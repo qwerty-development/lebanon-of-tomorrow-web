@@ -100,6 +100,17 @@ export default function AttendeesPage() {
           { event: "*", schema: "public", table: "fields" },
           () => loadAll()
         )
+        .on("broadcast", { event: "afs_changed" }, (msg: any) => {
+          const { attendeeId, fieldId, checkedAt } = msg.payload ?? {};
+          if (!attendeeId || !fieldId) return;
+          setStatusMap((prev) => {
+            const next = { ...prev } as Record<string, Record<string, string | null>>;
+            next[attendeeId] = { ...(next[attendeeId] ?? {}) };
+            next[attendeeId][fieldId] = checkedAt ?? null;
+            return next;
+          });
+        })
+        .on("broadcast", { event: "fields_changed" }, () => loadAll())
         .subscribe();
     }
 
@@ -174,6 +185,9 @@ export default function AttendeesPage() {
                         next.delete(key);
                         return next;
                       });
+                      await supabase
+                        .channel("attendance-realtime")
+                        .send({ type: "broadcast", event: "afs_changed", payload: { attendeeId: a.id, fieldId: f.id, checkedAt: new Date().toISOString() } });
                     }}
                   />
                 );
