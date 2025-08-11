@@ -42,21 +42,13 @@ export default function StatsPage() {
       await load();
       channel = supabase
         .channel("stats-realtime")
-        .on(
-          "postgres_changes",
-          { event: "*", schema: "public", table: "attendees" },
-          () => load()
-        )
+        .on("postgres_changes", { event: "*", schema: "public", table: "attendees" }, () => load())
         .on(
           "postgres_changes",
           { event: "*", schema: "public", table: "attendee_field_status" },
           () => load()
         )
-        .on(
-          "postgres_changes",
-          { event: "*", schema: "public", table: "fields" },
-          () => load()
-        )
+        .on("postgres_changes", { event: "*", schema: "public", table: "fields" }, () => load())
         .subscribe();
     }
     init();

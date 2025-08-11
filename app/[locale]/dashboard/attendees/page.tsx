@@ -78,8 +78,28 @@ export default function AttendeesPage() {
       channel = supabase
         .channel("attendance-realtime")
         .on("postgres_changes", { event: "*", schema: "public", table: "attendees" }, () => loadAll())
-        .on("postgres_changes", { event: "*", schema: "public", table: "attendee_field_status" }, () => loadAll())
-        .on("postgres_changes", { event: "*", schema: "public", table: "fields" }, () => loadAll())
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "attendee_field_status" },
+          (payload: any) => {
+            const row = payload.new ?? payload.old;
+            if (!row) return loadAll();
+            const attendeeId = row.attendee_id as string;
+            const fieldId = row.field_id as string;
+            const checkedAt = payload.eventType === "DELETE" ? null : (row.checked_at as string | null);
+            setStatusMap((prev) => {
+              const next = { ...prev } as Record<string, Record<string, string | null>>;
+              next[attendeeId] = { ...(next[attendeeId] ?? {}) };
+              next[attendeeId][fieldId] = checkedAt;
+              return next;
+            });
+          }
+        )
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "fields" },
+          () => loadAll()
+        )
         .subscribe();
     }
 
