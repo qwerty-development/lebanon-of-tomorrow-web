@@ -22,61 +22,104 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.15),transparent_60%)]">
-      <div className="w-full max-w-sm space-y-5 card p-6">
-        <h1 className="text-xl font-semibold text-center">{t.title}</h1>
-        <form
-          className="space-y-3"
-          onSubmit={async (e) => {
-            e.preventDefault();
-            setError(null);
-            setLoading(true);
-            const { error } = await supabase.auth.signInWithPassword({ email, password });
-            setLoading(false);
-            if (error) {
-              setError(isArabic ? "بيانات الدخول غير صحيحة" : "Invalid credentials");
-              return;
-            }
-            window.location.href = `/${locale}/dashboard`;
-          }}
-        >
-          <label className="block">
-            <span className="block text-sm mb-1">{t.email}</span>
-            <input
-              type="email"
-              className="w-full border rounded px-3 py-2"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </label>
-          <label className="block">
-            <span className="block text-sm mb-1">{t.password}</span>
-            <input
-              type="password"
-              className="w-full border rounded px-3 py-2"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </label>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full btn btn-primary disabled:opacity-50"
-          >
-            {loading ? (isArabic ? "...جارٍ الدخول" : "Signing in...") : t.submit}
-          </button>
-        </form>
+    <div className="min-h-screen flex items-center justify-center p-4 lg:p-6">
+      <div className="w-full max-w-md space-y-6">
+        {/* Logo and Branding */}
+        <div className="text-center space-y-3">
+          <div className="flex justify-center">
+            <div className="relative">
+              <div className="w-4 h-4 rounded-full bg-gradient-to-r from-[var(--brand)] to-[var(--brand-600)] shadow-lg" />
+              <div className="absolute inset-0 w-4 h-4 rounded-full bg-gradient-to-r from-[var(--brand)] to-[var(--brand-600)] animate-ping opacity-20" />
+            </div>
+          </div>
+          <h1 className="text-2xl lg:text-3xl font-bold text-[var(--foreground)]">
+            Lebanon of Tomorrow
+          </h1>
+          <p className="text-[var(--muted)] text-sm">
+            {isArabic ? "نظام إدارة الحضور والتوزيع" : "Attendance & Distribution Management"}
+          </p>
+        </div>
 
-        {error && (
-          <div className="text-red-600 text-sm text-center">{error}</div>
-        )}
-        <div className="text-center text-sm">
+        {/* Login Card */}
+        <div className="card p-6 lg:p-8 space-y-6">
+          <div className="text-center">
+            <h2 className="text-xl font-semibold text-[var(--foreground)]">{t.title}</h2>
+          </div>
+          
+          <form
+            className="space-y-4"
+            onSubmit={async (e) => {
+              e.preventDefault();
+              setError(null);
+              setLoading(true);
+              const { error } = await supabase.auth.signInWithPassword({ email, password });
+              setLoading(false);
+              if (error) {
+                setError(isArabic ? "بيانات الدخول غير صحيحة" : "Invalid credentials");
+                return;
+              }
+              window.location.href = `/${locale}/dashboard`;
+            }}
+          >
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  {t.email}
+                </label>
+                <input
+                  type="email"
+                  className="w-full glass rounded-xl px-4 py-3 border-[var(--border-glass)] text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--brand)] focus:shadow-[0_0_0_3px_var(--brand-accent)] transition-all"
+                  placeholder={isArabic ? "أدخل بريدك الإلكتروني" : "Enter your email"}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  {t.password}
+                </label>
+                <input
+                  type="password"
+                  className="w-full glass rounded-xl px-4 py-3 border-[var(--border-glass)] text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--brand)] focus:shadow-[0_0_0_3px_var(--brand-accent)] transition-all"
+                  placeholder={isArabic ? "أدخل كلمة المرور" : "Enter your password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+            
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full btn btn-primary h-12 text-base font-semibold disabled:opacity-50 relative overflow-hidden"
+            >
+              {loading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-inherit">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                </div>
+              )}
+              <span className={loading ? "opacity-0" : ""}>
+                {loading ? (isArabic ? "...جارٍ الدخول" : "Signing in...") : t.submit}
+              </span>
+            </button>
+          </form>
+
+          {error && (
+            <div className="glass-strong rounded-xl p-4 border border-red-200 bg-red-50/50 dark:border-red-800 dark:bg-red-900/20">
+              <div className="text-red-600 dark:text-red-400 text-sm text-center font-medium">{error}</div>
+            </div>
+          )}
+        </div>
+
+        {/* Language Toggle */}
+        <div className="text-center">
           <Link
             href={`/${isArabic ? "en" : "ar"}/login`}
-            className="underline text-[var(--muted)] hover:text-[var(--foreground)]"
+            className="inline-flex items-center gap-2 text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
           >
+            <span className="w-1 h-1 rounded-full bg-[var(--muted)]" />
             {t.switchTo}
           </Link>
         </div>

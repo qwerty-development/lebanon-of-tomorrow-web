@@ -80,6 +80,11 @@ create table if not exists public.attendees (
   constraint attendees_unique_record unique (record_number)
 );
 
+-- Remove legacy dependencies/policies that might reference event_id (idempotent)
+drop policy if exists attendees_select on public.attendees;
+drop policy if exists attendees_insert on public.attendees;
+drop policy if exists attendees_update on public.attendees;
+
 -- Remove event_id and old station columns when present (idempotent)
 do $$ begin
   if exists (select 1 from information_schema.columns where table_schema='public' and table_name='attendees' and column_name='event_id') then
@@ -285,6 +290,36 @@ $$;
 
 revoke all on function public.set_active_event(uuid) from public;
 grant execute on function public.set_active_event(uuid) to authenticated;
+
+-- RPC: add attendee (security definer to avoid client RLS pitfalls)
+create or replace function public.add_attendee(
+  p_name text,
+  p_record_number text,
+  p_governorate text,
+  p_district text,
+  p_area text,
+  p_phone text,
+  p_quantity integer
+) returns uuid
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_id uuid;
+begin
+  insert into public.attendees(name, record_number, governorate, district, area, phone, quantity)
+  values (p_name, p_record_number, p_governorate, p_district, p_area, p_phone, greatest(coalesce(p_quantity, 1), 1))
+  returning id into v_id;
+  return v_id;
+exception when unique_violation then
+  -- rethrow with clearer message
+  raise exception 'Record number already exists' using errcode = '23505';
+end;
+$$;
+
+revoke all on function public.add_attendee(text,text,text,text,text,text,integer) from public;
+grant execute on function public.add_attendee(text,text,text,text,text,text,integer) to authenticated;
 
 -- Seed default field (Main entrance) if none exists
 insert into public.fields(name, is_enabled, sort_order, is_main)

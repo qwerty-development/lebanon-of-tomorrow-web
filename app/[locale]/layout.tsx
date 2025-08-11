@@ -25,7 +25,7 @@ export default async function LocaleLayout({
   const dir = casted === "ar" ? "rtl" : "ltr";
 
   return (
-    <div className={dir === "rtl" ? "dir-rtl" : "dir-ltr"}>
+    <div className={`${dir === "rtl" ? "dir-rtl" : "dir-ltr"} min-h-screen flex flex-col`}>
       {children}
     </div>
   );

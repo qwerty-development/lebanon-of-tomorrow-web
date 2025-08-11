@@ -24,10 +24,12 @@ export default function DashboardLayout({
 
   return (
     <RequireAuth>
-      <div className="min-h-screen grid grid-rows-[auto_1fr]">
+      <div className="min-h-screen flex flex-col">
         <Navbar />
-        <main className="p-4">
-          <div className="mx-auto max-w-6xl">{children}</div>
+        <main className="flex-1 container mx-auto py-6 lg:py-8">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
         </main>
       </div>
     </RequireAuth>
