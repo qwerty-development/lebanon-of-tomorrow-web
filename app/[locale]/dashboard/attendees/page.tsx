@@ -76,7 +76,7 @@ export default function AttendeesPage() {
     async function init() {
       await loadAll();
       channel = supabase
-        .channel("attendance-realtime")
+        .channel("app")
         .on("postgres_changes", { event: "*", schema: "public", table: "attendees" }, () => loadAll())
         .on(
           "postgres_changes",
@@ -186,7 +186,7 @@ export default function AttendeesPage() {
                         return next;
                       });
                       await supabase
-                        .channel("attendance-realtime")
+                        .channel("app")
                         .send({ type: "broadcast", event: "afs_changed", payload: { attendeeId: a.id, fieldId: f.id, checkedAt: new Date().toISOString() } });
                     }}
                   />

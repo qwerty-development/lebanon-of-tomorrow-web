@@ -198,6 +198,7 @@ function FieldsManager() {
             setNewName("");
             await load();
             await supabase.channel("fields-realtime-admin").send({ type: "broadcast", event: "fields_changed", payload: {} });
+            await supabase.channel("app").send({ type: "broadcast", event: "fields_changed", payload: {} });
           } else alert(error.message);
         }}
       >
@@ -215,6 +216,7 @@ function FieldsManager() {
                 setFields((prev) => prev.map((x) => (x.id === f.id ? { ...x, name } : x)));
                 await supabase.from("fields").update({ name }).eq("id", f.id);
                 await supabase.channel("fields-realtime-admin").send({ type: "broadcast", event: "fields_changed", payload: {} });
+                await supabase.channel("app").send({ type: "broadcast", event: "fields_changed", payload: {} });
               }}
             />
             <label className="inline-flex items-center gap-1">
@@ -226,6 +228,7 @@ function FieldsManager() {
                   setFields((prev) => prev.map((x) => (x.id === f.id ? { ...x, is_enabled } : x)));
                   await supabase.from("fields").update({ is_enabled }).eq("id", f.id);
                   await supabase.channel("fields-realtime-admin").send({ type: "broadcast", event: "fields_changed", payload: {} });
+                  await supabase.channel("app").send({ type: "broadcast", event: "fields_changed", payload: {} });
                 }}
               />
               Enabled
@@ -243,6 +246,7 @@ function FieldsManager() {
                   if (error) alert(error.message);
                   await load();
                   await supabase.channel("fields-realtime-admin").send({ type: "broadcast", event: "fields_changed", payload: {} });
+                  await supabase.channel("app").send({ type: "broadcast", event: "fields_changed", payload: {} });
                 }}
               />
               Main
@@ -257,6 +261,7 @@ function FieldsManager() {
                   await supabase.from("fields").update({ sort_order: f.sort_order }).eq("id", up.id);
                   await load();
                   await supabase.channel("fields-realtime-admin").send({ type: "broadcast", event: "fields_changed", payload: {} });
+                  await supabase.channel("app").send({ type: "broadcast", event: "fields_changed", payload: {} });
                 }}
               >↑</button>
               <button
@@ -279,6 +284,7 @@ function FieldsManager() {
                 if (error) alert(error.message);
                 await load();
                 await supabase.channel("fields-realtime-admin").send({ type: "broadcast", event: "fields_changed", payload: {} });
+                await supabase.channel("app").send({ type: "broadcast", event: "fields_changed", payload: {} });
               }}
             >Delete</button>
           </div>
