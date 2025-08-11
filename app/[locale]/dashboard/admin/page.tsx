@@ -170,6 +170,17 @@ function FieldsManager() {
 
   useEffect(() => {
     load();
+    const channel = supabase
+      .channel("fields-realtime-admin")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "fields" },
+        () => load()
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   return (
