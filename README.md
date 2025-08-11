@@ -1,5 +1,19 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+# Lebanon of Tomorrow – Attendance & Distribution
+
+Component-based Next.js app with bilingual UI (English/Arabic), Supabase backend, real-time syncing, and role-based access.
+
+## Environment
+
+Create `.env.local` with:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+NEXT_PUBLIC_EVENT_ID=default
+```
+
 ## Getting Started
 
 First, run the development server:

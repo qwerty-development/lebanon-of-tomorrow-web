@@ -1,0 +1,152 @@
+Real-Time Attendance & Distribution Management System
+Prepared for: Lebanon of Tomorrow
+Prepared by: Qwerty
+Date: 06/08/2025
+1. Project Overview
+Lebanon of Tomorrow requires a real-time, bilingual web platform to manage event
+attendance and ensure fair item distribution to children. The system will prevent double
+claims and provide synchronized updates across all admin devices for eﬃcient on-ground
+operations.
+Key Objectives:
+●
+Prevent multiple claims per attendee.
+●
+Provide instant, real-time updates across all devices.
+●
+Enable admins to add and manage attendees easily.
+●
+Support bilingual (English & Arabic) interface with RTL compatibility.
+●
+Offer Super Admin control for resetting data and generating event reports.
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+2. Core Features
+2.1 Attendance & Event Management
+Manual child check-in with “Claimed” status.
+Real-time syncing to prevent duplicates across all admins.
+Visual warnings if a child is already claimed.
+Event reset feature for recurring distributions.
+2.2 Admin Features
+Multi-admin system (4–5 Admins + 1 Super Admin).
+Add new attendees manually (fields: Name, Record #, Governorate, District, Area,
+Phone #, Quantity).
+Optional bulk import via Excel/CSV.
+Export attendance records with timestamps.
+Basic stats:
+○
+Total attendees
+○
+Total claimed items
+○
+Breakdown by Governorate and District
+2.3 Multi-Language Support
+Fully bilingual UI (English & Arabic) with RTL layout.
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+One-click language toggle.
+Names remain as originally entered.
+2.4 UI & Accessibility
+Optimized for tablets and laptops.
+Mobile-friendly interface for quick check-ins.
+Visual indicators for already-claimed attendees.
+3. Technical Approach
+Frontend: Next.js (React) + Tailwind CSS
+Backend & Database: Supabase (PostgreSQL + Realtime API)
+Hosting: Vercel (frontend) + Supabase (backend & auth)
+Authentication: Supabase Auth (email/password with role-based access)
+Security: SSL encryption, secure login, and protected data exports
+4. Admin & Super Admin Workflow
+Admin Users
+Login securely
+Search by name or record #
+●
+Mark children as "Claimed"
+●
+●
+Real-time sync across all devices
+Add new attendees on the spot
+●
+Super Admin
+Full access to all admin features
+●
+Reset attendance records between events
+●
+●
+Export event data (CSV)
+View statistics dashboard with Governorate/District breakdown
+5. Pricing Estimate (With NGO Discount)
+In support of Lebanon of Tomorrow’s mission, we are offering a discounted flat rate of
+$1,000, reduced from the standard $1,200–$1,400.
+Task Category Estimate
+d Hours
+Rate
+(USD/
+hr)
+Discount
+ed Cost
+UI/UX Design &
+Multi-Language Setup
+8–10 hrs $30/hr $240 –
+$300
+Backend Setup (Supabase +
+Auth)
+8–10 hrs $30/hr $240 –
+$300
+Frontend Development
+(Dashboard)
+10–12
+hrs
+$30/hr $300 –
+$360
+Realtime Sync & Testing 4–5 hrs $30/hr $120 –
+$150
+Reports & Super Admin
+Panel
+4–5 hrs $30/hr $120 –
+$150
+Total Estimate (Discounted) 34–42
+hrs
+$30/hr Capped
+at $1,000
+Includes up to 2 revision sessions during development.
+A 50% deposit is required to begin. The project will start upon receiving this
+initial payment.
+Remaining balance is due upon completion and delivery.
+6. Maintenance
+We offer an optional annual maintenance plan at $500/year, which includes:
+●
+Up to 3 minor support tickets per month (bug fixes, performance tweaks, or
+technical clarifications)
+●
+Ongoing security updates and system monitoring
+Major feature additions or structural changes are not included in the
+maintenance plan.
+●
+●
+7. Deliverables
+Fully responsive, bilingual web application
+Real-time attendance and distribution management system
+●
+●
+●
+Super Admin panel with reset and reporting tools
+Statistics dashboard and CSV export
+Hosting and deployment via Vercel + Supabase
