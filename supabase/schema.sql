@@ -191,6 +191,11 @@ begin
 
   -- set timestamp when marking
   if new.checked_at is null then
+    -- allow explicit uncheck (null) on UPDATE; permission enforced above
+    if tg_op = 'UPDATE' and old.checked_at is not null then
+      return new;
+    end if;
+    -- otherwise, if inserting or marking as checked without timestamp, set it now
     new.checked_at = now();
   end if;
 

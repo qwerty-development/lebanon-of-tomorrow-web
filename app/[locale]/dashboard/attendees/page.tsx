@@ -33,6 +33,7 @@ export default function AttendeesPage() {
   const [fieldCheckFilter, setFieldCheckFilter] = useState<"any" | "checked" | "not_checked">("any");
   const [sortKey, setSortKey] = useState<"createdAt" | "name" | "recordNumber" | "governorate" | "district" | "area" | "quantity">("createdAt");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -127,6 +128,25 @@ export default function AttendeesPage() {
     return () => {
       isMounted = false;
       if (channel) supabase.removeChannel(channel);
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      const { data: userRes } = await supabase.auth.getUser();
+      const user = userRes?.user;
+      if (!user) return;
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+      if (!isMounted) return;
+      setIsSuperAdmin(profile?.role === "super_admin");
+    })();
+    return () => {
+      isMounted = false;
     };
   }, []);
 
@@ -367,7 +387,7 @@ export default function AttendeesPage() {
                   {fields.map((f) => {
                     const checked = !!statusMap[a.id]?.[f.id];
                     const mainChecked = mainField ? !!statusMap[a.id]?.[mainField.id] : true;
-                    const disabled = !f.is_main && !mainChecked;
+                    const disabled = !isSuperAdmin && !f.is_main && !mainChecked;
                     const key = `${a.id}:${f.id}`;
                     return (
                       <Station
@@ -375,7 +395,7 @@ export default function AttendeesPage() {
                         label={f.name}
                         active={checked}
                         disabled={disabled}
-                        busy={busy.has(key) || disabled}
+                        busy={busy.has(key)}
                         onMark={async () => {
                           if (!window.confirm(`${t.confirmPrefix}${f.name} - ${a.name}`)) return;
                           setBusy((prev) => new Set(prev).add(key));
