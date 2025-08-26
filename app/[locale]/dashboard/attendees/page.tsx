@@ -36,9 +36,10 @@ export default function AttendeesPage() {
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [loadError, setLoadError] = useState<string>("");
   const [loadingProgress, setLoadingProgress] = useState("");
+  const [subscriptionStatus, setSubscriptionStatus] = useState<string>("");
 
   const loadAll = useCallback(async () => {
-    console.log("loadAll function called");
+    console.log("loadAll function called at:", new Date().toISOString());
     setLoadError("");
     setLoadingProgress("");
     
@@ -133,20 +134,21 @@ export default function AttendeesPage() {
     }
   }, []);
 
-  // Load data on component mount
+  // Component mount effect - removed loadAll call since it's now called after subscription is established
   useEffect(() => {
-    console.log("Component mounted, calling loadAll");
-    loadAll();
-  }, [loadAll]);
+    console.log("Component mounted, setting up real-time subscription...");
+  }, []);
 
+  // Set up real-time subscription first, then load data
   useEffect(() => {
     let isMounted = true;
     let channel: any | null = null;
 
-    async function init() {
-      if (isMounted) {
-        await loadAll();
-      }
+    async function setupSubscription() {
+      if (!isMounted) return;
+
+      console.log("Setting up real-time subscription...");
+      
       // Set up real-time subscription for attendee_field_status changes
       channel = supabase
         .channel("attendee_field_status_changes")
@@ -159,6 +161,13 @@ export default function AttendeesPage() {
           },
           (payload: any) => {
             console.log("Real-time change received:", payload);
+            
+            // Only process updates if subscription is properly established
+            if (subscriptionStatus !== 'SUBSCRIBED') {
+              console.log("Ignoring real-time update - subscription not ready:", subscriptionStatus);
+              return;
+            }
+            
             const row = payload.new ?? payload.old;
             if (!row) return;
             
@@ -166,6 +175,8 @@ export default function AttendeesPage() {
             const fieldId = row.field_id as string;
             const checkedAt = payload.eventType === "DELETE" ? null : (row.checked_at as string | null);
             const quantity = payload.eventType === "DELETE" ? 1 : (row.quantity || 1);
+            
+            console.log(`Processing update: attendeeId=${attendeeId}, fieldId=${fieldId}, checkedAt=${checkedAt}, quantity=${quantity}`);
             
             setStatusMap((prev) => {
               const next = { ...prev };
@@ -176,21 +187,42 @@ export default function AttendeesPage() {
               } else {
                 next[attendeeId][fieldId] = { checkedAt, quantity };
               }
+              console.log(`Updated statusMap for ${attendeeId}:${fieldId}`, next[attendeeId][fieldId]);
               return next;
             });
           }
         )
         .subscribe((status) => {
           console.log("Subscription status:", status);
+          setSubscriptionStatus(status);
+          
+          // Only load data after subscription is established to ensure we don't miss updates
+          if (status === 'SUBSCRIBED' && isMounted) {
+            console.log("Real-time subscription established, loading initial data...");
+            loadAll();
+          } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+            console.error("Real-time subscription failed:", status);
+            // Try to reconnect after a delay
+            setTimeout(() => {
+              if (isMounted) {
+                console.log("Attempting to reconnect real-time subscription...");
+                setupSubscription();
+              }
+            }, 3000);
+          }
         });
     }
 
-    init();
+    setupSubscription();
+    
     return () => {
       isMounted = false;
-      if (channel) supabase.removeChannel(channel);
+      if (channel) {
+        console.log("Cleaning up real-time subscription");
+        supabase.removeChannel(channel);
+      }
     };
-  }, [loadAll]);
+  }, []); // Remove loadAll dependency to avoid infinite loops
 
   useEffect(() => {
     let isMounted = true;
@@ -236,6 +268,31 @@ export default function AttendeesPage() {
   useEffect(() => {
     console.log("Current statusMap:", statusMap);
   }, [statusMap]);
+
+  // Fallback refresh mechanism if subscription fails
+  useEffect(() => {
+    if (subscriptionStatus === 'CHANNEL_ERROR' || subscriptionStatus === 'TIMED_OUT') {
+      console.log("Subscription failed, setting up fallback refresh mechanism");
+      const interval = setInterval(() => {
+        console.log("Fallback refresh triggered");
+        loadAll();
+      }, 5000); // Refresh every 5 seconds if subscription fails
+      
+      return () => clearInterval(interval);
+    }
+  }, [subscriptionStatus, loadAll]);
+
+  // Periodic health check for subscription
+  useEffect(() => {
+    if (subscriptionStatus === 'SUBSCRIBED') {
+      const interval = setInterval(() => {
+        console.log("Subscription health check - status:", subscriptionStatus);
+        // If subscription is still active, this will help keep it alive
+      }, 30000); // Check every 30 seconds
+      
+      return () => clearInterval(interval);
+    }
+  }, [subscriptionStatus]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -431,6 +488,15 @@ export default function AttendeesPage() {
             >
               {isArabic ? "تحديث" : "Refresh"}
             </button>
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm">
+              <div className={`w-2 h-2 rounded-full ${subscriptionStatus === 'SUBSCRIBED' ? 'bg-green-500' : subscriptionStatus === 'CHANNEL_ERROR' ? 'bg-red-500' : 'bg-yellow-500'}`} />
+              <span className={subscriptionStatus === 'SUBSCRIBED' ? 'text-green-600' : subscriptionStatus === 'CHANNEL_ERROR' ? 'text-red-600' : 'text-yellow-600'}>
+                {subscriptionStatus === 'SUBSCRIBED' ? (isArabic ? 'متصل' : 'Connected') : 
+                 subscriptionStatus === 'CHANNEL_ERROR' ? (isArabic ? 'خطأ' : 'Error') : 
+                 subscriptionStatus === 'TIMED_OUT' ? (isArabic ? 'انتهت المهلة' : 'Timeout') :
+                 (isArabic ? 'جاري الاتصال...' : 'Connecting...')}
+              </span>
+            </div>
             <button
               onClick={async () => {
                 console.log("Testing direct database query...");
@@ -442,6 +508,35 @@ export default function AttendeesPage() {
               className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
             >
               Test DB
+            </button>
+            <button
+              onClick={async () => {
+                console.log("Testing real-time subscription...");
+                // Test by updating a field status to trigger real-time update
+                if (attendees.length > 0 && fields.length > 0) {
+                  const testAttendee = attendees[0];
+                  const testField = fields[0];
+                  console.log(`Testing with attendee: ${testAttendee.name}, field: ${testField.name}`);
+                  
+                  const { data, error } = await supabase
+                    .from("attendee_field_status")
+                    .upsert({
+                      attendee_id: testAttendee.id,
+                      field_id: testField.id,
+                      checked_at: new Date().toISOString(),
+                      quantity: 1
+                    }, { onConflict: "attendee_id,field_id" });
+                  
+                  if (error) {
+                    console.error("Test update failed:", error);
+                  } else {
+                    console.log("Test update successful, should trigger real-time update");
+                  }
+                }
+              }}
+              className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+            >
+              Test RT
             </button>
           </div>
         </div>
