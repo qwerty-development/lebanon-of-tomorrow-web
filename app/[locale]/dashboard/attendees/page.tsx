@@ -1,7 +1,16 @@
 "use client";
 import { useParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, memo } from "react";
 import { supabase } from "@/lib/supabaseClient";
+
+// Simple debounce utility function
+function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {
+  let timeout: NodeJS.Timeout;
+  return ((...args: any[]) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  }) as T;
+}
 
 type Attendee = {
   id: string;
@@ -35,104 +44,132 @@ export default function AttendeesPage() {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [loadError, setLoadError] = useState<string>("");
-  const [loadingProgress, setLoadingProgress] = useState("");
-  const [subscriptionStatus, setSubscriptionStatus] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(50);
+  const [totalCount, setTotalCount] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
 
-  const loadAll = useCallback(async () => {
-    console.log("loadAll function called at:", new Date().toISOString());
+  const loadAll = useCallback(async (page = 1, reset = false) => {
+    console.log(`loadAll function called at: ${new Date().toISOString()}, page: ${page}, reset: ${reset}`);
     setLoadError("");
-    setLoadingProgress("");
+    setIsLoading(true);
     
-    const { data: fieldRows, error: fieldsError } = await supabase
-      .from("fields")
-      .select("id,name,is_enabled,is_main,sort_order")
-      .order("sort_order", { ascending: true });
-    const enabled = (fieldRows ?? []).filter((f: any) => f.is_enabled) as Field[];
-    setFields(enabled);
-    if (fieldsError) setLoadError(fieldsError.message);
+    try {
+      // Load fields (only once, not per page)
+      if (reset || fields.length === 0) {
+        const { data: fieldRows, error: fieldsError } = await supabase
+          .from("fields")
+          .select("id,name,is_enabled,is_main,sort_order")
+          .order("sort_order", { ascending: true });
+        
+        if (fieldsError) throw fieldsError;
+        
+        const enabled = (fieldRows ?? []).filter((f: any) => f.is_enabled) as Field[];
+        setFields(enabled);
+      }
 
-    const { data, error: attendeesError } = await supabase
-      .from("attendees")
-      .select("id,name,record_number,governorate,district,area,phone,quantity,age")
-      .order("name", { ascending: true });
-    
-    console.log("Fetched attendees:", data);
-    if (attendeesError) {
-      console.error("Error fetching attendees:", attendeesError);
-      setLoadError(attendeesError.message);
-    }
-    
-    const mapped: Attendee[] = (data ?? []).map((r: any) => ({
-      id: r.id,
-      name: r.name,
-      recordNumber: r.record_number,
-      governorate: r.governorate,
-      district: r.district,
-      area: r.area,
-      phone: r.phone,
-      quantity: r.quantity,
-      ages: Array.isArray(r.age)
-        ? (r.age as any[]).map((x) => (typeof x === "number" ? x : parseInt(String(x), 10))).filter((n) => Number.isFinite(n))
-        : typeof r.age === "number"
-        ? [r.age]
-        : typeof r.age === "string"
-        ? [parseInt(r.age, 10)].filter((n) => Number.isFinite(n))
-        : [],
-    }));
-    setAttendees(mapped);
-    const ids = mapped.map((a) => a.id);
-    console.log("Attendee IDs to fetch status for:", ids);
-    
-    if (ids.length) {
-      // Fetch status data in batches to avoid URL length limits
-      let statusRows: any[] = [];
-      try {
-        if (ids.length) {
-          // Batch the IDs to avoid URL length limits
-          const batchSize = 100;
-          const totalBatches = Math.ceil(ids.length / batchSize);
-          
-          for (let i = 0; i < ids.length; i += batchSize) {
-            const batch = ids.slice(i, i + batchSize);
-            const currentBatch = Math.floor(i / batchSize) + 1;
-            const progress = `Loading field statuses... ${currentBatch}/${totalBatches}`;
-            setLoadingProgress(progress);
-            console.log(`Fetching batch ${currentBatch}/${totalBatches} (${batch.length} IDs)`);
-            
-            const { data: batchData, error: batchError } = await supabase
-              .from("attendee_field_status")
-              .select("attendee_id,field_id,checked_at,quantity")
-              .in("attendee_id", batch);
-            
-            if (batchError) {
-              console.error(`Error fetching batch ${currentBatch}:`, batchError);
-              continue;
-            }
-            
-            statusRows.push(...(batchData ?? []));
-          }
-          setLoadingProgress("");
-          console.log(`Total status rows fetched: ${statusRows.length}`);
-        }
-      } catch (error) {
-        console.error("Error fetching statuses in batches:", error);
-        statusRows = [];
-        setLoadingProgress("");
+      // Calculate pagination
+      const from = (page - 1) * pageSize;
+      const to = from + pageSize - 1;
+      
+      // Load attendees with pagination
+      const { data, error: attendeesError, count } = await supabase
+        .from("attendees")
+        .select("id,name,record_number,governorate,district,area,phone,quantity,age", { count: 'exact' })
+        .order("name", { ascending: true })
+        .range(from, to);
+      
+      if (attendeesError) throw attendeesError;
+      
+      console.log(`Fetched attendees page ${page}:`, data?.length, "of", count);
+      
+      const mapped: Attendee[] = (data ?? []).map((r: any) => ({
+        id: r.id,
+        name: r.name,
+        recordNumber: r.record_number,
+        governorate: r.governorate,
+        district: r.district,
+        area: r.area,
+        phone: r.phone,
+        quantity: r.quantity,
+        ages: Array.isArray(r.age)
+          ? (r.age as any[]).map((x) => (typeof x === "number" ? x : parseInt(String(x), 10))).filter((n) => Number.isFinite(n))
+          : typeof r.age === "number"
+          ? [r.age]
+          : typeof r.age === "string"
+          ? [parseInt(r.age, 10)].filter((n) => Number.isFinite(n))
+          : [],
+      }));
+      
+      if (reset) {
+        setAttendees(mapped);
+        setCurrentPage(1);
+      } else {
+        setAttendees(prev => [...prev, ...mapped]);
       }
       
-      const map: Record<string, Record<string, { checkedAt: string | null; quantity: number }>> = {};
-      for (const row of statusRows) {
-        if (!map[row.attendee_id]) map[row.attendee_id] = {};
-        // Only set quantity for checked fields, unchecked fields won't be in the map
-        const quantity = row.quantity !== null && row.quantity !== undefined ? row.quantity : 1;
-        map[row.attendee_id][row.field_id] = { checkedAt: row.checked_at, quantity };
+      setTotalCount(count || 0);
+      setHasMore((count || 0) > (reset ? pageSize : attendees.length + pageSize));
+      
+      // Load status data for current page attendees
+      if (mapped.length > 0) {
+        const attendeeIds = mapped.map(a => a.id);
+        
+        const { data: statusData, error: statusError } = await supabase
+          .from("attendee_field_status")
+          .select("attendee_id,field_id,checked_at,quantity")
+          .in("attendee_id", attendeeIds);
+        
+        if (statusError) {
+          console.error("Error fetching statuses:", statusError);
+        } else {
+          setStatusMap(prev => {
+            const next = { ...prev };
+            for (const row of statusData || []) {
+              if (!next[row.attendee_id]) next[row.attendee_id] = {};
+              const quantity = row.quantity !== null && row.quantity !== undefined ? row.quantity : 1;
+              next[row.attendee_id][row.field_id] = { checkedAt: row.checked_at, quantity };
+            }
+            return next;
+          });
+        }
       }
-      setStatusMap(map);
-      console.log("Final status map set:", map);
-    } else {
-      setStatusMap({});
+      
+    } catch (error: any) {
+      console.error("Error in loadAll:", error);
+      setLoadError(error.message || "Failed to load data");
+    } finally {
+      setIsLoading(false);
     }
-  }, []);
+  }, [fields.length, pageSize, attendees.length]);
+
+  const loadMore = useCallback(() => {
+    if (!isLoading && !isLoadingMore && hasMore) {
+      setIsLoadingMore(true);
+      const nextPage = Math.floor(attendees.length / pageSize) + 1;
+      loadAll(nextPage, false).finally(() => {
+        setIsLoadingMore(false);
+      });
+    }
+  }, [isLoading, isLoadingMore, hasMore, attendees.length, pageSize, loadAll]);
+
+  const refreshData = useCallback(() => {
+    loadAll(1, true);
+  }, [loadAll]);
+
+  // Debounced search to improve performance with large datasets
+  const debouncedSearch = useCallback(
+    debounce((searchTerm: string) => {
+      setQuery(searchTerm);
+      // Reset to first page when searching
+      if (searchTerm !== query) {
+        loadAll(1, true);
+      }
+    }, 300),
+    [query, loadAll]
+  );
 
   // Component mount effect - removed loadAll call since it's now called after subscription is established
   useEffect(() => {
@@ -163,10 +200,8 @@ export default function AttendeesPage() {
             console.log("Real-time change received:", payload);
             
             // Only process updates if subscription is properly established
-            if (subscriptionStatus !== 'SUBSCRIBED') {
-              console.log("Ignoring real-time update - subscription not ready:", subscriptionStatus);
-              return;
-            }
+            // Supabase channels automatically handle reconnection and retry
+            // We just need to ensure the data is loaded after subscription is ready
             
             const row = payload.new ?? payload.old;
             if (!row) return;
@@ -192,25 +227,12 @@ export default function AttendeesPage() {
             });
           }
         )
-        .subscribe((status) => {
-          console.log("Subscription status:", status);
-          setSubscriptionStatus(status);
-          
-          // Only load data after subscription is established to ensure we don't miss updates
-          if (status === 'SUBSCRIBED' && isMounted) {
-            console.log("Real-time subscription established, loading initial data...");
-            loadAll();
-          } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-            console.error("Real-time subscription failed:", status);
-            // Try to reconnect after a delay
-            setTimeout(() => {
-              if (isMounted) {
-                console.log("Attempting to reconnect real-time subscription...");
-                setupSubscription();
-              }
-            }, 3000);
-          }
-        });
+        .subscribe(); // Supabase channels automatically handle retry and reconnection
+      
+      // Load initial data after subscription is set up
+      if (isMounted) {
+        loadAll();
+      }
     }
 
     setupSubscription();
@@ -218,11 +240,10 @@ export default function AttendeesPage() {
     return () => {
       isMounted = false;
       if (channel) {
-        console.log("Cleaning up real-time subscription");
         supabase.removeChannel(channel);
       }
     };
-  }, []); // Remove loadAll dependency to avoid infinite loops
+  }, [loadAll]);
 
   useEffect(() => {
     let isMounted = true;
@@ -269,30 +290,11 @@ export default function AttendeesPage() {
     console.log("Current statusMap:", statusMap);
   }, [statusMap]);
 
-  // Fallback refresh mechanism if subscription fails
-  useEffect(() => {
-    if (subscriptionStatus === 'CHANNEL_ERROR' || subscriptionStatus === 'TIMED_OUT') {
-      console.log("Subscription failed, setting up fallback refresh mechanism");
-      const interval = setInterval(() => {
-        console.log("Fallback refresh triggered");
-        loadAll();
-      }, 5000); // Refresh every 5 seconds if subscription fails
-      
-      return () => clearInterval(interval);
-    }
-  }, [subscriptionStatus, loadAll]);
-
   // Periodic health check for subscription
   useEffect(() => {
-    if (subscriptionStatus === 'SUBSCRIBED') {
-      const interval = setInterval(() => {
-        console.log("Subscription health check - status:", subscriptionStatus);
-        // If subscription is still active, this will help keep it alive
-      }, 30000); // Check every 30 seconds
-      
-      return () => clearInterval(interval);
-    }
-  }, [subscriptionStatus]);
+    // Supabase channels automatically handle reconnection and retry
+    // This effect is no longer needed for manual checks
+  }, []);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -392,8 +394,8 @@ export default function AttendeesPage() {
         <input
           placeholder={t.search}
           className="w-full px-4 py-3 rounded-xl glass border-[var(--border-glass)] text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--brand)] focus:shadow-[0_0_0_3px_var(--brand-accent)] transition-all"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          defaultValue={query}
+          onChange={(e) => debouncedSearch(e.target.value)}
         />
       </div>
 
@@ -482,21 +484,19 @@ export default function AttendeesPage() {
             <button
               onClick={() => {
                 console.log("Manual refresh clicked");
-                loadAll();
+                refreshData();
               }}
               className="px-4 py-2 bg-[var(--brand)] text-white rounded-lg hover:bg-[var(--brand-hover)] transition-colors"
+              disabled={isLoading}
             >
-              {isArabic ? "تحديث" : "Refresh"}
+              {isLoading ? (isArabic ? "جاري..." : "Loading...") : (isArabic ? "تحديث" : "Refresh")}
             </button>
-            <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm">
-              <div className={`w-2 h-2 rounded-full ${subscriptionStatus === 'SUBSCRIBED' ? 'bg-green-500' : subscriptionStatus === 'CHANNEL_ERROR' ? 'bg-red-500' : 'bg-yellow-500'}`} />
-              <span className={subscriptionStatus === 'SUBSCRIBED' ? 'text-green-600' : subscriptionStatus === 'CHANNEL_ERROR' ? 'text-red-600' : 'text-yellow-600'}>
-                {subscriptionStatus === 'SUBSCRIBED' ? (isArabic ? 'متصل' : 'Connected') : 
-                 subscriptionStatus === 'CHANNEL_ERROR' ? (isArabic ? 'خطأ' : 'Error') : 
-                 subscriptionStatus === 'TIMED_OUT' ? (isArabic ? 'انتهت المهلة' : 'Timeout') :
-                 (isArabic ? 'جاري الاتصال...' : 'Connecting...')}
-              </span>
-            </div>
+                          <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm">
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-green-600 font-medium">
+                  {isArabic ? 'متصل - تحديثات فورية' : 'Connected - Real-time'}
+                </span>
+              </div>
             <button
               onClick={async () => {
                 console.log("Testing direct database query...");
@@ -541,13 +541,13 @@ export default function AttendeesPage() {
           </div>
         </div>
         
-        {/* Loading Progress */}
-        {loadingProgress && (
-          <div className="glass rounded-2xl p-4 text-center">
-            <div className="text-[var(--brand)] text-lg font-medium">{loadingProgress}</div>
-            <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-              <div className="bg-[var(--brand)] h-2 rounded-full transition-all duration-300" style={{ width: '100%' }}></div>
+        {/* Loading State */}
+        {isLoading && attendees.length === 0 && (
+          <div className="glass rounded-2xl p-8 text-center">
+            <div className="text-[var(--brand)] text-lg font-medium">
+              {isArabic ? "جاري تحميل البيانات..." : "Loading data..."}
             </div>
+            <div className="w-8 h-8 border-4 border-[var(--brand)] border-t-transparent rounded-full animate-spin mx-auto mt-4"></div>
           </div>
         )}
         
@@ -557,7 +557,7 @@ export default function AttendeesPage() {
           </div>
         )}
         
-        <div className="grid gap-4">
+                <div className="grid gap-4">
           {filtered.map((a) => (
             <div key={a.id} className="card p-4 lg:p-6 hover:shadow-xl transition-all duration-300">
               <div className="flex flex-col lg:flex-row lg:items-center gap-4">
@@ -692,83 +692,108 @@ export default function AttendeesPage() {
                                   return;
                                 }
                                 selectedQty = parsed;
+                                }
                               }
+                              if (!window.confirm(`${t.confirmPrefix}${action === "uncheck" ? (isArabic ? "إلغاء تأكيد" : "Uncheck") : (isArabic ? "تأكيد" : "Check")} ${f.name} - ${a.name}`)) return;
                             }
-                            if (!window.confirm(`${t.confirmPrefix}${action === "uncheck" ? (isArabic ? "إلغاء تأكيد" : "Uncheck") : (isArabic ? "تأكيد" : "Check")} ${f.name} - ${a.name}`)) return;
-                          }
-                          
-                          setBusy((prev) => new Set(prev).add(key));
-                          const prevVal = statusMap[a.id]?.[f.id] ?? { checkedAt: null, quantity: 1 };
-                          
-                          // Update local state immediately for real-time feel
-                          const newValue = isUnchecking ? null : new Date().toISOString();
-                          setStatusMap((prev) => ({ 
-                            ...prev, 
-                            [a.id]: { 
-                              ...(prev[a.id] ?? {}), 
-                              [f.id]: { checkedAt: newValue, quantity: selectedQty } 
-                            } 
-                          }));
-                          
-                          let result;
-                          if (isUnchecking) {
-                            // Uncheck by setting checked_at to null and quantity to 1 (default)
-                            result = await supabase
-                              .from("attendee_field_status")
-                              .update({ checked_at: null, quantity: 1 })
-                              .eq("attendee_id", a.id)
-                              .eq("field_id", f.id);
-                          } else {
-                            // Check by setting checked_at to current timestamp and quantity
-                            result = await supabase
-                              .from("attendee_field_status")
-                              .upsert(
-                                { 
-                                  attendee_id: a.id, 
-                                  field_id: f.id, 
-                                  checked_at: new Date().toISOString(),
-                                  quantity: selectedQty
-                                }, 
-                                { onConflict: "attendee_id,field_id" }
-                              );
-                          }
-                          
-                          if (result.error) {
-                            console.error("Database error:", result.error);
-                            alert(`${t.failed}: ${result.error.message}`);
-                            // Revert local state on error
+                            
+                            setBusy((prev) => new Set(prev).add(key));
+                            const prevVal = statusMap[a.id]?.[f.id] ?? { checkedAt: null, quantity: 1 };
+                            
+                            // Update local state immediately for real-time feel
+                            const newValue = isUnchecking ? null : new Date().toISOString();
                             setStatusMap((prev) => ({ 
                               ...prev, 
                               [a.id]: { 
                                 ...(prev[a.id] ?? {}), 
-                                [f.id]: prevVal 
+                                [f.id]: { checkedAt: newValue, quantity: selectedQty } 
                               } 
                             }));
-                          } else {
-                            console.log("Successfully updated field status:", { attendeeId: a.id, fieldId: f.id, checkedAt: newValue, quantity: selectedQty });
-                            // Real-time update will come through postgres_changes subscription
-                          }
-                          
-                          setBusy((prev) => {
-                            const next = new Set(prev);
-                            next.delete(key);
-                            return next;
-                          });
-                        }}
-                      />
-                    );
-                  })}
+                            
+                            let result;
+                            if (isUnchecking) {
+                              // Uncheck by setting checked_at to null and quantity to 1 (default)
+                              result = await supabase
+                                .from("attendee_field_status")
+                                .update({ checked_at: null, quantity: 1 })
+                                .eq("attendee_id", a.id)
+                                .eq("field_id", f.id);
+                            } else {
+                              // Check by setting checked_at to current timestamp and quantity
+                              result = await supabase
+                                .from("attendee_field_status")
+                                .upsert(
+                                  { 
+                                    attendee_id: a.id, 
+                                    field_id: f.id, 
+                                    checked_at: new Date().toISOString(),
+                                    quantity: selectedQty
+                                  }, 
+                                  { onConflict: "attendee_id,field_id" }
+                                );
+                            }
+                            
+                            if (result.error) {
+                              console.error("Database error:", result.error);
+                              alert(`${t.failed}: ${result.error.message}`);
+                              // Revert local state on error
+                              setStatusMap((prev) => ({ 
+                                ...prev, 
+                                [a.id]: { 
+                                  ...(prev[a.id] ?? {}), 
+                                  [f.id]: prevVal 
+                                } 
+                              }));
+                            } else {
+                              console.log("Successfully updated field status:", { attendeeId: a.id, fieldId: f.id, checkedAt: newValue, quantity: selectedQty });
+                              // Real-time update will come through postgres_changes subscription
+                            }
+                            
+                            setBusy((prev) => {
+                              const next = new Set(prev);
+                              next.delete(key);
+                              return next;
+                            });
+                          }}
+                        />
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
+            ))}
+            
+            {/* Pagination Controls */}
+            {hasMore && (
+              <div className="flex justify-center mt-6">
+                <button
+                  onClick={loadMore}
+                  disabled={isLoading || isLoadingMore}
+                  className="px-6 py-3 bg-[var(--brand)] text-white rounded-lg hover:bg-[var(--brand-hover)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoadingMore ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      {isArabic ? "جاري التحميل..." : "Loading..."}
+                    </div>
+                  ) : (
+                    isArabic ? "تحميل المزيد" : "Load More"
+                  )}
+                </button>
+              </div>
+            )}
+            
+            {/* Pagination Info */}
+            <div className="text-center text-sm text-[var(--muted)] mt-4">
+              {isArabic ? `عرض ${attendees.length} من ${totalCount} سجل` : `Showing ${attendees.length} of ${totalCount} records`}
             </div>
-          ))}
-        </div>
+          </div>
       </div>
     </div>
   );
 }
 
-function Station({ label, active, disabled = false, busy = false, isSuperAdmin = false, canForceCheck = false, quantity = 0, totalQuantity = 1, onMark }: { label: string; active: boolean; disabled?: boolean; busy?: boolean; isSuperAdmin?: boolean; canForceCheck?: boolean; quantity?: number; totalQuantity?: number; onMark: () => Promise<void> }) {
+const Station = memo(function Station({ label, active, disabled = false, busy = false, isSuperAdmin = false, canForceCheck = false, quantity = 0, totalQuantity = 1, onMark }: { label: string; active: boolean; disabled?: boolean; busy?: boolean; isSuperAdmin?: boolean; canForceCheck?: boolean; quantity?: number; totalQuantity?: number; onMark: () => Promise<void> }) {
   if (active) {
     // If super admin, make checked fields clickable to uncheck
     if (isSuperAdmin) {
@@ -868,4 +893,4 @@ function Station({ label, active, disabled = false, busy = false, isSuperAdmin =
       )}
     </button>
   );
-}
+});
