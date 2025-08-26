@@ -402,26 +402,80 @@ export default function AttendeesPage() {
                         active={checked}
                         disabled={disabled}
                         busy={busy.has(key)}
+                        isSuperAdmin={isSuperAdmin}
                         onMark={async () => {
-                          if (!window.confirm(`${t.confirmPrefix}${f.name} - ${a.name}`)) return;
+                          const isUnchecking = checked;
+                          const action = isUnchecking ? "uncheck" : "check";
+                          const confirmText = isUnchecking 
+                            ? (isArabic ? "إلغاء تأكيد" : "Uncheck") 
+                            : (isArabic ? "تأكيد" : "Check");
+                          if (!window.confirm(`${t.confirmPrefix}${confirmText} ${f.name} - ${a.name}`)) return;
+                          
                           setBusy((prev) => new Set(prev).add(key));
                           const prevVal = statusMap[a.id]?.[f.id] ?? null;
-                          setStatusMap((prev) => ({ ...prev, [a.id]: { ...(prev[a.id] ?? {}), [f.id]: new Date().toISOString() } }));
-                          const { error } = await supabase
-                            .from("attendee_field_status")
-                            .upsert({ attendee_id: a.id, field_id: f.id, checked_at: new Date().toISOString() }, { onConflict: "attendee_id,field_id" });
-                          if (error) {
-                            alert(t.failed);
-                            setStatusMap((prev) => ({ ...prev, [a.id]: { ...(prev[a.id] ?? {}), [f.id]: prevVal } }));
+                          
+                          // Update local state immediately for real-time feel
+                          const newValue = isUnchecking ? null : new Date().toISOString();
+                          setStatusMap((prev) => ({ 
+                            ...prev, 
+                            [a.id]: { 
+                              ...(prev[a.id] ?? {}), 
+                              [f.id]: newValue 
+                            } 
+                          }));
+                          
+                          let result;
+                          if (isUnchecking) {
+                            // Uncheck by setting checked_at to null
+                            result = await supabase
+                              .from("attendee_field_status")
+                              .update({ checked_at: null })
+                              .eq("attendee_id", a.id)
+                              .eq("field_id", f.id);
+                          } else {
+                            // Check by setting checked_at to current timestamp
+                            result = await supabase
+                              .from("attendee_field_status")
+                              .upsert(
+                                { 
+                                  attendee_id: a.id, 
+                                  field_id: f.id, 
+                                  checked_at: new Date().toISOString() 
+                                }, 
+                                { onConflict: "attendee_id,field_id" }
+                              );
                           }
+                          
+                          if (result.error) {
+                            alert(t.failed);
+                            // Revert local state on error
+                            setStatusMap((prev) => ({ 
+                              ...prev, 
+                              [a.id]: { 
+                                ...(prev[a.id] ?? {}), 
+                                [f.id]: prevVal 
+                              } 
+                            }));
+                          } else {
+                            // Broadcast the change for real-time updates
+                            await supabase
+                              .channel("app")
+                              .send({ 
+                                type: "broadcast", 
+                                event: "afs_changed", 
+                                payload: { 
+                                  attendeeId: a.id, 
+                                  fieldId: f.id, 
+                                  checkedAt: newValue 
+                                } 
+                              });
+                          }
+                          
                           setBusy((prev) => {
                             const next = new Set(prev);
                             next.delete(key);
                             return next;
                           });
-                          await supabase
-                            .channel("app")
-                            .send({ type: "broadcast", event: "afs_changed", payload: { attendeeId: a.id, fieldId: f.id, checkedAt: new Date().toISOString() } });
                         }}
                       />
                     );
@@ -436,8 +490,36 @@ export default function AttendeesPage() {
   );
 }
 
-function Station({ label, active, disabled = false, busy = false, onMark }: { label: string; active: boolean; disabled?: boolean; busy?: boolean; onMark: () => Promise<void> }) {
+function Station({ label, active, disabled = false, busy = false, isSuperAdmin = false, onMark }: { label: string; active: boolean; disabled?: boolean; busy?: boolean; isSuperAdmin?: boolean; onMark: () => Promise<void> }) {
   if (active) {
+    // If super admin, make checked fields clickable to uncheck
+    if (isSuperAdmin) {
+      return (
+        <button
+          disabled={busy}
+          title={`${label} (click to uncheck)`}
+          className="inline-flex items-center justify-center px-3 py-2 rounded-xl bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-medium shadow-lg hover:from-green-600 hover:to-green-700 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
+          onClick={() => {
+            if (busy) return;
+            void onMark();
+          }}
+        >
+          {busy ? (
+            <>
+              <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin mr-2" />
+              {label}
+            </>
+          ) : (
+            <>
+              <span className="w-1.5 h-1.5 rounded-full bg-white/80 mr-2" />
+              {label}
+            </>
+          )}
+        </button>
+      );
+    }
+    
+    // Regular users see static checked field
     return (
       <div className="inline-flex items-center justify-center px-3 py-2 rounded-xl bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-medium shadow-lg">
         <span className="w-1.5 h-1.5 rounded-full bg-white/80 mr-2" />
