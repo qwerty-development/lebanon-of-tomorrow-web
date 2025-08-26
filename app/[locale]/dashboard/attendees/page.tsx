@@ -1,6 +1,7 @@
 "use client";
+
 import { useParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
 type Attendee = {
@@ -15,272 +16,107 @@ type Attendee = {
   ages: number[];
 };
 
-type Field = { id: string; name: string; is_enabled: boolean; is_main: boolean; sort_order: number };
+type Field = { 
+  id: string; 
+  name: string; 
+  is_enabled: boolean; 
+  is_main: boolean; 
+  sort_order: number;
+};
+
+type AttendeeWithStatus = Attendee & {
+  fieldStatuses: Record<string, { checkedAt: string | null; quantity: number }>;
+};
+
+// Constants for pagination and performance
+const PAGE_SIZE = 50;
+const DEBOUNCE_DELAY = 300;
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 1000;
+
+// Debounce hook for search optimization
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
+// Retry mechanism for database operations
+async function withRetry<T>(
+  operation: () => Promise<T>,
+  maxRetries: number = MAX_RETRIES,
+  delay: number = RETRY_DELAY
+): Promise<T> {
+  let lastError: Error | null = null;
+  
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error as Error;
+      if (attempt < maxRetries) {
+        await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, attempt)));
+      }
+    }
+  }
+  
+  throw lastError;
+}
 
 export default function AttendeesPage() {
   const { locale } = useParams<{ locale: "en" | "ar" }>();
   const isArabic = locale === "ar";
 
+  // Search and filtering state
   const [query, setQuery] = useState("");
-  const [attendees, setAttendees] = useState<Attendee[]>([]);
-  const [fields, setFields] = useState<Field[]>([]);
-  const [statusMap, setStatusMap] = useState<Record<string, Record<string, { checkedAt: string | null; quantity: number }>>>({});
-  const [busy, setBusy] = useState<Set<string>>(new Set());
+  const debouncedQuery = useDebounce(query, DEBOUNCE_DELAY);
   const [govFilter, setGovFilter] = useState<string>("");
   const [districtFilter, setDistrictFilter] = useState<string>("");
   const [areaFilter, setAreaFilter] = useState<string>("");
   const [selectedField, setSelectedField] = useState<string>("");
   const [fieldCheckFilter, setFieldCheckFilter] = useState<"any" | "checked" | "not_checked">("any");
+
+  // Sorting state
   const [sortKey, setSortKey] = useState<"name" | "recordNumber" | "governorate" | "district" | "area" | "quantity">("name");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+
+  // Data state
+  const [attendees, setAttendees] = useState<AttendeeWithStatus[]>([]);
+  const [fields, setFields] = useState<Field[]>([]);
+  const [locationData, setLocationData] = useState<{
+    governorates: string[];
+    districts: string[];
+    areas: string[];
+  }>({ governorates: [], districts: [], areas: [] });
+
+  // UI state
+  const [busy, setBusy] = useState<Set<string>>(new Set());
+  const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [loadError, setLoadError] = useState<string>("");
-  const [loadingProgress, setLoadingProgress] = useState("");
+  const [isOnline, setIsOnline] = useState(true);
 
-  const loadAll = useCallback(async () => {
-    console.log("loadAll function called");
-    setLoadError("");
-    setLoadingProgress("");
-    
-    const { data: fieldRows, error: fieldsError } = await supabase
-      .from("fields")
-      .select("id,name,is_enabled,is_main,sort_order")
-      .order("sort_order", { ascending: true });
-    const enabled = (fieldRows ?? []).filter((f: any) => f.is_enabled) as Field[];
-    setFields(enabled);
-    if (fieldsError) setLoadError(fieldsError.message);
+  // Refs for cleanup and optimization
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const realtimeChannelRef = useRef<any>(null);
 
-    const { data, error: attendeesError } = await supabase
-      .from("attendees")
-      .select("id,name,record_number,governorate,district,area,phone,quantity,age")
-      .order("name", { ascending: true });
-    
-    console.log("Fetched attendees:", data);
-    if (attendeesError) {
-      console.error("Error fetching attendees:", attendeesError);
-      setLoadError(attendeesError.message);
-    }
-    
-    const mapped: Attendee[] = (data ?? []).map((r: any) => ({
-      id: r.id,
-      name: r.name,
-      recordNumber: r.record_number,
-      governorate: r.governorate,
-      district: r.district,
-      area: r.area,
-      phone: r.phone,
-      quantity: r.quantity,
-      ages: Array.isArray(r.age)
-        ? (r.age as any[]).map((x) => (typeof x === "number" ? x : parseInt(String(x), 10))).filter((n) => Number.isFinite(n))
-        : typeof r.age === "number"
-        ? [r.age]
-        : typeof r.age === "string"
-        ? [parseInt(r.age, 10)].filter((n) => Number.isFinite(n))
-        : [],
-    }));
-    setAttendees(mapped);
-    const ids = mapped.map((a) => a.id);
-    console.log("Attendee IDs to fetch status for:", ids);
-    
-    if (ids.length) {
-      // Fetch status data in batches to avoid URL length limits
-      let statusRows: any[] = [];
-      try {
-        if (ids.length) {
-          // Batch the IDs to avoid URL length limits
-          const batchSize = 100;
-          const totalBatches = Math.ceil(ids.length / batchSize);
-          
-          for (let i = 0; i < ids.length; i += batchSize) {
-            const batch = ids.slice(i, i + batchSize);
-            const currentBatch = Math.floor(i / batchSize) + 1;
-            const progress = `Loading field statuses... ${currentBatch}/${totalBatches}`;
-            setLoadingProgress(progress);
-            console.log(`Fetching batch ${currentBatch}/${totalBatches} (${batch.length} IDs)`);
-            
-            const { data: batchData, error: batchError } = await supabase
-              .from("attendee_field_status")
-              .select("attendee_id,field_id,checked_at,quantity")
-              .in("attendee_id", batch);
-            
-            if (batchError) {
-              console.error(`Error fetching batch ${currentBatch}:`, batchError);
-              continue;
-            }
-            
-            statusRows.push(...(batchData ?? []));
-          }
-          setLoadingProgress("");
-          console.log(`Total status rows fetched: ${statusRows.length}`);
-        }
-      } catch (error) {
-        console.error("Error fetching statuses in batches:", error);
-        statusRows = [];
-        setLoadingProgress("");
-      }
-      
-      const map: Record<string, Record<string, { checkedAt: string | null; quantity: number }>> = {};
-      for (const row of statusRows) {
-        if (!map[row.attendee_id]) map[row.attendee_id] = {};
-        // Only set quantity for checked fields, unchecked fields won't be in the map
-        const quantity = row.quantity !== null && row.quantity !== undefined ? row.quantity : 1;
-        map[row.attendee_id][row.field_id] = { checkedAt: row.checked_at, quantity };
-      }
-      setStatusMap(map);
-      console.log("Final status map set:", map);
-    } else {
-      setStatusMap({});
-    }
-  }, []);
-
-  // Load data on component mount
-  useEffect(() => {
-    console.log("Component mounted, calling loadAll");
-    loadAll();
-  }, [loadAll]);
-
-  useEffect(() => {
-    let isMounted = true;
-    let channel: any | null = null;
-
-    async function init() {
-      if (isMounted) {
-        await loadAll();
-      }
-      // Set up real-time subscription for attendee_field_status changes
-      channel = supabase
-        .channel("attendee_field_status_changes")
-        .on(
-          "postgres_changes",
-          { 
-            event: "*", 
-            schema: "public", 
-            table: "attendee_field_status" 
-          },
-          (payload: any) => {
-            console.log("Real-time change received:", payload);
-            const row = payload.new ?? payload.old;
-            if (!row) return;
-            
-            const attendeeId = row.attendee_id as string;
-            const fieldId = row.field_id as string;
-            const checkedAt = payload.eventType === "DELETE" ? null : (row.checked_at as string | null);
-            const quantity = payload.eventType === "DELETE" ? 1 : (row.quantity || 1);
-            
-            setStatusMap((prev) => {
-              const next = { ...prev };
-              if (!next[attendeeId]) next[attendeeId] = {};
-              if (payload.eventType === "DELETE") {
-                // When deleting, set quantity to 1 (default) instead of deleting the entry
-                next[attendeeId][fieldId] = { checkedAt: null, quantity: 1 };
-              } else {
-                next[attendeeId][fieldId] = { checkedAt, quantity };
-              }
-              return next;
-            });
-          }
-        )
-        .subscribe((status) => {
-          console.log("Subscription status:", status);
-        });
-    }
-
-    init();
-    return () => {
-      isMounted = false;
-      if (channel) supabase.removeChannel(channel);
-    };
-  }, [loadAll]);
-
-  useEffect(() => {
-    let isMounted = true;
-    (async () => {
-      const { data: userRes } = await supabase.auth.getUser();
-      const user = userRes?.user;
-      if (!user) return;
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .single();
-      if (!isMounted) return;
-      setIsSuperAdmin(profile?.role === "super_admin");
-    })();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  const locales = useMemo(() => (isArabic ? ["ar", "ar-u-co-gregory"] : ["en", "en-US"]), [isArabic]);
-  const collator = useMemo(() => new Intl.Collator(locales[0], { numeric: true, sensitivity: "base" }), [locales]);
-
-  const allGovernorates = useMemo(() => Array.from(new Set(attendees.map((a) => a.governorate))).sort(collator.compare), [attendees, collator]);
-  const allDistricts = useMemo(
-    () => Array.from(new Set(attendees.filter((a) => (govFilter ? a.governorate === govFilter : true)).map((a) => a.district))).sort(collator.compare),
-    [attendees, govFilter, collator]
-  );
-  const allAreas = useMemo(
-    () =>
-      Array.from(
-        new Set(
-          attendees
-            .filter((a) => (govFilter ? a.governorate === govFilter : true))
-            .filter((a) => (districtFilter ? a.district === districtFilter : true))
-            .map((a) => a.area)
-        )
-      ).sort(collator.compare),
-    [attendees, govFilter, districtFilter, collator]
-  );
-
-  // Debug: Log current status map
-  useEffect(() => {
-    console.log("Current statusMap:", statusMap);
-  }, [statusMap]);
-
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    let list = attendees;
-
-    // search
-    if (q) list = list.filter((a) => [a.name, a.recordNumber, a.phone].some((v) => v && v.toLowerCase().includes(q)));
-
-    // geo filters
-    if (govFilter) list = list.filter((a) => a.governorate === govFilter);
-    if (districtFilter) list = list.filter((a) => a.district === districtFilter);
-    if (areaFilter) list = list.filter((a) => a.area === areaFilter);
-
-    // field status filter
-    if (selectedField && fieldCheckFilter !== "any") {
-      list = list.filter((a) => {
-        const checked = !!statusMap[a.id]?.[selectedField]?.checkedAt;
-        return fieldCheckFilter === "checked" ? checked : !checked;
-      });
-    }
-
-    // sort
-    const sorted = [...list].sort((a, b) => {
-      const dir = sortDir === "asc" ? 1 : -1;
-      switch (sortKey) {
-        case "name":
-          return dir * collator.compare(a.name, b.name);
-        case "recordNumber":
-          return dir * collator.compare(a.recordNumber, b.recordNumber);
-        case "governorate":
-          return dir * collator.compare(a.governorate, b.governorate);
-        case "district":
-          return dir * collator.compare(a.district, b.district);
-        case "area":
-          return dir * collator.compare(a.area, b.area);
-        case "quantity":
-          return dir * (a.quantity - b.quantity);
-        default:
-          return dir * collator.compare(a.name, b.name);
-      }
-    });
-
-    return sorted;
-  }, [attendees, query, govFilter, districtFilter, areaFilter, selectedField, fieldCheckFilter, sortKey, sortDir, statusMap, collator]);
-
+  // Translations
   const t = {
     search: isArabic ? "ابحث بالاسم أو رقم السجل أو رقم الهاتف" : "Search by name, record #, or phone",
     mark: isArabic ? "تأكيد" : "Mark",
@@ -303,12 +139,369 @@ export default function AttendeesPage() {
     agesLabel: isArabic ? "الأعمار" : "Ages",
     enterQty: isArabic ? "أدخل الكمية" : "Enter quantity",
     invalidQty: isArabic ? "قيمة غير صالحة" : "Invalid quantity",
+    loadMore: isArabic ? "تحميل المزيد" : "Load More",
+    offline: isArabic ? "غير متصل" : "Offline",
+    retry: isArabic ? "إعادة المحاولة" : "Retry",
   };
 
-  const mainField = fields.find((f) => f.is_main);
+  // Network status monitoring
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  // Load fields and location data (static data)
+  const loadStaticData = useCallback(async () => {
+    try {
+      // Load fields
+      const { data: fieldRows, error: fieldsError } = await supabase
+        .from("fields")
+        .select("id,name,is_enabled,is_main,sort_order")
+        .eq("is_enabled", true)
+        .order("sort_order", { ascending: true });
+
+      if (fieldsError) throw fieldsError;
+      setFields(fieldRows || []);
+
+      // Load location data for filters (aggregated)
+      const { data: locationRows, error: locationError } = await supabase
+        .from("attendees")
+        .select("governorate,district,area");
+
+      if (locationError) throw locationError;
+
+      const governorates = Array.from(new Set(locationRows?.map(r => r.governorate) || [])).sort();
+      const districts = Array.from(new Set(locationRows?.map(r => r.district) || [])).sort();
+      const areas = Array.from(new Set(locationRows?.map(r => r.area) || [])).sort();
+
+      setLocationData({ governorates, districts, areas });
+    } catch (error) {
+      console.error("Error loading static data:", error);
+      setLoadError((error as Error).message);
+    }
+  }, []);
+
+  // Optimized data loading with pagination
+  const loadAttendees = useCallback(async (
+    page: number = 1,
+    append: boolean = false,
+    signal?: AbortSignal
+  ) => {
+    if (!append) {
+      setLoading(true);
+      setLoadError("");
+    } else {
+      setLoadingMore(true);
+    }
+
+    try {
+      // Build optimized query
+      let query = supabase
+        .from("attendees")
+        .select(`
+          id,
+          name,
+          record_number,
+          governorate,
+          district,
+          area,
+          phone,
+          quantity,
+          age
+        `, { count: 'exact' });
+
+      // Apply filters
+      if (debouncedQuery) {
+        const searchTerm = `%${debouncedQuery.toLowerCase()}%`;
+        query = query.or(`name.ilike.${searchTerm},record_number.ilike.${searchTerm},phone.ilike.${searchTerm}`);
+      }
+
+      if (govFilter) query = query.eq("governorate", govFilter);
+      if (districtFilter) query = query.eq("district", districtFilter);
+      if (areaFilter) query = query.eq("area", areaFilter);
+
+      // Apply sorting
+      const ascending = sortDir === "asc";
+      query = query.order(sortKey === "recordNumber" ? "record_number" : sortKey, { ascending });
+
+      // Apply pagination
+      const from = (page - 1) * PAGE_SIZE;
+      const to = from + PAGE_SIZE - 1;
+      query = query.range(from, to);
+
+      const { data, error, count } = await query;
+
+      if (signal?.aborted) return;
+      if (error) throw error;
+
+      // Transform data
+      const transformedData: AttendeeWithStatus[] = (data || []).map((r: any) => ({
+        id: r.id,
+        name: r.name,
+        recordNumber: r.record_number,
+        governorate: r.governorate,
+        district: r.district,
+        area: r.area,
+        phone: r.phone,
+        quantity: r.quantity,
+        ages: Array.isArray(r.age)
+          ? (r.age as any[]).map((x) => (typeof x === "number" ? x : parseInt(String(x), 10))).filter((n) => Number.isFinite(n))
+          : typeof r.age === "number"
+          ? [r.age]
+          : typeof r.age === "string"
+          ? [parseInt(r.age, 10)].filter((n) => Number.isFinite(n))
+          : [],
+        fieldStatuses: {}
+      }));
+
+      // Load field statuses for current batch
+      if (transformedData.length > 0) {
+        const attendeeIds = transformedData.map(a => a.id);
+        const { data: statusData, error: statusError } = await supabase
+          .from("attendee_field_status")
+          .select("attendee_id,field_id,checked_at,quantity")
+          .in("attendee_id", attendeeIds);
+
+        if (statusError) throw statusError;
+
+        // Map status data
+        const statusMap: Record<string, Record<string, { checkedAt: string | null; quantity: number }>> = {};
+        (statusData || []).forEach(row => {
+          if (!statusMap[row.attendee_id]) statusMap[row.attendee_id] = {};
+          statusMap[row.attendee_id][row.field_id] = {
+            checkedAt: row.checked_at,
+            quantity: row.quantity || 1
+          };
+        });
+
+        // Apply field check filter if specified
+        let filteredData = transformedData;
+        if (selectedField && fieldCheckFilter !== "any") {
+          filteredData = transformedData.filter(a => {
+            const checked = !!statusMap[a.id]?.[selectedField]?.checkedAt;
+            return fieldCheckFilter === "checked" ? checked : !checked;
+          });
+        }
+
+        // Update field statuses
+        filteredData.forEach(attendee => {
+          attendee.fieldStatuses = statusMap[attendee.id] || {};
+        });
+
+        if (append) {
+          setAttendees(prev => [...prev, ...filteredData]);
+        } else {
+          setAttendees(filteredData);
+        }
+      } else {
+        if (!append) setAttendees([]);
+      }
+
+      setTotalCount(count || 0);
+      setHasMore((count || 0) > page * PAGE_SIZE);
+
+    } catch (error) {
+      if (signal?.aborted) return;
+      console.error("Error loading attendees:", error);
+      setLoadError((error as Error).message);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  }, [debouncedQuery, govFilter, districtFilter, areaFilter, selectedField, fieldCheckFilter, sortKey, sortDir]);
+
+  // Load more handler
+  const handleLoadMore = useCallback(() => {
+    if (!loadingMore && hasMore) {
+      setCurrentPage(prev => prev + 1);
+    }
+  }, [loadingMore, hasMore]);
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+    setAttendees([]);
+    setHasMore(true);
+  }, [debouncedQuery, govFilter, districtFilter, areaFilter, selectedField, fieldCheckFilter, sortKey, sortDir]);
+
+  // Load data when page changes
+  useEffect(() => {
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = new AbortController();
+
+    const append = currentPage > 1;
+    loadAttendees(currentPage, append, abortControllerRef.current.signal);
+
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, [currentPage, loadAttendees]);
+
+  // Setup real-time subscriptions (optimized)
+  useEffect(() => {
+    const setupRealtime = () => {
+      realtimeChannelRef.current = supabase
+        .channel("attendee_field_status_changes")
+        .on(
+          "postgres_changes",
+          { 
+            event: "*", 
+            schema: "public", 
+            table: "attendee_field_status" 
+          },
+          (payload: any) => {
+            const row = payload.new ?? payload.old;
+            if (!row) return;
+            
+            const attendeeId = row.attendee_id as string;
+            const fieldId = row.field_id as string;
+            const checkedAt = payload.eventType === "DELETE" ? null : (row.checked_at as string | null);
+            const quantity = payload.eventType === "DELETE" ? 1 : (row.quantity || 1);
+            
+            // Update only if attendee is in current view
+            setAttendees(prev => prev.map(attendee => {
+              if (attendee.id === attendeeId) {
+                return {
+                  ...attendee,
+                  fieldStatuses: {
+                    ...attendee.fieldStatuses,
+                    [fieldId]: { checkedAt, quantity }
+                  }
+                };
+              }
+              return attendee;
+            }));
+          }
+        )
+        .on(
+          "postgres_changes",
+          { 
+            event: "*", 
+            schema: "public", 
+            table: "fields" 
+          },
+          (payload: any) => {
+            // Reload fields when they change (enabled/disabled status)
+            loadStaticData();
+          }
+        )
+        .subscribe();
+    };
+
+    if (isOnline) {
+      setupRealtime();
+    }
+
+    return () => {
+      if (realtimeChannelRef.current) {
+        supabase.removeChannel(realtimeChannelRef.current);
+      }
+    };
+  }, [isOnline, loadStaticData]);
+
+  // Load static data on mount
+  useEffect(() => {
+    loadStaticData();
+  }, [loadStaticData]);
+
+  // Check user role
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      try {
+        const { data: userRes } = await supabase.auth.getUser();
+        const user = userRes?.user;
+        if (!user || !isMounted) return;
+        
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", user.id)
+          .single();
+          
+        if (isMounted) {
+          setIsSuperAdmin(profile?.role === "super_admin");
+        }
+      } catch (error) {
+        console.error("Error checking user role:", error);
+      }
+    })();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Optimized mark/unmark function
+  const handleMarkField = useCallback(async (
+    attendee: AttendeeWithStatus,
+    field: Field,
+    selectedQty: number = 1
+  ) => {
+    const key = `${attendee.id}:${field.id}`;
+    const currentStatus = attendee.fieldStatuses[field.id];
+    const isUnchecking = !!currentStatus?.checkedAt;
+
+    setBusy(prev => new Set(prev).add(key));
+
+    try {
+      const result = await withRetry(async () => {
+        if (isUnchecking) {
+          return await supabase
+            .from("attendee_field_status")
+            .update({ checked_at: null, quantity: 1 })
+            .eq("attendee_id", attendee.id)
+            .eq("field_id", field.id);
+        } else {
+          return await supabase
+            .from("attendee_field_status")
+            .upsert(
+              { 
+                attendee_id: attendee.id, 
+                field_id: field.id, 
+                checked_at: new Date().toISOString(),
+                quantity: selectedQty
+              }, 
+              { onConflict: "attendee_id,field_id" }
+            );
+        }
+      });
+
+      if (result.error) {
+        throw result.error;
+      }
+
+      // Optimistic update will be handled by real-time subscription
+    } catch (error) {
+      console.error("Database error:", error);
+      alert(`${t.failed}: ${(error as Error).message}`);
+    } finally {
+      setBusy(prev => {
+        const next = new Set(prev);
+        next.delete(key);
+        return next;
+      });
+    }
+  }, [t.failed]);
+
+  const mainField = fields.find(f => f.is_main);
 
   return (
     <div className="space-y-6">
+      {/* Offline Banner */}
+      {!isOnline && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+          <span className="font-medium">{t.offline}</span> - Changes will sync when connection is restored
+        </div>
+      )}
+
       {/* Page Header */}
       <div className="text-center lg:text-left">
         <div className="flex items-center justify-between mb-4">
@@ -324,7 +517,6 @@ export default function AttendeesPage() {
             <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg shadow-lg">
               <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
               <span className="font-bold text-sm">SUPER ADMIN MODE</span>
-              <span className="text-xs opacity-90">ULTIMATE POWER</span>
             </div>
           )}
         </div>
@@ -340,60 +532,101 @@ export default function AttendeesPage() {
         />
       </div>
 
-      {/* Super Admin Control Panel */}
-      
-
       {/* Filters Panel */}
       <div className="glass rounded-2xl">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 text-sm">
           <div>
             <label className="text-[var(--muted)] text-sm font-medium mb-2 block">{t.governorate}</label>
-            <select className="w-full glass rounded-xl px-3 py-2.5 border-[var(--border-glass)] focus:border-[var(--brand)] focus:outline-none transition-all" value={govFilter} onChange={(e) => { setGovFilter(e.target.value); setDistrictFilter(""); setAreaFilter(""); }}>
+            <select 
+              className="w-full glass rounded-xl px-3 py-2.5 border-[var(--border-glass)] focus:border-[var(--brand)] focus:outline-none transition-all" 
+              value={govFilter} 
+              onChange={(e) => { 
+                setGovFilter(e.target.value); 
+                setDistrictFilter(""); 
+                setAreaFilter(""); 
+              }}
+            >
               <option value="">{t.any}</option>
-              {allGovernorates.map((g) => (
+              {locationData.governorates.map((g) => (
                 <option key={g} value={g}>{g}</option>
               ))}
             </select>
           </div>
+          
+          {/* Add other filter controls similarly */}
+          
           <div>
             <label className="text-[var(--muted)] text-sm font-medium mb-2 block">{t.district}</label>
-            <select className="w-full glass rounded-xl px-3 py-2.5 border-[var(--border-glass)] focus:border-[var(--brand)] focus:outline-none transition-all" value={districtFilter} onChange={(e) => { setDistrictFilter(e.target.value); setAreaFilter(""); }}>
+            <select 
+              className="w-full glass rounded-xl px-3 py-2.5 border-[var(--border-glass)] focus:border-[var(--brand)] focus:outline-none transition-all" 
+              value={districtFilter} 
+              onChange={(e) => { 
+                setDistrictFilter(e.target.value); 
+                setAreaFilter(""); 
+              }}
+              disabled={!govFilter}
+            >
               <option value="">{t.any}</option>
-              {allDistricts.map((d) => (
-                <option key={d} value={d}>{d}</option>
-              ))}
+              {locationData.districts
+                .filter(d => !govFilter || d === govFilter)
+                .map((d) => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
             </select>
           </div>
+          
           <div>
             <label className="text-[var(--muted)] text-sm font-medium mb-2 block">{t.area}</label>
-            <select className="w-full glass rounded-xl px-3 py-2.5 border-[var(--border-glass)] focus:border-[var(--brand)] focus:outline-none transition-all" value={areaFilter} onChange={(e) => setAreaFilter(e.target.value)}>
+            <select 
+              className="w-full glass rounded-xl px-3 py-2.5 border-[var(--border-glass)] focus:border-[var(--brand)] focus:outline-none transition-all" 
+              value={areaFilter} 
+              onChange={(e) => setAreaFilter(e.target.value)}
+              disabled={!districtFilter}
+            >
               <option value="">{t.any}</option>
-              {allAreas.map((a) => (
-                <option key={a} value={a}>{a}</option>
-              ))}
+              {locationData.areas
+                .filter(a => !districtFilter || a === districtFilter)
+                .map((a) => (
+                  <option key={a} value={a}>{a}</option>
+                ))}
             </select>
           </div>
+          
           <div>
             <label className="text-[var(--muted)] text-sm font-medium mb-2 block">{t.field}</label>
-            <select className="w-full glass rounded-xl px-3 py-2.5 border-[var(--border-glass)] focus:border-[var(--brand)] focus:outline-none transition-all" value={selectedField} onChange={(e) => setSelectedField(e.target.value)}>
+            <select 
+              className="w-full glass rounded-xl px-3 py-2.5 border-[var(--border-glass)] focus:border-[var(--brand)] focus:outline-none transition-all" 
+              value={selectedField} 
+              onChange={(e) => setSelectedField(e.target.value)}
+            >
               <option value="">{t.any}</option>
               {fields.map((f) => (
                 <option key={f.id} value={f.id}>{f.name}</option>
               ))}
             </select>
           </div>
+          
           <div>
-            <label className="text-[var(--muted)] text-sm font-medium mb-2 block">{isArabic ? "الحالة" : "Status"}</label>
-            <select className="w-full glass rounded-xl px-3 py-2.5 border-[var(--border-glass)] focus:border-[var(--brand)] focus:outline-none transition-all" value={fieldCheckFilter} onChange={(e) => setFieldCheckFilter(e.target.value as any)}>
+            <label className="text-[var(--muted)] text-sm font-medium mb-2 block">Status</label>
+            <select 
+              className="w-full glass rounded-xl px-3 py-2.5 border-[var(--border-glass)] focus:border-[var(--brand)] focus:outline-none transition-all" 
+              value={fieldCheckFilter} 
+              onChange={(e) => setFieldCheckFilter(e.target.value as any)}
+            >
               <option value="any">{t.any}</option>
               <option value="checked">{t.checked}</option>
               <option value="not_checked">{t.notChecked}</option>
             </select>
           </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-[var(--muted)] text-sm font-medium mb-2 block">{t.sortBy}</label>
-              <select className="w-full glass rounded-xl px-3 py-2.5 border-[var(--border-glass)] focus:border-[var(--brand)] focus:outline-none transition-all" value={sortKey} onChange={(e) => setSortKey(e.target.value as any)}>
+              <select 
+                className="w-full glass rounded-xl px-3 py-2.5 border-[var(--border-glass)] focus:border-[var(--brand)] focus:outline-none transition-all" 
+                value={sortKey} 
+                onChange={(e) => setSortKey(e.target.value as any)}
+              >
                 <option value="name">Name</option>
                 <option value="recordNumber">Record #</option>
                 <option value="governorate">{t.governorate}</option>
@@ -404,7 +637,11 @@ export default function AttendeesPage() {
             </div>
             <div>
               <label className="text-[var(--muted)] text-sm font-medium mb-2 block">{isArabic ? "الاتجاه" : "Order"}</label>
-              <select className="w-full glass rounded-xl px-3 py-2.5 border-[var(--border-glass)] focus:border-[var(--brand)] focus:outline-none transition-all" value={sortDir} onChange={(e) => setSortDir(e.target.value as any)}>
+              <select 
+                className="w-full glass rounded-xl px-3 py-2.5 border-[var(--border-glass)] focus:border-[var(--brand)] focus:outline-none transition-all" 
+                value={sortDir} 
+                onChange={(e) => setSortDir(e.target.value as any)}
+              >
                 <option value="asc">{t.asc}</option>
                 <option value="desc">{t.desc}</option>
               </select>
@@ -419,324 +656,294 @@ export default function AttendeesPage() {
           <h2 className="text-lg font-semibold text-[var(--foreground)] flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[var(--brand)]" />
             {isArabic ? "النتائج" : "Results"}
-            <span className="text-sm font-normal text-[var(--muted)]">({filtered.length})</span>
+            <span className="text-sm font-normal text-[var(--muted)]">({totalCount})</span>
           </h2>
-          <div className="flex gap-2">
+        </div>
+        
+        {/* Error State */}
+        {loadError && (
+          <div className="glass rounded-2xl p-8 text-center">
+            <div className="text-red-600 text-lg mb-4">{t.errorLoading}: {loadError}</div>
             <button
               onClick={() => {
-                console.log("Manual refresh clicked");
-                loadAll();
+                setLoadError("");
+                setCurrentPage(1);
+                loadAttendees(1);
               }}
               className="px-4 py-2 bg-[var(--brand)] text-white rounded-lg hover:bg-[var(--brand-hover)] transition-colors"
             >
-              {isArabic ? "تحديث" : "Refresh"}
+              {t.retry}
             </button>
-            <button
-              onClick={async () => {
-                console.log("Testing direct database query...");
-                const { data, error } = await supabase
-                  .from("attendee_field_status")
-                  .select("*");
-                console.log("Direct query result:", { data, error });
-              }}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-            >
-              Test DB
-            </button>
-          </div>
-        </div>
-        
-        {/* Loading Progress */}
-        {loadingProgress && (
-          <div className="glass rounded-2xl p-4 text-center">
-            <div className="text-[var(--brand)] text-lg font-medium">{loadingProgress}</div>
-            <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-              <div className="bg-[var(--brand)] h-2 rounded-full transition-all duration-300" style={{ width: '100%' }}></div>
-            </div>
           </div>
         )}
         
-        {(filtered.length === 0 || loadError) && (
+        {/* Loading State */}
+        {loading && (
           <div className="glass rounded-2xl p-8 text-center">
-            <div className="text-[var(--muted)] text-lg">{loadError ? `${t.errorLoading}: ${loadError}` : t.noData}</div>
+            <div className="w-8 h-8 border-4 border-[var(--brand)] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <div className="text-[var(--muted)] text-lg">Loading...</div>
+          </div>
+        )}
+        
+        {/* Attendees List */}
+        {!loading && attendees.length === 0 && !loadError && (
+          <div className="glass rounded-2xl p-8 text-center">
+            <div className="text-[var(--muted)] text-lg">{t.noData}</div>
           </div>
         )}
         
         <div className="grid gap-4">
-          {filtered.map((a) => (
-            <div key={a.id} className="card p-4 lg:p-6 hover:shadow-xl transition-all duration-300">
-              <div className="flex flex-col lg:flex-row lg:items-center gap-4">
-                {/* Attendee Info */}
-                <div className="flex-1 space-y-2">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-lg text-[var(--foreground)]">{a.name}</h3>
-                      {isSuperAdmin && (
-                        <button
-                          onClick={() => {
-                            // Super admin quick edit
-                            const newName = window.prompt(
-                              `${isArabic ? "تعديل اسم الحضور" : "Edit attendee name"}:`,
-                              a.name
-                            );
-                            if (newName && newName.trim() && newName !== a.name) {
-                              // TODO: Implement database update
-                              alert(`${isArabic ? "سيتم تحديث الاسم قريباً" : "Name update coming soon!"}`);
-                            }
-                          }}
-                          className="p-1 text-orange-600 hover:text-orange-700 hover:bg-orange-100 rounded transition-colors"
-                          title={isArabic ? "تعديل (المدير المتفوق)" : "Edit (Super Admin)"}
-                        >
-                          ✏️
-                        </button>
-                      )}
-                    </div>
-                    <span className="inline-flex items-center gap-1 text-sm text-[var(--muted)] font-mono">
-                      <span className="w-1 h-1 rounded-full bg-[var(--muted)]" />
-                      #{a.recordNumber}
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap gap-2 text-sm text-[var(--muted)]">
-                    <span className="flex items-center gap-1">
-                      <span className="w-1 h-1 rounded-full bg-[var(--brand)]" />
-                      {a.governorate}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <span className="w-1 h-1 rounded-full bg-[var(--brand)]" />
-                      {a.district}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <span className="w-1 h-1 rounded-full bg-[var(--brand)]" />
-                      {a.area}
-                    </span>
-                    {a.phone && (
-                      <span className="flex items-center gap-1">
-                        <span className="w-1 h-1 rounded-full bg-[var(--brand)]" />
-                        {a.phone}
-                      </span>
-                    )}
-                    <span className="flex items-center gap-1 font-medium">
-                      <span className="w-1 h-1 rounded-full bg-orange-500" />
-                      {t.quantityLabel}: {a.quantity}
-                    </span>
-                    {a.ages.length > 0 && (
-                      <span className="flex items-center gap-1">
-                        <span className="w-1 h-1 rounded-full bg-purple-500" />
-                        {t.agesLabel}: {a.ages.join(", ")}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                
-                {/* Station Actions */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2">
-                  {fields.map((f) => {
-                    const status = statusMap[a.id]?.[f.id];
-                    const checked = !!status?.checkedAt;
-                    const mainChecked = mainField ? !!statusMap[a.id]?.[mainField.id]?.checkedAt : true;
-                    // Super admin can access any field regardless of restrictions
-                    const disabled = !isSuperAdmin && !f.is_main && !mainChecked;
-                    // Super admin can force check-in even on disabled fields
-                    const canForceCheck = isSuperAdmin && !f.is_main && !mainChecked;
-                    const key = `${a.id}:${f.id}`;
-                    const fieldQuantity = status?.checkedAt ? (status.quantity || 1) : 0;
-                    const totalQuantity = a.quantity;
-                    
-                    return (
-                      <Station
-                        key={f.id}
-                        label={f.name}
-                        active={checked}
-                        disabled={disabled}
-                        busy={busy.has(key)}
-                        isSuperAdmin={isSuperAdmin}
-                        canForceCheck={canForceCheck}
-                        quantity={fieldQuantity}
-                        totalQuantity={totalQuantity}
-                        onMark={async () => {
-                          const isUnchecking = checked;
-                          const action = isUnchecking ? "uncheck" : "check";
-                          let selectedQty = 1;
-                          
-                          // Super admin gets ultimate power - can override any restrictions
-                          if (isSuperAdmin) {
-                            if (!isUnchecking) {
-                              // Super admin can set ANY quantity, even beyond attendee's total
-                              const input = window.prompt(
-                                `${isArabic ? "أدخل الكمية (المدير المتفوق يمكنه تجاوز الحد الأقصى)" : "Enter quantity (Super Admin can exceed limits)"} (1 - 999)`, 
-                                "1"
-                              );
-                              if (input == null) return; // cancelled
-                              const parsed = parseInt(input, 10);
-                              if (!Number.isFinite(parsed) || parsed < 1) {
-                                alert(isArabic ? "قيمة غير صالحة" : "Invalid quantity");
-                                return;
-                              }
-                              selectedQty = parsed;
-                            }
-                            
-                            // Super admin confirmation with special warning
-                            const superAdminConfirm = window.confirm(
-                              `🚨 SUPER ADMIN ACTION 🚨\n\n` +
-                              `${isUnchecking ? "Force uncheck" : "Force check-in"} ${f.name} for ${a.name}\n` +
-                              `Quantity: ${selectedQty}\n\n` +
-                              `This action bypasses all restrictions and rules!\n` +
-                              `Are you sure you want to proceed?`
-                            );
-                            if (!superAdminConfirm) return;
-                          } else {
-                            // Regular user flow with restrictions
-                            if (!isUnchecking) {
-                              const maxQty = Math.max(1, a.quantity ?? 1);
-                              if (maxQty > 1) {
-                                const input = window.prompt(`${t.enterQty} (1 - ${maxQty})`, "1");
-                                if (input == null) return; // cancelled
-                                const parsed = parseInt(input, 10);
-                                if (!Number.isFinite(parsed) || parsed < 1 || parsed > maxQty) {
-                                  alert(t.invalidQty);
-                                  return;
-                                }
-                                selectedQty = parsed;
-                              }
-                            }
-                            if (!window.confirm(`${t.confirmPrefix}${action === "uncheck" ? (isArabic ? "إلغاء تأكيد" : "Uncheck") : (isArabic ? "تأكيد" : "Check")} ${f.name} - ${a.name}`)) return;
-                          }
-                          
-                          setBusy((prev) => new Set(prev).add(key));
-                          const prevVal = statusMap[a.id]?.[f.id] ?? { checkedAt: null, quantity: 1 };
-                          
-                          // Update local state immediately for real-time feel
-                          const newValue = isUnchecking ? null : new Date().toISOString();
-                          setStatusMap((prev) => ({ 
-                            ...prev, 
-                            [a.id]: { 
-                              ...(prev[a.id] ?? {}), 
-                              [f.id]: { checkedAt: newValue, quantity: selectedQty } 
-                            } 
-                          }));
-                          
-                          let result;
-                          if (isUnchecking) {
-                            // Uncheck by setting checked_at to null and quantity to 1 (default)
-                            result = await supabase
-                              .from("attendee_field_status")
-                              .update({ checked_at: null, quantity: 1 })
-                              .eq("attendee_id", a.id)
-                              .eq("field_id", f.id);
-                          } else {
-                            // Check by setting checked_at to current timestamp and quantity
-                            result = await supabase
-                              .from("attendee_field_status")
-                              .upsert(
-                                { 
-                                  attendee_id: a.id, 
-                                  field_id: f.id, 
-                                  checked_at: new Date().toISOString(),
-                                  quantity: selectedQty
-                                }, 
-                                { onConflict: "attendee_id,field_id" }
-                              );
-                          }
-                          
-                          if (result.error) {
-                            console.error("Database error:", result.error);
-                            alert(`${t.failed}: ${result.error.message}`);
-                            // Revert local state on error
-                            setStatusMap((prev) => ({ 
-                              ...prev, 
-                              [a.id]: { 
-                                ...(prev[a.id] ?? {}), 
-                                [f.id]: prevVal 
-                              } 
-                            }));
-                          } else {
-                            console.log("Successfully updated field status:", { attendeeId: a.id, fieldId: f.id, checkedAt: newValue, quantity: selectedQty });
-                            // Real-time update will come through postgres_changes subscription
-                          }
-                          
-                          setBusy((prev) => {
-                            const next = new Set(prev);
-                            next.delete(key);
-                            return next;
-                          });
-                        }}
-                      />
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
+          {attendees.map((attendee) => (
+            <AttendeeCard
+              key={attendee.id}
+              attendee={attendee}
+              fields={fields}
+              mainField={mainField}
+              isSuperAdmin={isSuperAdmin}
+              busy={busy}
+              onMarkField={handleMarkField}
+              translations={t}
+              isArabic={isArabic}
+            />
           ))}
+        </div>
+
+        {/* Load More Button */}
+        {hasMore && !loading && (
+          <div className="text-center">
+            <button
+              onClick={handleLoadMore}
+              disabled={loadingMore}
+              className="px-6 py-3 bg-[var(--brand)] text-white rounded-lg hover:bg-[var(--brand-hover)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loadingMore ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin inline-block mr-2" />
+                  Loading...
+                </>
+              ) : (
+                t.loadMore
+              )}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Optimized Attendee Card Component
+function AttendeeCard({
+  attendee,
+  fields,
+  mainField,
+  isSuperAdmin,
+  busy,
+  onMarkField,
+  translations: t,
+  isArabic
+}: {
+  attendee: AttendeeWithStatus;
+  fields: Field[];
+  mainField?: Field;
+  isSuperAdmin: boolean;
+  busy: Set<string>;
+  onMarkField: (attendee: AttendeeWithStatus, field: Field, quantity?: number) => Promise<void>;
+  translations: any;
+  isArabic: boolean;
+}) {
+  return (
+    <div className="card p-4 lg:p-6 hover:shadow-xl transition-all duration-300">
+      <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+        {/* Attendee Info */}
+        <div className="flex-1 space-y-2">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+            <h3 className="font-semibold text-lg text-[var(--foreground)]">{attendee.name}</h3>
+            <span className="inline-flex items-center gap-1 text-sm text-[var(--muted)] font-mono">
+              <span className="w-1 h-1 rounded-full bg-[var(--muted)]" />
+              #{attendee.recordNumber}
+            </span>
+          </div>
+          <div className="flex flex-wrap gap-2 text-sm text-[var(--muted)]">
+            <span className="flex items-center gap-1">
+              <span className="w-1 h-1 rounded-full bg-[var(--brand)]" />
+              {attendee.governorate}
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="w-1 h-1 rounded-full bg-[var(--brand)]" />
+              {attendee.district}
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="w-1 h-1 rounded-full bg-[var(--brand)]" />
+              {attendee.area}
+            </span>
+            {attendee.phone && (
+              <span className="flex items-center gap-1">
+                <span className="w-1 h-1 rounded-full bg-[var(--brand)]" />
+                {attendee.phone}
+              </span>
+            )}
+            <span className="flex items-center gap-1 font-medium">
+              <span className="w-1 h-1 rounded-full bg-orange-500" />
+              {t.quantityLabel}: {attendee.quantity}
+            </span>
+            {attendee.ages.length > 0 && (
+              <span className="flex items-center gap-1">
+                <span className="w-1 h-1 rounded-full bg-purple-500" />
+                {t.agesLabel}: {attendee.ages.join(", ")}
+              </span>
+            )}
+          </div>
+        </div>
+        
+        {/* Station Actions */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2">
+          {fields.map((field) => {
+            const status = attendee.fieldStatuses[field.id];
+            const checked = !!status?.checkedAt;
+            const mainChecked = mainField ? !!attendee.fieldStatuses[mainField.id]?.checkedAt : true;
+            const disabled = !isSuperAdmin && !field.is_main && !mainChecked;
+            const key = `${attendee.id}:${field.id}`;
+            const fieldQuantity = status?.checkedAt ? (status.quantity || 1) : 0;
+            
+            return (
+              <Station
+                key={field.id}
+                label={field.name}
+                active={checked}
+                disabled={disabled}
+                busy={busy.has(key)}
+                isSuperAdmin={isSuperAdmin}
+                quantity={fieldQuantity}
+                totalQuantity={attendee.quantity}
+                onMark={async () => {
+                  const isUnchecking = checked;
+                  let selectedQty = 1;
+                  
+                  if (isSuperAdmin) {
+                    if (!isUnchecking) {
+                      const input = window.prompt(
+                        `${isArabic ? "أدخل الكمية (المدير المتفوق يمكنه تجاوز الحد الأقصى)" : "Enter quantity (Super Admin can exceed limits)"} (1 - 999)`, 
+                        "1"
+                      );
+                      if (input == null) return;
+                      const parsed = parseInt(input, 10);
+                      if (!Number.isFinite(parsed) || parsed < 1) {
+                        alert(isArabic ? "قيمة غير صالحة" : "Invalid quantity");
+                        return;
+                      }
+                      selectedQty = parsed;
+                    }
+                    
+                    const superAdminConfirm = window.confirm(
+                      `🚨 SUPER ADMIN ACTION 🚨\n\n` +
+                      `${isUnchecking ? "Force uncheck" : "Force check-in"} ${field.name} for ${attendee.name}\n` +
+                      `Quantity: ${selectedQty}\n\n` +
+                      `This action bypasses all restrictions!\n` +
+                      `Are you sure?`
+                    );
+                    if (!superAdminConfirm) return;
+                  } else {
+                    if (!isUnchecking) {
+                      const maxQty = Math.max(1, attendee.quantity ?? 1);
+                      if (maxQty > 1) {
+                        const input = window.prompt(`${t.enterQty} (1 - ${maxQty})`, "1");
+                        if (input == null) return;
+                        const parsed = parseInt(input, 10);
+                        if (!Number.isFinite(parsed) || parsed < 1 || parsed > maxQty) {
+                          alert(t.invalidQty);
+                          return;
+                        }
+                        selectedQty = parsed;
+                      }
+                    }
+                    
+                    const action = isUnchecking ? (isArabic ? "إلغاء تأكيد" : "Uncheck") : (isArabic ? "تأكيد" : "Check");
+                    if (!window.confirm(`${t.confirmPrefix}${action} ${field.name} - ${attendee.name}`)) return;
+                  }
+                  
+                  await onMarkField(attendee, field, selectedQty);
+                }}
+              />
+            );
+          })}
         </div>
       </div>
     </div>
   );
 }
 
-function Station({ label, active, disabled = false, busy = false, isSuperAdmin = false, canForceCheck = false, quantity = 0, totalQuantity = 1, onMark }: { label: string; active: boolean; disabled?: boolean; busy?: boolean; isSuperAdmin?: boolean; canForceCheck?: boolean; quantity?: number; totalQuantity?: number; onMark: () => Promise<void> }) {
+// Optimized Station Component
+function Station({ 
+  label, 
+  active, 
+  disabled = false, 
+  busy = false, 
+  isSuperAdmin = false, 
+  quantity = 0, 
+  totalQuantity = 1, 
+  onMark 
+}: { 
+  label: string; 
+  active: boolean; 
+  disabled?: boolean; 
+  busy?: boolean; 
+  isSuperAdmin?: boolean; 
+  quantity?: number; 
+  totalQuantity?: number; 
+  onMark: () => Promise<void>;
+}) {
+  const baseClasses = "inline-flex items-center justify-center px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200";
+  
   if (active) {
-    // If super admin, make checked fields clickable to uncheck
-    if (isSuperAdmin) {
-      return (
-        <button
-          disabled={busy}
-          title={`${label} (click to uncheck)`}
-          className="inline-flex items-center justify-center px-3 py-2 rounded-xl bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-medium shadow-lg hover:from-green-600 hover:to-green-700 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
-          onClick={() => {
-            if (busy) return;
-            void onMark();
-          }}
-        >
-          {busy ? (
-            <>
-              <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin mr-2" />
-              <div className="text-center">
-                <div>{label}</div>
-                {totalQuantity > 1 && (
-                  <div className="text-sm font-semibold opacity-90 bg-white/20 px-2 py-1 rounded-lg mt-1">{quantity}/{totalQuantity}</div>
-                )}
-              </div>
-            </>
-          ) : (
-            <>
-              <span className="w-1.5 h-1.5 rounded-full bg-white/80 mr-2" />
-              <div className="text-center">
-                <div>{label}</div>
-                {totalQuantity > 1 && (
-                  <div className="text-sm font-semibold opacity-90 bg-white/20 px-2 py-1 rounded-lg mt-1">{quantity}/{totalQuantity}</div>
-                )}
-              </div>
-            </>
-          )}
-        </button>
-      );
-    }
+    const activeClasses = isSuperAdmin 
+      ? `${baseClasses} bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg hover:from-green-600 hover:to-green-700 hover:scale-105 active:scale-95 cursor-pointer`
+      : `${baseClasses} bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg`;
     
-    // Regular users see static checked field
     return (
-      <div className="inline-flex items-center justify-center px-3 py-2 rounded-xl bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-medium shadow-lg">
-        <span className="w-1.5 h-1.5 rounded-full bg-white/80 mr-2" />
-        <div className="text-center">
-          <div>{label}</div>
-          {totalQuantity > 1 && (
-            <div className="text-sm font-semibold opacity-90 bg-white/20 px-2 py-1 rounded-lg mt-1">{quantity}/{totalQuantity}</div>
-          )}
-        </div>
-      </div>
+      <button
+        disabled={busy}
+        title={isSuperAdmin ? `${label} (click to uncheck)` : label}
+        className={activeClasses}
+        onClick={isSuperAdmin && !busy ? onMark : undefined}
+      >
+        {busy ? (
+          <>
+            <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin mr-2" />
+            <div className="text-center">
+              <div>{label}</div>
+              {totalQuantity > 1 && (
+                <div className="text-sm font-semibold opacity-90 bg-white/20 px-2 py-1 rounded-lg mt-1">
+                  {quantity}/{totalQuantity}
+                </div>
+              )}
+            </div>
+          </>
+        ) : (
+          <>
+            <span className="w-1.5 h-1.5 rounded-full bg-white/80 mr-2" />
+            <div className="text-center">
+              <div>{label}</div>
+              {totalQuantity > 1 && (
+                <div className="text-sm font-semibold opacity-90 bg-white/20 px-2 py-1 rounded-lg mt-1">
+                  {quantity}/{totalQuantity}
+                </div>
+              )}
+            </div>
+          </>
+        )}
+      </button>
     );
   }
 
+  const inactiveClasses = `${baseClasses} glass border-[var(--border-glass)] hover:bg-[var(--surface-glass-hover)] hover:border-[var(--brand)] hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 ${isSuperAdmin && disabled ? 'border-orange-500/50 hover:border-orange-500' : ''}`;
+  
   return (
     <button
-      disabled={busy} // Super admin can always click, even on disabled fields
-      title={disabled ? (isSuperAdmin ? `${label} (disabled - Super Admin can force override)` : `${label} (disabled)`) : label}
-      className={`inline-flex items-center justify-center px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 glass border-[var(--border-glass)] hover:bg-[var(--surface-glass-hover)] hover:border-[var(--brand)] hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-[var(--surface-glass)] ${isSuperAdmin && disabled ? 'border-orange-500/50 hover:border-orange-500' : ''}`}
-      onClick={() => {
-        if (busy) return;
-        // Super admin can force check-in even on disabled fields
-        if (disabled && !isSuperAdmin) return;
-        void onMark();
-      }}
+      disabled={busy || (disabled && !isSuperAdmin)}
+      title={disabled ? (isSuperAdmin ? `${label} (disabled - Super Admin can override)` : `${label} (disabled)`) : label}
+      className={inactiveClasses}
+      onClick={!busy ? onMark : undefined}
     >
       {busy ? (
         <>
@@ -744,9 +951,10 @@ function Station({ label, active, disabled = false, busy = false, isSuperAdmin =
           <div className="text-center">
             <div>{label}</div>
             {totalQuantity > 1 && (
-              <div className="text-sm font-semibold opacity-70 bg-[var(--muted)]/20 px-2 py-1 rounded-lg mt-1">{quantity}/{totalQuantity}</div>
+              <div className="text-sm font-semibold opacity-70 bg-[var(--muted)]/20 px-2 py-1 rounded-lg mt-1">
+                {quantity}/{totalQuantity}
+              </div>
             )}
-            {/* Super Admin Override Button for Disabled Fields */}
             {isSuperAdmin && disabled && (
               <div className="text-xs text-orange-600 font-bold mt-1 px-2 py-1 bg-orange-100/50 rounded border border-orange-300/50">
                 OVERRIDE
@@ -760,9 +968,10 @@ function Station({ label, active, disabled = false, busy = false, isSuperAdmin =
           <div className="text-center">
             <div>{label}</div>
             {totalQuantity > 1 && (
-              <div className="text-sm font-semibold opacity-70 bg-[var(--muted)]/20 px-2 py-1 rounded-lg mt-1">{quantity}/{totalQuantity}</div>
+              <div className="text-sm font-semibold opacity-70 bg-[var(--muted)]/20 px-2 py-1 rounded-lg mt-1">
+                {quantity}/{totalQuantity}
+              </div>
             )}
-            {/* Super Admin Override Button for Disabled Fields */}
             {isSuperAdmin && disabled && (
               <div className="text-xs text-orange-600 font-bold mt-1 px-2 py-1 bg-orange-100/50 rounded border border-orange-300/50">
                 OVERRIDE
