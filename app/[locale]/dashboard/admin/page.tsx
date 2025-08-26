@@ -4,6 +4,23 @@ import { supabase } from "@/lib/supabaseClient";
 // events removed; using global fields
 import { useEffect, useState } from "react";
 
+async function downloadBlob(blob: Blob, filename: string): Promise<void> {
+  try {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 1000);
+  } catch (err) {
+    console.warn("CSV download failed:", err);
+  }
+}
+
 export default function AdminPage() {
   const { locale } = useParams<{ locale: "en" | "ar" }>();
   const isArabic = locale === "ar";
@@ -95,12 +112,7 @@ export default function AdminPage() {
                 ),
               ].join("\n");
               const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement("a");
-              a.href = url;
-              a.download = `attendees-backup-before-reset.csv`;
-              a.click();
-              URL.revokeObjectURL(url);
+              await downloadBlob(blob, `attendees-backup-before-reset.csv`);
 
               // Then reset
                   const { error } = await supabase.rpc("reset_attendance");
@@ -173,12 +185,7 @@ export default function AdminPage() {
                   ),
                 ].join("\n");
                 const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = `attendees.csv`;
-                a.click();
-                URL.revokeObjectURL(url);
+                await downloadBlob(blob, `attendees.csv`);
               }}
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -459,12 +466,7 @@ function SelectiveReset({
             ].join(","))
           ].join("\n");
           const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = `attendees-backup-before-selective-reset.csv`;
-          a.click();
-          URL.revokeObjectURL(url);
+          await downloadBlob(blob, `attendees-backup-before-selective-reset.csv`);
 
           // Then reset selectively
           const ids = Object.entries(selected)

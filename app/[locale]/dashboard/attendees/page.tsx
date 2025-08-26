@@ -176,7 +176,7 @@ export default function AttendeesPage() {
     let list = attendees;
 
     // search
-    if (q) list = list.filter((a) => [a.name, a.recordNumber].some((v) => v.toLowerCase().includes(q)));
+    if (q) list = list.filter((a) => [a.name, a.recordNumber, a.phone ?? ""].some((v) => v.toLowerCase().includes(q)));
 
     // geo filters
     if (govFilter) list = list.filter((a) => a.governorate === govFilter);
@@ -373,6 +373,12 @@ export default function AttendeesPage() {
                       <span className="w-1 h-1 rounded-full bg-[var(--brand)]" />
                       {a.area}
                     </span>
+                    {a.phone && (
+                      <span className="flex items-center gap-1">
+                        <span className="w-1 h-1 rounded-full bg-[var(--brand)]" />
+                        {a.phone}
+                      </span>
+                    )}
                     {a.quantity > 1 && (
                       <span className="flex items-center gap-1 font-medium">
                         <span className="w-1 h-1 rounded-full bg-orange-500" />
