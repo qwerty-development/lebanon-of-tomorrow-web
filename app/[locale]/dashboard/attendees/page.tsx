@@ -1,6 +1,6 @@
 "use client";
 import { useParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
 type Attendee = {
@@ -12,7 +12,7 @@ type Attendee = {
   area: string;
   phone: string | null;
   quantity: number;
-  createdAt: string;
+  ages: number[];
 };
 
 type Field = { id: string; name: string; is_enabled: boolean; is_main: boolean; sort_order: number };
@@ -24,104 +24,165 @@ export default function AttendeesPage() {
   const [query, setQuery] = useState("");
   const [attendees, setAttendees] = useState<Attendee[]>([]);
   const [fields, setFields] = useState<Field[]>([]);
-  const [statusMap, setStatusMap] = useState<Record<string, Record<string, string | null>>>({});
+  const [statusMap, setStatusMap] = useState<Record<string, Record<string, { checkedAt: string | null; quantity: number }>>>({});
   const [busy, setBusy] = useState<Set<string>>(new Set());
   const [govFilter, setGovFilter] = useState<string>("");
   const [districtFilter, setDistrictFilter] = useState<string>("");
   const [areaFilter, setAreaFilter] = useState<string>("");
   const [selectedField, setSelectedField] = useState<string>("");
   const [fieldCheckFilter, setFieldCheckFilter] = useState<"any" | "checked" | "not_checked">("any");
-  const [sortKey, setSortKey] = useState<"createdAt" | "name" | "recordNumber" | "governorate" | "district" | "area" | "quantity">("createdAt");
+  const [sortKey, setSortKey] = useState<"name" | "recordNumber" | "governorate" | "district" | "area" | "quantity">("name");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [loadError, setLoadError] = useState<string>("");
+  const [loadingProgress, setLoadingProgress] = useState("");
+
+  const loadAll = useCallback(async () => {
+    console.log("loadAll function called");
+    setLoadError("");
+    setLoadingProgress("");
+    
+    const { data: fieldRows, error: fieldsError } = await supabase
+      .from("fields")
+      .select("id,name,is_enabled,is_main,sort_order")
+      .order("sort_order", { ascending: true });
+    const enabled = (fieldRows ?? []).filter((f: any) => f.is_enabled) as Field[];
+    setFields(enabled);
+    if (fieldsError) setLoadError(fieldsError.message);
+
+    const { data, error: attendeesError } = await supabase
+      .from("attendees")
+      .select("id,name,record_number,governorate,district,area,phone,quantity,age")
+      .order("name", { ascending: true });
+    
+    console.log("Fetched attendees:", data);
+    if (attendeesError) {
+      console.error("Error fetching attendees:", attendeesError);
+      setLoadError(attendeesError.message);
+    }
+    
+    const mapped: Attendee[] = (data ?? []).map((r: any) => ({
+      id: r.id,
+      name: r.name,
+      recordNumber: r.record_number,
+      governorate: r.governorate,
+      district: r.district,
+      area: r.area,
+      phone: r.phone,
+      quantity: r.quantity,
+      ages: Array.isArray(r.age)
+        ? (r.age as any[]).map((x) => (typeof x === "number" ? x : parseInt(String(x), 10))).filter((n) => Number.isFinite(n))
+        : typeof r.age === "number"
+        ? [r.age]
+        : typeof r.age === "string"
+        ? [parseInt(r.age, 10)].filter((n) => Number.isFinite(n))
+        : [],
+    }));
+    setAttendees(mapped);
+    const ids = mapped.map((a) => a.id);
+    console.log("Attendee IDs to fetch status for:", ids);
+    
+    if (ids.length) {
+      // Fetch status data in batches to avoid URL length limits
+      let statusRows: any[] = [];
+      try {
+        if (ids.length) {
+          // Batch the IDs to avoid URL length limits
+          const batchSize = 100;
+          const totalBatches = Math.ceil(ids.length / batchSize);
+          
+          for (let i = 0; i < ids.length; i += batchSize) {
+            const batch = ids.slice(i, i + batchSize);
+            const currentBatch = Math.floor(i / batchSize) + 1;
+            const progress = `Loading field statuses... ${currentBatch}/${totalBatches}`;
+            setLoadingProgress(progress);
+            console.log(`Fetching batch ${currentBatch}/${totalBatches} (${batch.length} IDs)`);
+            
+            const { data: batchData, error: batchError } = await supabase
+              .from("attendee_field_status")
+              .select("attendee_id,field_id,checked_at,quantity")
+              .in("attendee_id", batch);
+            
+            if (batchError) {
+              console.error(`Error fetching batch ${currentBatch}:`, batchError);
+              continue;
+            }
+            
+            statusRows.push(...(batchData ?? []));
+          }
+          setLoadingProgress("");
+          console.log(`Total status rows fetched: ${statusRows.length}`);
+        }
+      } catch (error) {
+        console.error("Error fetching statuses in batches:", error);
+        statusRows = [];
+        setLoadingProgress("");
+      }
+      
+      const map: Record<string, Record<string, { checkedAt: string | null; quantity: number }>> = {};
+      for (const row of statusRows) {
+        if (!map[row.attendee_id]) map[row.attendee_id] = {};
+        // Only set quantity for checked fields, unchecked fields won't be in the map
+        const quantity = row.quantity !== null && row.quantity !== undefined ? row.quantity : 1;
+        map[row.attendee_id][row.field_id] = { checkedAt: row.checked_at, quantity };
+      }
+      setStatusMap(map);
+      console.log("Final status map set:", map);
+    } else {
+      setStatusMap({});
+    }
+  }, []);
+
+  // Load data on component mount
+  useEffect(() => {
+    console.log("Component mounted, calling loadAll");
+    loadAll();
+  }, [loadAll]);
 
   useEffect(() => {
     let isMounted = true;
     let channel: any | null = null;
 
-    async function loadAll() {
-      const { data: fieldRows } = await supabase
-        .from("fields")
-        .select("id,name,is_enabled,is_main,sort_order")
-        .order("sort_order", { ascending: true });
-      const enabled = (fieldRows ?? []).filter((f: any) => f.is_enabled) as Field[];
-      if (!isMounted) return;
-      setFields(enabled);
-
-      const { data } = await supabase
-        .from("attendees")
-        .select("id,name,record_number,governorate,district,area,phone,quantity,created_at")
-        .order("created_at", { ascending: true });
-      if (!isMounted) return;
-      const mapped: Attendee[] = (data ?? []).map((r: any) => ({
-        id: r.id,
-        name: r.name,
-        recordNumber: r.record_number,
-        governorate: r.governorate,
-        district: r.district,
-        area: r.area,
-        phone: r.phone,
-        quantity: r.quantity,
-        createdAt: r.created_at,
-      }));
-      setAttendees(mapped);
-      const ids = mapped.map((a) => a.id);
-      if (ids.length) {
-        const { data: statusRows } = await supabase
-          .from("attendee_field_status")
-          .select("attendee_id,field_id,checked_at")
-          .in("attendee_id", ids);
-        const map: Record<string, Record<string, string | null>> = {};
-        for (const row of statusRows ?? []) {
-          if (!map[row.attendee_id]) map[row.attendee_id] = {};
-          map[row.attendee_id][row.field_id] = row.checked_at;
-        }
-        if (!isMounted) return;
-        setStatusMap(map);
-      } else {
-        setStatusMap({});
-      }
-    }
-
     async function init() {
-      await loadAll();
+      if (isMounted) {
+        await loadAll();
+      }
+      // Set up real-time subscription for attendee_field_status changes
       channel = supabase
-        .channel("app")
-        .on("postgres_changes", { event: "*", schema: "public", table: "attendees" }, () => loadAll())
+        .channel("attendee_field_status_changes")
         .on(
           "postgres_changes",
-          { event: "*", schema: "public", table: "attendee_field_status" },
+          { 
+            event: "*", 
+            schema: "public", 
+            table: "attendee_field_status" 
+          },
           (payload: any) => {
+            console.log("Real-time change received:", payload);
             const row = payload.new ?? payload.old;
-            if (!row) return loadAll();
+            if (!row) return;
+            
             const attendeeId = row.attendee_id as string;
             const fieldId = row.field_id as string;
             const checkedAt = payload.eventType === "DELETE" ? null : (row.checked_at as string | null);
+            const quantity = payload.eventType === "DELETE" ? 1 : (row.quantity || 1);
+            
             setStatusMap((prev) => {
-              const next = { ...prev } as Record<string, Record<string, string | null>>;
-              next[attendeeId] = { ...(next[attendeeId] ?? {}) };
-              next[attendeeId][fieldId] = checkedAt;
+              const next = { ...prev };
+              if (!next[attendeeId]) next[attendeeId] = {};
+              if (payload.eventType === "DELETE") {
+                // When deleting, set quantity to 1 (default) instead of deleting the entry
+                next[attendeeId][fieldId] = { checkedAt: null, quantity: 1 };
+              } else {
+                next[attendeeId][fieldId] = { checkedAt, quantity };
+              }
               return next;
             });
           }
         )
-        .on(
-          "postgres_changes",
-          { event: "*", schema: "public", table: "fields" },
-          () => loadAll()
-        )
-        .on("broadcast", { event: "afs_changed" }, (msg: any) => {
-          const { attendeeId, fieldId, checkedAt } = msg.payload ?? {};
-          if (!attendeeId || !fieldId) return;
-          setStatusMap((prev) => {
-            const next = { ...prev } as Record<string, Record<string, string | null>>;
-            next[attendeeId] = { ...(next[attendeeId] ?? {}) };
-            next[attendeeId][fieldId] = checkedAt ?? null;
-            return next;
-          });
-        })
-        .on("broadcast", { event: "fields_changed" }, () => loadAll())
-        .subscribe();
+        .subscribe((status) => {
+          console.log("Subscription status:", status);
+        });
     }
 
     init();
@@ -129,7 +190,7 @@ export default function AttendeesPage() {
       isMounted = false;
       if (channel) supabase.removeChannel(channel);
     };
-  }, []);
+  }, [loadAll]);
 
   useEffect(() => {
     let isMounted = true;
@@ -171,6 +232,11 @@ export default function AttendeesPage() {
     [attendees, govFilter, districtFilter, collator]
   );
 
+  // Debug: Log current status map
+  useEffect(() => {
+    console.log("Current statusMap:", statusMap);
+  }, [statusMap]);
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     let list = attendees;
@@ -186,7 +252,7 @@ export default function AttendeesPage() {
     // field status filter
     if (selectedField && fieldCheckFilter !== "any") {
       list = list.filter((a) => {
-        const checked = !!statusMap[a.id]?.[selectedField];
+        const checked = !!statusMap[a.id]?.[selectedField]?.checkedAt;
         return fieldCheckFilter === "checked" ? checked : !checked;
       });
     }
@@ -207,9 +273,8 @@ export default function AttendeesPage() {
           return dir * collator.compare(a.area, b.area);
         case "quantity":
           return dir * (a.quantity - b.quantity);
-        case "createdAt":
         default:
-          return dir * (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+          return dir * collator.compare(a.name, b.name);
       }
     });
 
@@ -233,7 +298,11 @@ export default function AttendeesPage() {
     sortBy: isArabic ? "ترتيب حسب" : "Sort by",
     asc: isArabic ? "تصاعدي" : "Asc",
     desc: isArabic ? "تنازلي" : "Desc",
-    createdAt: isArabic ? "تاريخ الإنشاء" : "Created at",
+    errorLoading: isArabic ? "تعذر تحميل البيانات" : "Failed to load data",
+    quantityLabel: isArabic ? "الكمية" : "Qty",
+    agesLabel: isArabic ? "الأعمار" : "Ages",
+    enterQty: isArabic ? "أدخل الكمية" : "Enter quantity",
+    invalidQty: isArabic ? "قيمة غير صالحة" : "Invalid quantity",
   };
 
   const mainField = fields.find((f) => f.is_main);
@@ -242,12 +311,23 @@ export default function AttendeesPage() {
     <div className="space-y-6">
       {/* Page Header */}
       <div className="text-center lg:text-left">
-        <h1 className="text-2xl lg:text-3xl font-bold text-[var(--foreground)] mb-2">
-          {isArabic ? "إدارة الحضور" : "Attendee Management"}
-        </h1>
-        <p className="text-[var(--muted)] text-responsive">
-          {isArabic ? "تتبع وإدارة حضور المشاركين" : "Track and manage participant attendance"}
-        </p>
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-bold text-[var(--foreground)] mb-2">
+              {isArabic ? "إدارة الحضور" : "Attendee Management"}
+            </h1>
+            <p className="text-[var(--muted)] text-responsive">
+              {isArabic ? "تتبع وإدارة حضور المشاركين" : "Track and manage participant attendance"}
+            </p>
+          </div>
+          {isSuperAdmin && (
+            <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg shadow-lg">
+              <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+              <span className="font-bold text-sm">SUPER ADMIN MODE</span>
+              <span className="text-xs opacity-90">ULTIMATE POWER</span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Search Bar */}
@@ -259,6 +339,9 @@ export default function AttendeesPage() {
           onChange={(e) => setQuery(e.target.value)}
         />
       </div>
+
+      {/* Super Admin Control Panel */}
+      
 
       {/* Filters Panel */}
       <div className="glass rounded-2xl">
@@ -311,7 +394,6 @@ export default function AttendeesPage() {
             <div>
               <label className="text-[var(--muted)] text-sm font-medium mb-2 block">{t.sortBy}</label>
               <select className="w-full glass rounded-xl px-3 py-2.5 border-[var(--border-glass)] focus:border-[var(--brand)] focus:outline-none transition-all" value={sortKey} onChange={(e) => setSortKey(e.target.value as any)}>
-                <option value="createdAt">{t.createdAt}</option>
                 <option value="name">Name</option>
                 <option value="recordNumber">Record #</option>
                 <option value="governorate">{t.governorate}</option>
@@ -339,11 +421,44 @@ export default function AttendeesPage() {
             {isArabic ? "النتائج" : "Results"}
             <span className="text-sm font-normal text-[var(--muted)]">({filtered.length})</span>
           </h2>
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                console.log("Manual refresh clicked");
+                loadAll();
+              }}
+              className="px-4 py-2 bg-[var(--brand)] text-white rounded-lg hover:bg-[var(--brand-hover)] transition-colors"
+            >
+              {isArabic ? "تحديث" : "Refresh"}
+            </button>
+            <button
+              onClick={async () => {
+                console.log("Testing direct database query...");
+                const { data, error } = await supabase
+                  .from("attendee_field_status")
+                  .select("*");
+                console.log("Direct query result:", { data, error });
+              }}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            >
+              Test DB
+            </button>
+          </div>
         </div>
         
-        {filtered.length === 0 && (
+        {/* Loading Progress */}
+        {loadingProgress && (
+          <div className="glass rounded-2xl p-4 text-center">
+            <div className="text-[var(--brand)] text-lg font-medium">{loadingProgress}</div>
+            <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+              <div className="bg-[var(--brand)] h-2 rounded-full transition-all duration-300" style={{ width: '100%' }}></div>
+            </div>
+          </div>
+        )}
+        
+        {(filtered.length === 0 || loadError) && (
           <div className="glass rounded-2xl p-8 text-center">
-            <div className="text-[var(--muted)] text-lg">{t.noData}</div>
+            <div className="text-[var(--muted)] text-lg">{loadError ? `${t.errorLoading}: ${loadError}` : t.noData}</div>
           </div>
         )}
         
@@ -354,7 +469,28 @@ export default function AttendeesPage() {
                 {/* Attendee Info */}
                 <div className="flex-1 space-y-2">
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                    <h3 className="font-semibold text-lg text-[var(--foreground)]">{a.name}</h3>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold text-lg text-[var(--foreground)]">{a.name}</h3>
+                      {isSuperAdmin && (
+                        <button
+                          onClick={() => {
+                            // Super admin quick edit
+                            const newName = window.prompt(
+                              `${isArabic ? "تعديل اسم الحضور" : "Edit attendee name"}:`,
+                              a.name
+                            );
+                            if (newName && newName.trim() && newName !== a.name) {
+                              // TODO: Implement database update
+                              alert(`${isArabic ? "سيتم تحديث الاسم قريباً" : "Name update coming soon!"}`);
+                            }
+                          }}
+                          className="p-1 text-orange-600 hover:text-orange-700 hover:bg-orange-100 rounded transition-colors"
+                          title={isArabic ? "تعديل (المدير المتفوق)" : "Edit (Super Admin)"}
+                        >
+                          ✏️
+                        </button>
+                      )}
+                    </div>
                     <span className="inline-flex items-center gap-1 text-sm text-[var(--muted)] font-mono">
                       <span className="w-1 h-1 rounded-full bg-[var(--muted)]" />
                       #{a.recordNumber}
@@ -379,10 +515,14 @@ export default function AttendeesPage() {
                         {a.phone}
                       </span>
                     )}
-                    {a.quantity > 1 && (
-                      <span className="flex items-center gap-1 font-medium">
-                        <span className="w-1 h-1 rounded-full bg-orange-500" />
-                        {isArabic ? `الكمية: ${a.quantity}` : `Qty: ${a.quantity}`}
+                    <span className="flex items-center gap-1 font-medium">
+                      <span className="w-1 h-1 rounded-full bg-orange-500" />
+                      {t.quantityLabel}: {a.quantity}
+                    </span>
+                    {a.ages.length > 0 && (
+                      <span className="flex items-center gap-1">
+                        <span className="w-1 h-1 rounded-full bg-purple-500" />
+                        {t.agesLabel}: {a.ages.join(", ")}
                       </span>
                     )}
                   </div>
@@ -391,10 +531,17 @@ export default function AttendeesPage() {
                 {/* Station Actions */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2">
                   {fields.map((f) => {
-                    const checked = !!statusMap[a.id]?.[f.id];
-                    const mainChecked = mainField ? !!statusMap[a.id]?.[mainField.id] : true;
+                    const status = statusMap[a.id]?.[f.id];
+                    const checked = !!status?.checkedAt;
+                    const mainChecked = mainField ? !!statusMap[a.id]?.[mainField.id]?.checkedAt : true;
+                    // Super admin can access any field regardless of restrictions
                     const disabled = !isSuperAdmin && !f.is_main && !mainChecked;
+                    // Super admin can force check-in even on disabled fields
+                    const canForceCheck = isSuperAdmin && !f.is_main && !mainChecked;
                     const key = `${a.id}:${f.id}`;
+                    const fieldQuantity = status?.checkedAt ? (status.quantity || 1) : 0;
+                    const totalQuantity = a.quantity;
+                    
                     return (
                       <Station
                         key={f.id}
@@ -403,16 +550,60 @@ export default function AttendeesPage() {
                         disabled={disabled}
                         busy={busy.has(key)}
                         isSuperAdmin={isSuperAdmin}
+                        canForceCheck={canForceCheck}
+                        quantity={fieldQuantity}
+                        totalQuantity={totalQuantity}
                         onMark={async () => {
                           const isUnchecking = checked;
                           const action = isUnchecking ? "uncheck" : "check";
-                          const confirmText = isUnchecking 
-                            ? (isArabic ? "إلغاء تأكيد" : "Uncheck") 
-                            : (isArabic ? "تأكيد" : "Check");
-                          if (!window.confirm(`${t.confirmPrefix}${confirmText} ${f.name} - ${a.name}`)) return;
+                          let selectedQty = 1;
+                          
+                          // Super admin gets ultimate power - can override any restrictions
+                          if (isSuperAdmin) {
+                            if (!isUnchecking) {
+                              // Super admin can set ANY quantity, even beyond attendee's total
+                              const input = window.prompt(
+                                `${isArabic ? "أدخل الكمية (المدير المتفوق يمكنه تجاوز الحد الأقصى)" : "Enter quantity (Super Admin can exceed limits)"} (1 - 999)`, 
+                                "1"
+                              );
+                              if (input == null) return; // cancelled
+                              const parsed = parseInt(input, 10);
+                              if (!Number.isFinite(parsed) || parsed < 1) {
+                                alert(isArabic ? "قيمة غير صالحة" : "Invalid quantity");
+                                return;
+                              }
+                              selectedQty = parsed;
+                            }
+                            
+                            // Super admin confirmation with special warning
+                            const superAdminConfirm = window.confirm(
+                              `🚨 SUPER ADMIN ACTION 🚨\n\n` +
+                              `${isUnchecking ? "Force uncheck" : "Force check-in"} ${f.name} for ${a.name}\n` +
+                              `Quantity: ${selectedQty}\n\n` +
+                              `This action bypasses all restrictions and rules!\n` +
+                              `Are you sure you want to proceed?`
+                            );
+                            if (!superAdminConfirm) return;
+                          } else {
+                            // Regular user flow with restrictions
+                            if (!isUnchecking) {
+                              const maxQty = Math.max(1, a.quantity ?? 1);
+                              if (maxQty > 1) {
+                                const input = window.prompt(`${t.enterQty} (1 - ${maxQty})`, "1");
+                                if (input == null) return; // cancelled
+                                const parsed = parseInt(input, 10);
+                                if (!Number.isFinite(parsed) || parsed < 1 || parsed > maxQty) {
+                                  alert(t.invalidQty);
+                                  return;
+                                }
+                                selectedQty = parsed;
+                              }
+                            }
+                            if (!window.confirm(`${t.confirmPrefix}${action === "uncheck" ? (isArabic ? "إلغاء تأكيد" : "Uncheck") : (isArabic ? "تأكيد" : "Check")} ${f.name} - ${a.name}`)) return;
+                          }
                           
                           setBusy((prev) => new Set(prev).add(key));
-                          const prevVal = statusMap[a.id]?.[f.id] ?? null;
+                          const prevVal = statusMap[a.id]?.[f.id] ?? { checkedAt: null, quantity: 1 };
                           
                           // Update local state immediately for real-time feel
                           const newValue = isUnchecking ? null : new Date().toISOString();
@@ -420,34 +611,36 @@ export default function AttendeesPage() {
                             ...prev, 
                             [a.id]: { 
                               ...(prev[a.id] ?? {}), 
-                              [f.id]: newValue 
+                              [f.id]: { checkedAt: newValue, quantity: selectedQty } 
                             } 
                           }));
                           
                           let result;
                           if (isUnchecking) {
-                            // Uncheck by setting checked_at to null
+                            // Uncheck by setting checked_at to null and quantity to 1 (default)
                             result = await supabase
                               .from("attendee_field_status")
-                              .update({ checked_at: null })
+                              .update({ checked_at: null, quantity: 1 })
                               .eq("attendee_id", a.id)
                               .eq("field_id", f.id);
                           } else {
-                            // Check by setting checked_at to current timestamp
+                            // Check by setting checked_at to current timestamp and quantity
                             result = await supabase
                               .from("attendee_field_status")
                               .upsert(
                                 { 
                                   attendee_id: a.id, 
                                   field_id: f.id, 
-                                  checked_at: new Date().toISOString() 
+                                  checked_at: new Date().toISOString(),
+                                  quantity: selectedQty
                                 }, 
                                 { onConflict: "attendee_id,field_id" }
                               );
                           }
                           
                           if (result.error) {
-                            alert(t.failed);
+                            console.error("Database error:", result.error);
+                            alert(`${t.failed}: ${result.error.message}`);
                             // Revert local state on error
                             setStatusMap((prev) => ({ 
                               ...prev, 
@@ -457,18 +650,8 @@ export default function AttendeesPage() {
                               } 
                             }));
                           } else {
-                            // Broadcast the change for real-time updates
-                            await supabase
-                              .channel("app")
-                              .send({ 
-                                type: "broadcast", 
-                                event: "afs_changed", 
-                                payload: { 
-                                  attendeeId: a.id, 
-                                  fieldId: f.id, 
-                                  checkedAt: newValue 
-                                } 
-                              });
+                            console.log("Successfully updated field status:", { attendeeId: a.id, fieldId: f.id, checkedAt: newValue, quantity: selectedQty });
+                            // Real-time update will come through postgres_changes subscription
                           }
                           
                           setBusy((prev) => {
@@ -490,7 +673,7 @@ export default function AttendeesPage() {
   );
 }
 
-function Station({ label, active, disabled = false, busy = false, isSuperAdmin = false, onMark }: { label: string; active: boolean; disabled?: boolean; busy?: boolean; isSuperAdmin?: boolean; onMark: () => Promise<void> }) {
+function Station({ label, active, disabled = false, busy = false, isSuperAdmin = false, canForceCheck = false, quantity = 0, totalQuantity = 1, onMark }: { label: string; active: boolean; disabled?: boolean; busy?: boolean; isSuperAdmin?: boolean; canForceCheck?: boolean; quantity?: number; totalQuantity?: number; onMark: () => Promise<void> }) {
   if (active) {
     // If super admin, make checked fields clickable to uncheck
     if (isSuperAdmin) {
@@ -507,12 +690,22 @@ function Station({ label, active, disabled = false, busy = false, isSuperAdmin =
           {busy ? (
             <>
               <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin mr-2" />
-              {label}
+              <div className="text-center">
+                <div>{label}</div>
+                {totalQuantity > 1 && (
+                  <div className="text-sm font-semibold opacity-90 bg-white/20 px-2 py-1 rounded-lg mt-1">{quantity}/{totalQuantity}</div>
+                )}
+              </div>
             </>
           ) : (
             <>
               <span className="w-1.5 h-1.5 rounded-full bg-white/80 mr-2" />
-              {label}
+              <div className="text-center">
+                <div>{label}</div>
+                {totalQuantity > 1 && (
+                  <div className="text-sm font-semibold opacity-90 bg-white/20 px-2 py-1 rounded-lg mt-1">{quantity}/{totalQuantity}</div>
+                )}
+              </div>
             </>
           )}
         </button>
@@ -523,30 +716,59 @@ function Station({ label, active, disabled = false, busy = false, isSuperAdmin =
     return (
       <div className="inline-flex items-center justify-center px-3 py-2 rounded-xl bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-medium shadow-lg">
         <span className="w-1.5 h-1.5 rounded-full bg-white/80 mr-2" />
-        {label}
+        <div className="text-center">
+          <div>{label}</div>
+          {totalQuantity > 1 && (
+            <div className="text-sm font-semibold opacity-90 bg-white/20 px-2 py-1 rounded-lg mt-1">{quantity}/{totalQuantity}</div>
+          )}
+        </div>
       </div>
     );
   }
 
   return (
     <button
-      disabled={disabled || busy}
-      title={disabled ? `${label} (disabled)` : label}
-      className="inline-flex items-center justify-center px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 glass border-[var(--border-glass)] hover:bg-[var(--surface-glass-hover)] hover:border-[var(--brand)] hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-[var(--surface-glass)]"
+      disabled={busy} // Super admin can always click, even on disabled fields
+      title={disabled ? (isSuperAdmin ? `${label} (disabled - Super Admin can force override)` : `${label} (disabled)`) : label}
+      className={`inline-flex items-center justify-center px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 glass border-[var(--border-glass)] hover:bg-[var(--surface-glass-hover)] hover:border-[var(--brand)] hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-[var(--surface-glass)] ${isSuperAdmin && disabled ? 'border-orange-500/50 hover:border-orange-500' : ''}`}
       onClick={() => {
-        if (disabled || busy) return;
+        if (busy) return;
+        // Super admin can force check-in even on disabled fields
+        if (disabled && !isSuperAdmin) return;
         void onMark();
       }}
     >
       {busy ? (
         <>
           <div className="w-3 h-3 border border-current border-t-transparent rounded-full animate-spin mr-2" />
-          {label}
+          <div className="text-center">
+            <div>{label}</div>
+            {totalQuantity > 1 && (
+              <div className="text-sm font-semibold opacity-70 bg-[var(--muted)]/20 px-2 py-1 rounded-lg mt-1">{quantity}/{totalQuantity}</div>
+            )}
+            {/* Super Admin Override Button for Disabled Fields */}
+            {isSuperAdmin && disabled && (
+              <div className="text-xs text-orange-600 font-bold mt-1 px-2 py-1 bg-orange-100/50 rounded border border-orange-300/50">
+                OVERRIDE
+              </div>
+            )}
+          </div>
         </>
       ) : (
         <>
           <span className="w-1.5 h-1.5 rounded-full bg-[var(--muted)] mr-2" />
-          {label}
+          <div className="text-center">
+            <div>{label}</div>
+            {totalQuantity > 1 && (
+              <div className="text-sm font-semibold opacity-70 bg-[var(--muted)]/20 px-2 py-1 rounded-lg mt-1">{quantity}/{totalQuantity}</div>
+            )}
+            {/* Super Admin Override Button for Disabled Fields */}
+            {isSuperAdmin && disabled && (
+              <div className="text-xs text-orange-600 font-bold mt-1 px-2 py-1 bg-orange-100/50 rounded border border-orange-300/50">
+                OVERRIDE
+              </div>
+            )}
+          </div>
         </>
       )}
     </button>

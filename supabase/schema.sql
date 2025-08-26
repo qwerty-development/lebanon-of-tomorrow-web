@@ -112,6 +112,7 @@ create table if not exists public.attendee_field_status (
   attendee_id uuid not null references public.attendees(id) on delete cascade,
   field_id uuid not null references public.fields(id) on delete cascade,
   checked_at timestamptz null,
+  quantity integer not null default 1 check (quantity >= 1),
   primary key (attendee_id, field_id)
 );
 
@@ -181,6 +182,7 @@ as $$
 declare
   is_main_field boolean;
   has_main boolean;
+  attendee_qty integer;
 begin
   -- prevent uncheck by non-super-admins
   if tg_op = 'UPDATE' then
@@ -197,6 +199,17 @@ begin
     end if;
     -- otherwise, if inserting or marking as checked without timestamp, set it now
     new.checked_at = now();
+  end if;
+
+  -- ensure quantity is valid
+  if new.quantity < 1 then
+    raise exception 'Quantity must be at least 1';
+  end if;
+
+  -- get attendee's total quantity
+  select quantity into attendee_qty from public.attendees where id = new.attendee_id;
+  if new.quantity > attendee_qty then
+    raise exception 'Quantity cannot exceed attendee total quantity';
   end if;
 
   -- gating: if field is not main, ensure main is checked for same attendee
