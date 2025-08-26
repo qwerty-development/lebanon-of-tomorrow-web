@@ -176,7 +176,7 @@ export default function AttendeesPage() {
     let list = attendees;
 
     // search
-    if (q) list = list.filter((a) => [a.name, a.recordNumber, a.phone ?? ""].some((v) => v.toLowerCase().includes(q)));
+    if (q) list = list.filter((a) => [a.name, a.recordNumber, a.phone].some((v) => v && v.toLowerCase().includes(q)));
 
     // geo filters
     if (govFilter) list = list.filter((a) => a.governorate === govFilter);
@@ -217,7 +217,7 @@ export default function AttendeesPage() {
   }, [attendees, query, govFilter, districtFilter, areaFilter, selectedField, fieldCheckFilter, sortKey, sortDir, statusMap, collator]);
 
   const t = {
-    search: isArabic ? "ابحث بالاسم أو رقم السجل" : "Search by name or record #",
+    search: isArabic ? "ابحث بالاسم أو رقم السجل أو رقم الهاتف" : "Search by name, record #, or phone",
     mark: isArabic ? "تأكيد" : "Mark",
     noData: isArabic ? "لا توجد سجلات" : "No records",
     confirmPrefix: isArabic ? "تأكيد: " : "Confirm: ",
