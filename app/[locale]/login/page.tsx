@@ -58,7 +58,7 @@ export default function LoginPage() {
                 setError(isArabic ? "بيانات الدخول غير صحيحة" : "Invalid credentials");
                 return;
               }
-              window.location.href = `/${locale}/dashboard`;
+              window.location.href = `/${locale}/dashboard/stats`;
             }}
           >
             <div className="space-y-4">

@@ -13,9 +13,52 @@ begin
     join pg_namespace nsp on nsp.oid = typ.typnamespace
     where typ.typname = 'user_role' and nsp.nspname = 'public'
   ) then
-    create type public.user_role as enum ('admin','super_admin');
+    create type public.user_role as enum ('admin','super_admin','shabebik','optic_et_vision','medical','dental');
+  else
+    -- Update existing enum if it doesn't have the new roles
+    if not exists (select 1 from pg_enum where enumtypid = (select oid from pg_type where typname = 'user_role') and enumlabel = 'shabebik') then
+      alter type public.user_role add value 'shabebik';
+    end if;
+    if not exists (select 1 from pg_enum where enumtypid = (select oid from pg_type where typname = 'user_role') and enumlabel = 'optic_et_vision') then
+      alter type public.user_role add value 'optic_et_vision';
+    end if;
+    if not exists (select 1 from pg_enum where enumtypid = (select oid from pg_type where typname = 'user_role') and enumlabel = 'medical') then
+      alter type public.user_role add value 'medical';
+    end if;
+    if not exists (select 1 from pg_enum where enumtypid = (select oid from pg_type where typname = 'user_role') and enumlabel = 'dental') then
+      alter type public.user_role add value 'dental';
+    end if;
   end if;
 end$$;
+
+-- Function to check if user can modify a specific field
+create or replace function public.can_user_modify_field(user_role public.user_role, field_name text)
+returns boolean
+language plpgsql
+stable
+security definer
+as $$
+begin
+  -- Super admin and admin can modify all fields
+  if user_role in ('super_admin', 'admin') then
+    return true;
+  end if;
+  
+  -- Role-specific field access (case insensitive matching)
+  case user_role
+    when 'shabebik' then
+      return lower(field_name) like '%shabebik%' or lower(field_name) like '%شبابيك%';
+    when 'optic_et_vision' then  
+      return lower(field_name) like '%optic%' or lower(field_name) like '%vision%' or lower(field_name) like '%بصر%' or lower(field_name) like '%عيون%';
+    when 'medical' then
+      return lower(field_name) like '%medical%' or lower(field_name) like '%طبي%';
+    when 'dental' then
+      return lower(field_name) like '%dental%' or lower(field_name) like '%أسنان%';
+    else
+      return false;
+  end case;
+end;
+$$;
 
 -- Profiles (Auth users)
 create table if not exists public.profiles (
@@ -183,7 +226,23 @@ declare
   is_main_field boolean;
   has_main boolean;
   attendee_qty integer;
+  user_role public.user_role;
+  field_name text;
 begin
+  -- Get user role and field name
+  select p.role into user_role 
+  from public.profiles p 
+  where p.id = auth.uid();
+  
+  select f.name into field_name 
+  from public.fields f 
+  where f.id = new.field_id;
+  
+  -- Check if user can modify this field
+  if not public.can_user_modify_field(user_role, field_name) then
+    raise exception 'You do not have permission to modify this field';
+  end if;
+  
   -- prevent uncheck by non-super-admins
   if tg_op = 'UPDATE' then
     if old.checked_at is not null and new.checked_at is null and not public.is_super_admin(auth.uid()) then
@@ -289,6 +348,63 @@ $$;
 
 revoke all on function public.reset_attendance_selective(uuid[]) from public;
 grant execute on function public.reset_attendance_selective(uuid[]) to authenticated;
+
+-- Admin function to list all users (for super admins only)
+create or replace function public.list_all_users()
+returns table (
+  id uuid,
+  email text,
+  role public.user_role,
+  created_at timestamptz
+)
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not public.is_super_admin(auth.uid()) then
+    raise exception 'Only super admins can list all users';
+  end if;
+  
+  return query
+  select 
+    p.id,
+    u.email,
+    p.role,
+    p.created_at
+  from public.profiles p
+  join auth.users u on u.id = p.id
+  order by p.created_at desc;
+end;
+$$;
+
+revoke all on function public.list_all_users() from public;
+grant execute on function public.list_all_users() to authenticated;
+
+-- Admin function to update user roles (for super admins only)
+create or replace function public.update_user_role(p_user_id uuid, p_new_role public.user_role)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not public.is_super_admin(auth.uid()) then
+    raise exception 'Only super admins can update user roles';
+  end if;
+  
+  update public.profiles 
+  set role = p_new_role, updated_at = now()
+  where id = p_user_id;
+  
+  if not found then
+    raise exception 'User not found';
+  end if;
+end;
+$$;
+
+revoke all on function public.update_user_role(uuid, public.user_role) from public;
+grant execute on function public.update_user_role(uuid, public.user_role) to authenticated;
 
 -- RPC: set active event (sets all others to inactive)
 create or replace function public.set_active_event(p_event_id uuid)

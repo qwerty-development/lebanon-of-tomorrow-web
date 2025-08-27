@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { UserRole, canUserModifyField } from "@/lib/roleUtils";
 
 type Attendee = {
   id: string;
@@ -109,6 +110,7 @@ export default function AttendeesPage() {
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [userRole, setUserRole] = useState<UserRole>('admin');
   const [loadError, setLoadError] = useState<string>("");
   const [isOnline, setIsOnline] = useState(true);
 
@@ -427,8 +429,9 @@ export default function AttendeesPage() {
           .eq("id", user.id)
           .single();
           
-        if (isMounted) {
-          setIsSuperAdmin(profile?.role === "super_admin");
+        if (isMounted && profile) {
+          setUserRole(profile.role);
+          setIsSuperAdmin(profile.role === "super_admin");
         }
       } catch (error) {
         console.error("Error checking user role:", error);
@@ -700,6 +703,7 @@ export default function AttendeesPage() {
               fields={fields}
               mainField={mainField}
               isSuperAdmin={isSuperAdmin}
+              userRole={userRole}
               busy={busy}
               onMarkField={handleMarkField}
               translations={t}
@@ -738,6 +742,7 @@ function AttendeeCard({
   fields,
   mainField,
   isSuperAdmin,
+  userRole,
   busy,
   onMarkField,
   translations: t,
@@ -747,6 +752,7 @@ function AttendeeCard({
   fields: Field[];
   mainField?: Field;
   isSuperAdmin: boolean;
+  userRole: UserRole;
   busy: Set<string>;
   onMarkField: (attendee: AttendeeWithStatus, field: Field, quantity?: number) => Promise<void>;
   translations: any;
@@ -802,7 +808,8 @@ function AttendeeCard({
             const status = attendee.fieldStatuses[field.id];
             const checked = !!status?.checkedAt;
             const mainChecked = mainField ? !!attendee.fieldStatuses[mainField.id]?.checkedAt : true;
-            const disabled = !isSuperAdmin && !field.is_main && !mainChecked;
+            const roleRestricted = !canUserModifyField(userRole, field.name);
+            const disabled = (!isSuperAdmin && !field.is_main && !mainChecked) || roleRestricted;
             const key = `${attendee.id}:${field.id}`;
             const fieldQuantity = status?.checkedAt ? (status.quantity || 1) : 0;
             
@@ -814,6 +821,8 @@ function AttendeeCard({
                 disabled={disabled}
                 busy={busy.has(key)}
                 isSuperAdmin={isSuperAdmin}
+                userRole={userRole}
+                fieldName={field.name}
                 quantity={fieldQuantity}
                 totalQuantity={attendee.quantity}
                 onMark={async () => {
@@ -880,6 +889,8 @@ function Station({
   disabled = false, 
   busy = false, 
   isSuperAdmin = false, 
+  userRole, 
+  fieldName, 
   quantity = 0, 
   totalQuantity = 1, 
   onMark 
@@ -889,10 +900,16 @@ function Station({
   disabled?: boolean; 
   busy?: boolean; 
   isSuperAdmin?: boolean; 
+  userRole?: UserRole; 
+  fieldName?: string; 
   quantity?: number; 
   totalQuantity?: number; 
   onMark: () => Promise<void>;
 }) {
+  const canModify = !fieldName || !userRole || canUserModifyField(userRole, fieldName);
+  const isDisabled = disabled || !canModify;
+  const roleRestricted = !canModify && userRole && !['admin', 'super_admin'].includes(userRole);
+  
   const baseClasses = "inline-flex items-center justify-center px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200";
   
   if (active) {
@@ -902,10 +919,10 @@ function Station({
     
     return (
       <button
-        disabled={busy}
+        disabled={busy || isDisabled}
         title={isSuperAdmin ? `${label} (click to uncheck)` : label}
         className={activeClasses}
-        onClick={isSuperAdmin && !busy ? onMark : undefined}
+        onClick={isSuperAdmin && !busy && !isDisabled ? onMark : undefined}
       >
         {busy ? (
           <>
@@ -936,14 +953,14 @@ function Station({
     );
   }
 
-  const inactiveClasses = `${baseClasses} glass border-[var(--border-glass)] hover:bg-[var(--surface-glass-hover)] hover:border-[var(--brand)] hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 ${isSuperAdmin && disabled ? 'border-orange-500/50 hover:border-orange-500' : ''}`;
+  const inactiveClasses = `${baseClasses} glass border-[var(--border-glass)] hover:bg-[var(--surface-glass-hover)] hover:border-[var(--brand)] hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 ${isSuperAdmin && isDisabled ? 'border-orange-500/50 hover:border-orange-500' : ''} ${roleRestricted ? 'border-red-500/50 hover:border-red-500' : ''}`;
   
   return (
     <button
-      disabled={busy || (disabled && !isSuperAdmin)}
-      title={disabled ? (isSuperAdmin ? `${label} (disabled - Super Admin can override)` : `${label} (disabled)`) : label}
+      disabled={busy || (isDisabled && !isSuperAdmin)}
+      title={isDisabled ? (isSuperAdmin ? `${label} (disabled - Super Admin can override)` : roleRestricted ? `${label} (role restricted)` : `${label} (disabled)`) : label}
       className={inactiveClasses}
-      onClick={!busy ? onMark : undefined}
+      onClick={!busy && !isDisabled ? onMark : undefined}
     >
       {busy ? (
         <>
@@ -955,9 +972,14 @@ function Station({
                 {quantity}/{totalQuantity}
               </div>
             )}
-            {isSuperAdmin && disabled && (
+            {isSuperAdmin && isDisabled && !roleRestricted && (
               <div className="text-xs text-orange-600 font-bold mt-1 px-2 py-1 bg-orange-100/50 rounded border border-orange-300/50">
                 OVERRIDE
+              </div>
+            )}
+            {roleRestricted && (
+              <div className="text-xs text-red-600 font-bold mt-1 px-2 py-1 bg-red-100/50 rounded border border-red-300/50">
+                ROLE RESTRICTED
               </div>
             )}
           </div>
@@ -972,9 +994,14 @@ function Station({
                 {quantity}/{totalQuantity}
               </div>
             )}
-            {isSuperAdmin && disabled && (
+            {isSuperAdmin && isDisabled && !roleRestricted && (
               <div className="text-xs text-orange-600 font-bold mt-1 px-2 py-1 bg-orange-100/50 rounded border border-orange-300/50">
                 OVERRIDE
+              </div>
+            )}
+            {roleRestricted && (
+              <div className="text-xs text-red-600 font-bold mt-1 px-2 py-1 bg-red-100/50 rounded border border-red-300/50">
+                ROLE RESTRICTED
               </div>
             )}
           </div>

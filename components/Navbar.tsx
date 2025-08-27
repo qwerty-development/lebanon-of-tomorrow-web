@@ -4,11 +4,13 @@ import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { useEffect, useState } from "react";
 import { LogOut, Users, PlusCircle, BarChart3, Shield, Menu, X } from "lucide-react";
+import { UserRole, getRoleDisplayName } from "@/lib/roleUtils";
 
 export function Navbar() {
   const { locale } = useParams<{ locale: "en" | "ar" }>();
   const isArabic = locale === "ar";
   const [isSuper, setIsSuper] = useState(false);
+  const [userRole, setUserRole] = useState<UserRole>('admin');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -17,7 +19,10 @@ export function Navbar() {
       const userId = userData.user?.id;
       if (!userId) return;
       const { data } = await supabase.from("profiles").select("role").eq("id", userId).maybeSingle();
-      setIsSuper(data?.role === "super_admin");
+      if (data?.role) {
+        setUserRole(data.role);
+        setIsSuper(data.role === "super_admin");
+      }
     })();
   }, []);
 
@@ -58,6 +63,11 @@ export function Navbar() {
                   <span className="text-sm font-medium">{label}</span>
                 </Link>
               ))}
+              <div className="w-px h-6 bg-[var(--border-glass)] mx-2" />
+              <div className="flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg shadow-lg">
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                <span className="font-bold text-xs">{getRoleDisplayName(userRole, isArabic)}</span>
+              </div>
               <div className="w-px h-6 bg-[var(--border-glass)] mx-2" />
               <button
                 className="pill inline-flex items-center gap-2 text-red-600 hover:text-red-700 hover:scale-105 active:scale-95"
@@ -106,6 +116,11 @@ export function Navbar() {
                   <span className="font-medium">{label}</span>
                 </Link>
               ))}
+              <div className="h-px bg-[var(--border-glass)] my-1" />
+              <div className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg shadow-lg">
+                <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                <span className="font-bold text-sm">{getRoleDisplayName(userRole, isArabic)}</span>
+              </div>
               <div className="h-px bg-[var(--border-glass)] my-1" />
               <button
                 className="pill justify-start gap-3 text-red-600 hover:text-red-700 hover:scale-105 active:scale-95"
