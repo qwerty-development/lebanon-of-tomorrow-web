@@ -765,24 +765,9 @@ function AttendeeCard({
         <div className="flex-1 space-y-2">
           <div className="flex flex-col sm:flex-row sm:items-center gap-2">
             <h3 className="font-semibold text-lg text-[var(--foreground)]">{attendee.name}</h3>
-            <span className="inline-flex items-center gap-1 text-sm text-[var(--muted)] font-mono">
-              <span className="w-1 h-1 rounded-full bg-[var(--muted)]" />
-              #{attendee.recordNumber}
-            </span>
+
           </div>
           <div className="flex flex-wrap gap-2 text-sm text-[var(--muted)]">
-            <span className="flex items-center gap-1">
-              <span className="w-1 h-1 rounded-full bg-[var(--brand)]" />
-              {attendee.governorate}
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="w-1 h-1 rounded-full bg-[var(--brand)]" />
-              {attendee.district}
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="w-1 h-1 rounded-full bg-[var(--brand)]" />
-              {attendee.area}
-            </span>
             {attendee.phone && (
               <span className="flex items-center gap-1">
                 <span className="w-1 h-1 rounded-full bg-[var(--brand)]" />
