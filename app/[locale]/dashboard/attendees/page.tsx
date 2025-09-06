@@ -29,6 +29,36 @@ type AttendeeWithStatus = Attendee & {
   fieldStatuses: Record<string, { checkedAt: string | null; quantity: number }>;
 };
 
+// Modal types for mobile-friendly dialogs
+type QuantityModalProps = {
+  isOpen: boolean;
+  title: string;
+  message: string;
+  defaultValue: string;
+  maxValue?: number;
+  isSuperAdmin?: boolean;
+  isArabic?: boolean;
+  onConfirm: (value: string) => void;
+  onCancel: () => void;
+};
+
+type ConfirmModalProps = {
+  isOpen: boolean;
+  title: string;
+  message: string;
+  isArabic?: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+};
+
+type AlertModalProps = {
+  isOpen: boolean;
+  title: string;
+  message: string;
+  isArabic?: boolean;
+  onClose: () => void;
+};
+
 // Constants for pagination and performance
 const PAGE_SIZE = 50;
 const DEBOUNCE_DELAY = 300;
@@ -186,6 +216,51 @@ function generateSlashPatterns(searchTerm: string): string[] {
                 patterns.push(`%00961${sep}${before}${sep}${after}%`);
               }
             });
+          }
+          
+          // **NEW: CRITICAL FIX FOR REVERSE SEPARATOR MATCHING**
+          // When user searches "71182625" but DB has "71/182625" 
+          // We need to create patterns that will match DB values WITH separators
+          // This generates patterns like: %71/182625%, %71-182625%, %71 182625%, etc.
+          
+          // Try all possible separator positions for this digit string
+          for (let sepPos = 1; sepPos < digitString.length; sepPos++) {
+            const beforeSep = digitString.substring(0, sepPos);
+            const afterSep = digitString.substring(sepPos);
+            
+            if (beforeSep.length >= 1 && afterSep.length >= 1) {
+              separators.forEach(sep => {
+                // Basic separator pattern
+                patterns.push(`%${beforeSep}${sep}${afterSep}%`);
+                
+                // With leading zero variations
+                patterns.push(`%0${beforeSep}${sep}${afterSep}%`);
+                patterns.push(`%00${beforeSep}${sep}${afterSep}%`);
+                patterns.push(`%${beforeSep}${sep}0${afterSep}%`);
+                
+                // Phone number variations
+                if (digitString.length >= 6) {
+                  patterns.push(`%+961${beforeSep}${sep}${afterSep}%`);
+                  patterns.push(`%961${beforeSep}${sep}${afterSep}%`);
+                  patterns.push(`%00961${beforeSep}${sep}${afterSep}%`);
+                  patterns.push(`%+961 ${beforeSep}${sep}${afterSep}%`);
+                  patterns.push(`%961 ${beforeSep}${sep}${afterSep}%`);
+                }
+                
+                // Multiple separator combinations
+                if (afterSep.length >= 4) {
+                  // Split the second part further
+                  for (let secondSepPos = 2; secondSepPos < afterSep.length - 1; secondSepPos++) {
+                    const middlePart = afterSep.substring(0, secondSepPos);
+                    const endPart = afterSep.substring(secondSepPos);
+                    
+                    patterns.push(`%${beforeSep}${sep}${middlePart}${sep}${endPart}%`);
+                    patterns.push(`%0${beforeSep}${sep}${middlePart}${sep}${endPart}%`);
+                    patterns.push(`%+961${beforeSep}${sep}${middlePart}${sep}${endPart}%`);
+                  }
+                }
+              });
+            }
           }
         }
       });
@@ -348,6 +423,264 @@ function generateSlashPatterns(searchTerm: string): string[] {
   return uniquePatterns.slice(0, 100);
 }
 
+// Mobile-friendly Quantity Input Modal
+function QuantityModal({ 
+  isOpen, 
+  title, 
+  message, 
+  defaultValue, 
+  maxValue,
+  isSuperAdmin = false,
+  isArabic = false,
+  onConfirm, 
+  onCancel 
+}: QuantityModalProps) {
+  const [value, setValue] = useState(defaultValue);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      setValue(defaultValue);
+      // Prevent body scroll on mobile
+      document.body.style.overflow = 'hidden';
+      // Focus input after modal animation
+      setTimeout(() => {
+        inputRef.current?.focus();
+        inputRef.current?.select();
+      }, 100);
+    } else {
+      // Restore body scroll
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen, defaultValue]);
+
+  if (!isOpen) return null;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onConfirm(value);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      onCancel();
+    }
+  };
+
+  return (
+    <div 
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      onClick={onCancel}
+      onKeyDown={handleKeyDown}
+      tabIndex={-1}
+    >
+      <div 
+        className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full mx-auto transform transition-all animate-in fade-in-0 zoom-in-95 duration-200"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-6">
+          <div className="text-center mb-6">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              {title}
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+              {message}
+            </p>
+            {isSuperAdmin && (
+              <div className="mt-3 px-3 py-2 bg-orange-100 dark:bg-orange-900/30 border border-orange-300 dark:border-orange-600 rounded-lg">
+                <span className="text-xs font-bold text-orange-800 dark:text-orange-200">
+                  🚨 {isArabic ? "وضع المدير المتفوق" : "SUPER ADMIN MODE"}
+                </span>
+              </div>
+            )}
+          </div>
+          
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <input
+                ref={inputRef}
+                type="number"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                min="1"
+                max={isSuperAdmin ? "999" : maxValue}
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                className="w-full px-4 py-3 text-lg text-center border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:border-blue-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors touch-manipulation"
+                placeholder={isArabic ? "أدخل الكمية" : "Enter quantity"}
+                autoFocus
+              />
+              {maxValue && !isSuperAdmin && (
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 text-center">
+                  {isArabic ? `الحد الأقصى: ${maxValue}` : `Max: ${maxValue}`}
+                </p>
+              )}
+            </div>
+            
+            <div className="flex gap-3 pt-4">
+              <button
+                type="button"
+                onClick={onCancel}
+                className="flex-1 px-4 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors touch-manipulation min-h-[48px]"
+              >
+                {isArabic ? "إلغاء" : "Cancel"}
+              </button>
+              <button
+                type="submit"
+                className="flex-1 px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-medium transition-colors touch-manipulation min-h-[48px]"
+              >
+                {isArabic ? "تأكيد" : "Confirm"}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Mobile-friendly Confirmation Modal
+function ConfirmModal({ 
+  isOpen, 
+  title, 
+  message, 
+  isArabic = false, 
+  onConfirm, 
+  onCancel 
+}: ConfirmModalProps) {
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      onCancel();
+    } else if (e.key === 'Enter') {
+      onConfirm();
+    }
+  };
+
+  return (
+    <div 
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      onClick={onCancel}
+      onKeyDown={handleKeyDown}
+      tabIndex={-1}
+    >
+      <div 
+        className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full mx-auto transform transition-all animate-in fade-in-0 zoom-in-95 duration-200"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-6">
+          <div className="text-center mb-6">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              {title}
+            </h3>
+            <div className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed whitespace-pre-line">
+              {message}
+            </div>
+          </div>
+          
+          <div className="flex gap-3">
+            <button
+              onClick={onCancel}
+              className="flex-1 px-4 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors touch-manipulation min-h-[48px]"
+            >
+              {isArabic ? "إلغاء" : "Cancel"}
+            </button>
+            <button
+              onClick={onConfirm}
+              className="flex-1 px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-medium transition-colors touch-manipulation min-h-[48px]"
+            >
+              {isArabic ? "تأكيد" : "Confirm"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Mobile-friendly Alert Modal
+function AlertModal({ 
+  isOpen, 
+  title, 
+  message, 
+  isArabic = false, 
+  onClose 
+}: AlertModalProps) {
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape' || e.key === 'Enter') {
+      onClose();
+    }
+  };
+
+  return (
+    <div 
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+      onKeyDown={handleKeyDown}
+      tabIndex={-1}
+    >
+      <div 
+        className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full mx-auto transform transition-all animate-in fade-in-0 zoom-in-95 duration-200"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-6">
+          <div className="text-center mb-6">
+            <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              {title}
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+              {message}
+            </p>
+          </div>
+          
+          <button
+            onClick={onClose}
+            className="w-full px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-medium transition-colors touch-manipulation min-h-[48px]"
+          >
+            {isArabic ? "موافق" : "OK"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function AttendeesPage() {
   const { locale } = useParams<{ locale: "en" | "ar" }>();
   const isArabic = locale === "ar";
@@ -388,9 +721,121 @@ export default function AttendeesPage() {
   const [loadError, setLoadError] = useState<string>("");
   const [isOnline, setIsOnline] = useState(true);
 
+  // Modal state for mobile-friendly dialogs
+  const [quantityModal, setQuantityModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    defaultValue: string;
+    maxValue?: number;
+    isSuperAdmin?: boolean;
+    onConfirm: (value: string) => void;
+    onCancel?: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    defaultValue: '1',
+    onConfirm: () => {}
+  });
+
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+    onCancel?: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {}
+  });
+
+  const [alertModal, setAlertModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onClose?: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: ''
+  });
+
   // Refs for cleanup and optimization
   const abortControllerRef = useRef<AbortController | null>(null);
   const realtimeChannelRef = useRef<any>(null);
+
+  // Utility functions for mobile-friendly modals
+  const showQuantityModal = (
+    title: string,
+    message: string,
+    defaultValue: string = '1',
+    maxValue?: number,
+    isSuperAdmin: boolean = false
+  ): Promise<string | null> => {
+    return new Promise((resolve) => {
+      const handleConfirm = (value: string) => {
+        setQuantityModal(prev => ({ ...prev, isOpen: false }));
+        resolve(value);
+      };
+      
+      const handleCancel = () => {
+        setQuantityModal(prev => ({ ...prev, isOpen: false }));
+        resolve(null);
+      };
+      
+      setQuantityModal({
+        isOpen: true,
+        title,
+        message,
+        defaultValue,
+        maxValue,
+        isSuperAdmin,
+        onConfirm: handleConfirm,
+        onCancel: handleCancel
+      });
+    });
+  };
+
+  const showConfirmModal = (title: string, message: string): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const handleConfirm = () => {
+        setConfirmModal(prev => ({ ...prev, isOpen: false }));
+        resolve(true);
+      };
+      
+      const handleCancel = () => {
+        setConfirmModal(prev => ({ ...prev, isOpen: false }));
+        resolve(false);
+      };
+      
+      setConfirmModal({
+        isOpen: true,
+        title,
+        message,
+        onConfirm: handleConfirm,
+        onCancel: handleCancel
+      });
+    });
+  };
+
+  const showAlertModal = (title: string, message: string): Promise<void> => {
+    return new Promise((resolve) => {
+      const handleClose = () => {
+        setAlertModal(prev => ({ ...prev, isOpen: false }));
+        resolve();
+      };
+      
+      setAlertModal({
+        isOpen: true,
+        title,
+        message,
+        onClose: handleClose
+      });
+    });
+  };
 
   // Translations
   const t = {
@@ -996,6 +1441,9 @@ export default function AttendeesPage() {
               onMarkField={handleMarkField}
               translations={t}
               isArabic={isArabic}
+              showQuantityModal={showQuantityModal}
+              showConfirmModal={showConfirmModal}
+              showAlertModal={showAlertModal}
             />
           ))}
         </div>
@@ -1020,6 +1468,36 @@ export default function AttendeesPage() {
           </div>
         )}
       </div>
+
+      {/* Mobile-friendly Modal Components */}
+      <QuantityModal
+        isOpen={quantityModal.isOpen}
+        title={quantityModal.title}
+        message={quantityModal.message}
+        defaultValue={quantityModal.defaultValue}
+        maxValue={quantityModal.maxValue}
+        isSuperAdmin={quantityModal.isSuperAdmin}
+        isArabic={isArabic}
+        onConfirm={quantityModal.onConfirm}
+        onCancel={quantityModal.onCancel || (() => setQuantityModal(prev => ({ ...prev, isOpen: false })))}
+      />
+      
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        isArabic={isArabic}
+        onConfirm={confirmModal.onConfirm}
+        onCancel={confirmModal.onCancel || (() => setConfirmModal(prev => ({ ...prev, isOpen: false })))}
+      />
+      
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        title={alertModal.title}
+        message={alertModal.message}
+        isArabic={isArabic}
+        onClose={alertModal.onClose || (() => setAlertModal(prev => ({ ...prev, isOpen: false })))}
+      />
     </div>
   );
 }
@@ -1034,7 +1512,10 @@ function AttendeeCard({
   busy,
   onMarkField,
   translations: t,
-  isArabic
+  isArabic,
+  showQuantityModal,
+  showConfirmModal,
+  showAlertModal
 }: {
   attendee: AttendeeWithStatus;
   fields: Field[];
@@ -1045,6 +1526,9 @@ function AttendeeCard({
   onMarkField: (attendee: AttendeeWithStatus, field: Field, quantity?: number) => Promise<void>;
   translations: any;
   isArabic: boolean;
+  showQuantityModal: (title: string, message: string, defaultValue?: string, maxValue?: number, isSuperAdmin?: boolean) => Promise<string | null>;
+  showConfirmModal: (title: string, message: string) => Promise<boolean>;
+  showAlertModal: (title: string, message: string) => Promise<void>;
 }) {
   return (
     <div className="card p-4 lg:p-6 hover:shadow-xl transition-all duration-300">
@@ -1104,36 +1588,48 @@ function AttendeeCard({
                   
                   if (isSuperAdmin) {
                     if (!isUnchecking) {
-                      const input = window.prompt(
-                        `${isArabic ? "أدخل الكمية (المدير المتفوق يمكنه تجاوز الحد الأقصى)" : "Enter quantity (Super Admin can exceed limits)"} (1 - 999)`, 
-                        "1"
+                      const input = await showQuantityModal(
+                        isArabic ? "إدخال الكمية - مدير متفوق" : "Enter Quantity - Super Admin",
+                        `${isArabic ? "أدخل الكمية (المدير المتفوق يمكنه تجاوز الحد الأقصى)" : "Enter quantity (Super Admin can exceed limits)"}\n(1 - 999)`,
+                        "1",
+                        999,
+                        true
                       );
                       if (input == null) return;
                       const parsed = parseInt(input, 10);
                       if (!Number.isFinite(parsed) || parsed < 1) {
-                        alert(isArabic ? "قيمة غير صالحة" : "Invalid quantity");
+                        await showAlertModal(
+                          isArabic ? "خطأ" : "Error",
+                          isArabic ? "قيمة غير صالحة" : "Invalid quantity"
+                        );
                         return;
                       }
                       selectedQty = parsed;
                     }
                     
-                    const superAdminConfirm = window.confirm(
-                      `🚨 SUPER ADMIN ACTION 🚨\n\n` +
-                      `${isUnchecking ? "Force uncheck" : "Force check-in"} ${field.name} for ${attendee.name}\n` +
-                      `Quantity: ${selectedQty}\n\n` +
-                      `This action bypasses all restrictions!\n` +
-                      `Are you sure?`
+                    const superAdminConfirm = await showConfirmModal(
+                      "🚨 SUPER ADMIN ACTION 🚨",
+                      `${isUnchecking ? "Force uncheck" : "Force check-in"} ${field.name} for ${attendee.name}\nQuantity: ${selectedQty}\n\nThis action bypasses all restrictions!\nAre you sure?`
                     );
                     if (!superAdminConfirm) return;
                   } else {
                     if (!isUnchecking) {
                       const maxQty = Math.max(1, attendee.quantity ?? 1);
                       if (maxQty > 1) {
-                        const input = window.prompt(`${t.enterQty} (1 - ${maxQty})`, "1");
+                        const input = await showQuantityModal(
+                          isArabic ? "إدخال الكمية" : "Enter Quantity",
+                          `${t.enterQty} (1 - ${maxQty})`,
+                          "1",
+                          maxQty,
+                          false
+                        );
                         if (input == null) return;
                         const parsed = parseInt(input, 10);
                         if (!Number.isFinite(parsed) || parsed < 1 || parsed > maxQty) {
-                          alert(t.invalidQty);
+                          await showAlertModal(
+                            isArabic ? "خطأ" : "Error",
+                            t.invalidQty
+                          );
                           return;
                         }
                         selectedQty = parsed;
@@ -1141,7 +1637,11 @@ function AttendeeCard({
                     }
                     
                     const action = isUnchecking ? (isArabic ? "إلغاء تأكيد" : "Uncheck") : (isArabic ? "تأكيد" : "Check");
-                    if (!window.confirm(`${t.confirmPrefix}${action} ${field.name} - ${attendee.name}`)) return;
+                    const confirmed = await showConfirmModal(
+                      isArabic ? "تأكيد العملية" : "Confirm Action",
+                      `${t.confirmPrefix}${action} ${field.name} - ${attendee.name}`
+                    );
+                    if (!confirmed) return;
                   }
                   
                   await onMarkField(attendee, field, selectedQty);
