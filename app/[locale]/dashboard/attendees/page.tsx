@@ -74,6 +74,280 @@ async function withRetry<T>(
   throw lastError;
 }
 
+// Helper function to generate ultra-comprehensive search patterns for any input
+function generateSlashPatterns(searchTerm: string): string[] {
+  const patterns: string[] = [];
+  
+  // Always add the original search term (case insensitive)
+  patterns.push(`%${searchTerm.toLowerCase()}%`);
+  
+  // Check if search term contains digits
+  const hasDigits = /\d/.test(searchTerm);
+  
+  if (hasDigits) {
+    // Extract all digits from the search term
+    const allDigits = searchTerm.replace(/\D/g, '');
+    
+    if (allDigits.length >= 2) {
+      // 1. BASIC DIGIT PATTERNS
+      patterns.push(`%${allDigits}%`); // Just the digits
+      
+      // 2. LEADING ZEROS VARIATIONS (super broad)
+      for (let leadingZeros = 1; leadingZeros <= 4; leadingZeros++) {
+        const zerosPrefix = '0'.repeat(leadingZeros);
+        patterns.push(`%${zerosPrefix}${allDigits}%`);
+      }
+      
+      // 3. **CRITICAL FIX** - REMOVE LEADING ZEROS FROM SEARCH
+      // If user searches "03463479", also search for "3463479" (without leading zeros)
+      let trimmedDigits = allDigits;
+      while (trimmedDigits.startsWith('0') && trimmedDigits.length > 1) {
+        trimmedDigits = trimmedDigits.substring(1);
+        patterns.push(`%${trimmedDigits}%`);
+        
+        // Also add variations with different separators for the trimmed number
+        if (trimmedDigits.length >= 3) {
+          for (let i = 1; i < trimmedDigits.length; i++) {
+            const before = trimmedDigits.substring(0, i);
+            const after = trimmedDigits.substring(i);
+            patterns.push(`%${before}/${after}%`);
+            patterns.push(`%${before}-${after}%`);
+            patterns.push(`%${before} ${after}%`);
+          }
+        }
+      }
+      
+      // 4. PHONE NUMBER PATTERNS - LEBANON SPECIFIC & INTERNATIONAL
+      if (allDigits.length >= 6) {
+        // Lebanese mobile patterns (961, +961, 00961)
+        patterns.push(`%961${allDigits}%`);
+        patterns.push(`%+961${allDigits}%`);
+        patterns.push(`%00961${allDigits}%`);
+        
+        // Also try with trimmed digits
+        if (trimmedDigits !== allDigits && trimmedDigits.length >= 6) {
+          patterns.push(`%961${trimmedDigits}%`);
+          patterns.push(`%+961${trimmedDigits}%`);
+          patterns.push(`%00961${trimmedDigits}%`);
+        }
+        
+        // Common Lebanese mobile prefixes
+        const lebMobilePrefixes = ['03', '70', '71', '76', '78', '79', '81'];
+        lebMobilePrefixes.forEach(prefix => {
+          if (allDigits.startsWith(prefix) || allDigits.includes(prefix)) {
+            patterns.push(`%${prefix}${allDigits.replace(prefix, '')}%`);
+            patterns.push(`%0${prefix}${allDigits.replace(prefix, '')}%`);
+            patterns.push(`%961${prefix}${allDigits.replace(prefix, '')}%`);
+            patterns.push(`%+961${prefix}${allDigits.replace(prefix, '')}%`);
+          }
+          
+          // Try with trimmed digits too
+          if (trimmedDigits !== allDigits && (trimmedDigits.startsWith(prefix) || trimmedDigits.includes(prefix))) {
+            patterns.push(`%${prefix}${trimmedDigits.replace(prefix, '')}%`);
+            patterns.push(`%0${prefix}${trimmedDigits.replace(prefix, '')}%`);
+            patterns.push(`%961${prefix}${trimmedDigits.replace(prefix, '')}%`);
+            patterns.push(`%+961${prefix}${trimmedDigits.replace(prefix, '')}%`);
+          }
+        });
+        
+        // If digits might be part of phone number, try common formats
+        patterns.push(`%+${allDigits}%`);
+        patterns.push(`%00${allDigits}%`);
+        if (trimmedDigits !== allDigits) {
+          patterns.push(`%+${trimmedDigits}%`);
+          patterns.push(`%00${trimmedDigits}%`);
+        }
+      }
+      
+      // 5. ALL POSSIBLE SEPARATOR COMBINATIONS
+      const separators = ['/', '-', ' ', '_', '.', '(', ')', '+'];
+      
+      // Single separator at every possible position - for both original and trimmed
+      [allDigits, trimmedDigits].forEach(digitString => {
+        if (digitString.length >= 2) {
+          for (let i = 1; i < digitString.length; i++) {
+            const before = digitString.substring(0, i);
+            const after = digitString.substring(i);
+            
+            separators.forEach(sep => {
+              patterns.push(`%${before}${sep}${after}%`);
+              
+              // With leading zeros
+              for (let zeros = 1; zeros <= 3; zeros++) {
+                const zeroPrefix = '0'.repeat(zeros);
+                patterns.push(`%${zeroPrefix}${before}${sep}${after}%`);
+                patterns.push(`%${before}${sep}${zeroPrefix}${after}%`);
+              }
+              
+              // Phone number specific formats
+              if (digitString.length >= 6) {
+                patterns.push(`%961${sep}${before}${sep}${after}%`);
+                patterns.push(`%+961${sep}${before}${sep}${after}%`);
+                patterns.push(`%00961${sep}${before}${sep}${after}%`);
+              }
+            });
+          }
+        }
+      });
+      
+      // 6. MULTIPLE SEPARATORS - Common phone formats
+      [allDigits, trimmedDigits].forEach(digitString => {
+        if (digitString.length >= 6) {
+          const commonPhoneFormats = [
+            // Lebanese formats
+            `%+961 ${digitString.substring(0, 2)} ${digitString.substring(2)}%`,
+            `%+961-${digitString.substring(0, 2)}-${digitString.substring(2)}%`,
+            `%961 ${digitString.substring(0, 2)} ${digitString.substring(2)}%`,
+            `%961-${digitString.substring(0, 2)}-${digitString.substring(2)}%`,
+            `%00961 ${digitString.substring(0, 2)} ${digitString.substring(2)}%`,
+            `%00961-${digitString.substring(0, 2)}-${digitString.substring(2)}%`,
+            
+            // Local formats
+            `%0${digitString.substring(0, 2)} ${digitString.substring(2)}%`,
+            `%0${digitString.substring(0, 2)}-${digitString.substring(2)}%`,
+            `%0${digitString.substring(0, 2)}/${digitString.substring(2)}%`,
+            
+            // International formats
+            `%(+961) ${digitString.substring(0, 2)} ${digitString.substring(2)}%`,
+            `%(961) ${digitString.substring(0, 2)} ${digitString.substring(2)}%`,
+          ];
+          
+          // Add different splitting positions for each format
+          for (let splitPos = 2; splitPos <= Math.min(4, digitString.length - 2); splitPos++) {
+            const part1 = digitString.substring(0, splitPos);
+            const part2 = digitString.substring(splitPos);
+            
+            commonPhoneFormats.push(
+              `%+961 ${part1} ${part2}%`,
+              `%+961-${part1}-${part2}%`,
+              `%961 ${part1} ${part2}%`,
+              `%961-${part1}-${part2}%`,
+              `%0${part1} ${part2}%`,
+              `%0${part1}-${part2}%`,
+              `%0${part1}/${part2}%`,
+              `%(+961) ${part1} ${part2}%`,
+              `%(961) ${part1} ${part2}%`
+            );
+            
+            // Triple split for longer numbers
+            if (part2.length >= 4) {
+              const subPart1 = part2.substring(0, Math.floor(part2.length / 2));
+              const subPart2 = part2.substring(Math.floor(part2.length / 2));
+              
+              commonPhoneFormats.push(
+                `%+961 ${part1} ${subPart1} ${subPart2}%`,
+                `%+961-${part1}-${subPart1}-${subPart2}%`,
+                `%961 ${part1} ${subPart1} ${subPart2}%`,
+                `%961-${part1}-${subPart1}-${subPart2}%`,
+                `%0${part1} ${subPart1} ${subPart2}%`,
+                `%0${part1}-${subPart1}-${subPart2}%`,
+                `%(+961) ${part1} ${subPart1} ${subPart2}%`,
+                `%(961) ${part1} ${subPart1} ${subPart2}%`
+              );
+            }
+          }
+          
+          patterns.push(...commonPhoneFormats);
+        }
+      });
+      
+      // 7. RECORD NUMBER PATTERNS
+      [allDigits, trimmedDigits].forEach(digitString => {
+        if (digitString.length >= 3) {
+          // Common record number formats
+          const recordFormats = [
+            `%${digitString.substring(0, 2)}/${digitString.substring(2)}%`,
+            `%${digitString.substring(0, 3)}/${digitString.substring(3)}%`,
+            `%${digitString.substring(0, 2)}-${digitString.substring(2)}%`,
+            `%${digitString.substring(0, 3)}-${digitString.substring(3)}%`,
+            `%REC${digitString}%`,
+            `%rec${digitString}%`,
+            `%R${digitString}%`,
+            `%r${digitString}%`,
+          ];
+          
+          // With leading zeros
+          recordFormats.forEach(format => {
+            patterns.push(format);
+            for (let zeros = 1; zeros <= 3; zeros++) {
+              const zeroPrefix = '0'.repeat(zeros);
+              patterns.push(format.replace(digitString, `${zeroPrefix}${digitString}`));
+            }
+          });
+        }
+      });
+      
+      // 8. SUBSTRING MATCHING - Find digits as part of longer sequences
+      // This finds the search digits anywhere within larger numbers
+      [allDigits, trimmedDigits].forEach(digitString => {
+        if (digitString.length >= 3) {
+          patterns.push(`%${digitString}%`); // Already added, but ensures it's there
+        }
+      });
+      
+      // 9. REVERSED PATTERNS (sometimes numbers are stored/displayed differently)
+      [allDigits, trimmedDigits].forEach(digitString => {
+        if (digitString.length >= 4) {
+          const reversed = digitString.split('').reverse().join('');
+          patterns.push(`%${reversed}%`);
+          
+          // Reversed with separators
+          for (let i = 1; i < reversed.length; i++) {
+            const before = reversed.substring(0, i);
+            const after = reversed.substring(i);
+            patterns.push(`%${before}/${after}%`);
+            patterns.push(`%${before}-${after}%`);
+            patterns.push(`%${before} ${after}%`);
+          }
+        }
+      });
+      
+      // 10. PARTIAL MATCHING - Super broad
+      [allDigits, trimmedDigits].forEach(digitString => {
+        if (digitString.length >= 4) {
+          // Take different chunks of the digits
+          for (let start = 0; start < digitString.length - 2; start++) {
+            for (let length = 3; length <= digitString.length - start; length++) {
+              const chunk = digitString.substring(start, start + length);
+              if (chunk.length >= 3) {
+                patterns.push(`%${chunk}%`);
+                patterns.push(`%0${chunk}%`);
+                patterns.push(`%00${chunk}%`);
+              }
+            }
+          }
+        }
+      });
+    }
+  }
+  
+  // 11. NON-NUMERIC PATTERNS (for names, etc.)
+  if (!searchTerm.match(/^\d+$/)) {
+    // Add case variations
+    patterns.push(`%${searchTerm.toUpperCase()}%`);
+    
+    // Add patterns for names with common prefixes/suffixes
+    const namePrefixes = ['mr', 'mrs', 'ms', 'dr', 'prof'];
+    const nameSuffixes = ['jr', 'sr', 'ii', 'iii'];
+    
+    namePrefixes.forEach(prefix => {
+      patterns.push(`%${prefix} ${searchTerm.toLowerCase()}%`);
+      patterns.push(`%${prefix.toUpperCase()} ${searchTerm.toLowerCase()}%`);
+    });
+    
+    nameSuffixes.forEach(suffix => {
+      patterns.push(`%${searchTerm.toLowerCase()} ${suffix}%`);
+      patterns.push(`%${searchTerm.toLowerCase()} ${suffix.toUpperCase()}%`);
+    });
+  }
+  
+  // 12. Remove duplicates and limit to reasonable number
+  const uniquePatterns = [...new Set(patterns)];
+  
+  // Return first 100 most relevant patterns to avoid query complexity
+  return uniquePatterns.slice(0, 100);
+}
+
 export default function AttendeesPage() {
   const { locale } = useParams<{ locale: "en" | "ar" }>();
   const isArabic = locale === "ar";
@@ -220,10 +494,24 @@ export default function AttendeesPage() {
           age
         `, { count: 'exact' });
 
-      // Apply filters
+      // Apply filters with ultra-comprehensive search patterns
       if (debouncedQuery) {
-        const searchTerm = `%${debouncedQuery.toLowerCase()}%`;
-        query = query.or(`name.ilike.${searchTerm},record_number.ilike.${searchTerm},phone.ilike.${searchTerm}`);
+        const searchPatterns = generateSlashPatterns(debouncedQuery);
+        const searchConditions: string[] = [];
+        
+        console.log(`Generated ${searchPatterns.length} search patterns for: "${debouncedQuery}"`);
+        
+        // Use all generated patterns (already limited to 100 in the function)
+        searchPatterns.forEach(pattern => {
+          searchConditions.push(`name.ilike.${pattern}`);
+          searchConditions.push(`record_number.ilike.${pattern}`);
+          searchConditions.push(`phone.ilike.${pattern}`);
+        });
+        
+        // Combine all conditions with OR
+        if (searchConditions.length > 0) {
+          query = query.or(searchConditions.join(','));
+        }
       }
 
       if (govFilter) query = query.eq("governorate", govFilter);
