@@ -18,7 +18,7 @@ export default function StatsPage() {
 
   const [total, setTotal] = useState(0);
   const [fieldCounts, setFieldCounts] = useState<
-    { id: string; name: string; count: number }[]
+    { id: string; name: string; accountCount: number; peopleCount: number; isMain: boolean }[]
   >([]);
   const [mainEntranceQuantity, setMainEntranceQuantity] = useState(0);
   const [totalQuantityDistributed, setTotalQuantityDistributed] = useState(0);
@@ -37,44 +37,39 @@ export default function StatsPage() {
         .eq("is_enabled", true)
         .order("sort_order", { ascending: true });
 
-      const counts: { id: string; name: string; count: number }[] = [];
+      const counts: { id: string; name: string; accountCount: number; peopleCount: number; isMain: boolean }[] = [];
       let mainEntranceQty = 0;
       let totalQtyDistributed = 0;
 
       for (const f of fieldRows ?? []) {
-        // Get quantity data for this field
+        // Get account count (number of check-ins) for this field
+        const { count: accountCount } = await supabase
+          .from("attendee_field_status")
+          .select("attendee_id", { count: "exact", head: true })
+          .eq("field_id", f.id)
+          .not("checked_at", "is", null);
+
+        // Get people count (sum of quantities) for this field
         const { data: quantityData } = await supabase
           .from("attendee_field_status")
           .select("quantity")
           .eq("field_id", f.id)
           .not("checked_at", "is", null);
 
-        const fieldQuantity =
-          quantityData?.reduce((sum, row) => sum + (row.quantity || 1), 0) || 0;
-        totalQtyDistributed += fieldQuantity;
+        const peopleCount = quantityData?.reduce((sum, row) => sum + (row.quantity || 1), 0) || 0;
+        totalQtyDistributed += peopleCount;
 
         if (f.is_main) {
-          // For main entrance, store quantity separately but show check-ins in the main list
-          mainEntranceQty = fieldQuantity;
-
-          // Get check-in count for main entrance (original behavior)
-          const { count } = await supabase
-            .from("attendee_field_status")
-            .select("attendee_id", { count: "exact", head: true })
-            .eq("field_id", f.id)
-            .not("checked_at", "is", null);
-
-          counts.push({ id: f.id, name: f.name, count: count ?? 0 });
-        } else {
-          // For other fields, count the number of check-ins (not quantities)
-          const { count } = await supabase
-            .from("attendee_field_status")
-            .select("attendee_id", { count: "exact", head: true })
-            .eq("field_id", f.id)
-            .not("checked_at", "is", null);
-
-          counts.push({ id: f.id, name: f.name, count: count ?? 0 });
+          mainEntranceQty = peopleCount;
         }
+
+        counts.push({ 
+          id: f.id, 
+          name: f.name, 
+          accountCount: accountCount ?? 0, 
+          peopleCount,
+          isMain: f.is_main ?? false
+        });
       }
 
       setFieldCounts(counts);
@@ -201,7 +196,7 @@ export default function StatsPage() {
             </div>
           </div>
           <div className="mt-4 flex items-center">
-            <div className="flex hidden items-center text-sm text-green-600 dark:text-green-400">
+            <div className="hidden items-center text-sm text-green-600 dark:text-green-400">
               <svg
                 className="w-4 h-4 mr-1"
                 fill="none"
@@ -271,9 +266,15 @@ export default function StatsPage() {
           </div>
         </div>
 
-        {/* Field Statistics Cards */}
+        {/* Field Statistics Cards - All Fields */}
         {fieldCounts.map((f, index) => {
+          // Adjust colors for all fields including main entrance
           const colors = [
+            {
+              from: "from-amber-500", // Different color for main entrance
+              to: "to-amber-600",
+              border: "border-l-amber-500",
+            },
             {
               from: "from-green-500",
               to: "to-green-600",
@@ -305,22 +306,31 @@ export default function StatsPage() {
               border: "border-l-indigo-500",
             },
           ];
-          const colorSet = colors[index % colors.length];
-          const percentage =
-            total > 0 ? ((f.count / total) * 100).toFixed(1) : "0";
+          
+          // Use amber for main entrance (index 0), then cycle through other colors
+          const colorSet = f.isMain ? colors[0] : colors[(index % (colors.length - 1)) + 1];
+          const accountPercentage = total > 0 ? ((f.accountCount / total) * 100).toFixed(1) : "0";
 
           return (
             <div
               key={f.id}
-              className={`card p-6 hover:shadow-xl transition-all duration-300 border-l-4 ${colorSet.border}`}
+              className={`card p-6 hover:shadow-xl transition-all duration-300 border-l-4 ${colorSet.border} ${f.isMain ? 'ring-2 ring-amber-200 dark:ring-amber-800' : ''}`}
             >
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mb-3">
                 <div className="flex-1">
-                  <div className="text-sm font-medium text-[var(--muted)] mb-2">
+                  <div className="text-sm font-medium text-[var(--muted)] mb-2 flex items-center gap-2">
                     {f.name}
+                    {f.isMain && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200">
+                        {isArabic ? "رئيسي" : "Main"}
+                      </span>
+                    )}
                   </div>
-                  <div className="text-3xl font-bold text-[var(--foreground)]">
-                    {f.count.toLocaleString()}
+                  <div className="text-2xl font-bold text-[var(--foreground)] mb-1">
+                    {f.peopleCount.toLocaleString()}
+                  </div>
+                  <div className="text-xs text-[var(--muted)]">
+                    {f.accountCount.toLocaleString()} {isArabic ? "حساب" : "accounts"}
                   </div>
                 </div>
                 <div
@@ -332,28 +342,54 @@ export default function StatsPage() {
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
+                    {f.isMain ? (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                      />
+                    ) : (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    )}
                   </svg>
                 </div>
               </div>
-              <div className="mt-4 flex items-center justify-between">
-                <div className="flex items-center text-sm text-[var(--muted)]">
-                  <span>
-                    {percentage}% {isArabic ? "من الإجمالي" : "of total"}
-                  </span>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center text-sm text-[var(--muted)]">
+                    <span>
+                      {f.peopleCount} {isArabic ? "شخص" : "people"}
+                    </span>
+                  </div>
+                  <div className="w-16 h-2 bg-[var(--surface-2)] rounded-full overflow-hidden">
+                    <div
+                      className={`h-full bg-gradient-to-r ${colorSet.from} ${colorSet.to} rounded-full transition-all duration-500`}
+                      style={{
+                        width: `${Math.min(100, (f.peopleCount / Math.max(1, totalQuantityDistributed)) * 100)}%`,
+                      }}
+                    />
+                  </div>
                 </div>
-                <div className="w-16 h-2 bg-[var(--surface-2)] rounded-full overflow-hidden">
-                  <div
-                    className={`h-full bg-gradient-to-r ${colorSet.from} ${colorSet.to} rounded-full transition-all duration-500`}
-                    style={{
-                      width: `${Math.min(100, parseFloat(percentage))}%`,
-                    }}
-                  />
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center text-xs text-[var(--muted)]">
+                    <span>
+                      {accountPercentage}% {isArabic ? "من الحسابات" : "of accounts"}
+                    </span>
+                  </div>
+                  <div className="w-16 h-1.5 bg-[var(--surface-2)] rounded-full overflow-hidden">
+                    <div
+                      className={`h-full bg-gradient-to-r ${colorSet.from} ${colorSet.to} rounded-full transition-all duration-500 opacity-60`}
+                      style={{
+                        width: `${Math.min(100, parseFloat(accountPercentage))}%`,
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -368,15 +404,25 @@ export default function StatsPage() {
             <span className="w-2 h-2 rounded-full bg-[var(--brand)]" />
             {isArabic ? "ملخص الإحصائيات" : "Statistics Summary"}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="text-center">
               <div className="text-2xl font-bold text-[var(--foreground)] mb-1">
                 {fieldCounts
-                  .reduce((sum, f) => sum + f.count, 0)
+                  .reduce((sum, f) => sum + f.peopleCount, 0)
                   .toLocaleString()}
               </div>
               <div className="text-sm text-[var(--muted)]">
-                {isArabic ? "إجمالي الفحوصات" : "Total Checkpoints"}
+                {isArabic ? "إجمالي الزوار (أشخاص)" : "Total Visitors (People)"}
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-[var(--foreground)] mb-1">
+                {fieldCounts
+                  .reduce((sum, f) => sum + f.accountCount, 0)
+                  .toLocaleString()}
+              </div>
+              <div className="text-sm text-[var(--muted)]">
+                {isArabic ? "إجمالي الزوار (حسابات)" : "Total Visitors (Accounts)"}
               </div>
             </div>
             <div className="text-center">
@@ -391,7 +437,7 @@ export default function StatsPage() {
               <div className="text-2xl font-bold text-[var(--foreground)] mb-1">
                 {total > 0
                   ? Math.round(
-                      (fieldCounts.reduce((sum, f) => sum + f.count, 0) /
+                      (fieldCounts.reduce((sum, f) => sum + f.accountCount, 0) /
                         (total * fieldCounts.length)) *
                         100
                     )
