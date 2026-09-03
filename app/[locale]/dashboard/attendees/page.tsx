@@ -15,6 +15,8 @@ type Attendee = {
   phone: string | null;
   quantity: number;
   ages: number[];
+  batch: string;
+  preCollected: boolean;
 };
 
 type Field = { 
@@ -85,6 +87,7 @@ export default function AttendeesPage() {
   const [districtFilter, setDistrictFilter] = useState<string>("");
   const [areaFilter, setAreaFilter] = useState<string>("");
   const [selectedField, setSelectedField] = useState<string>("");
+  const [batchFilter, setBatchFilter] = useState<"active" | "south" | "all">("active");
   const [fieldCheckFilter, setFieldCheckFilter] = useState<"any" | "checked" | "not_checked">("any");
 
   // Sorting state
@@ -99,11 +102,9 @@ export default function AttendeesPage() {
   // Data state
   const [attendees, setAttendees] = useState<AttendeeWithStatus[]>([]);
   const [fields, setFields] = useState<Field[]>([]);
-  const [locationData, setLocationData] = useState<{
-    governorates: string[];
-    districts: string[];
-    areas: string[];
-  }>({ governorates: [], districts: [], areas: [] });
+  const [locationTriples, setLocationTriples] = useState<
+    { governorate: string; district: string; area: string }[]
+  >([]);
 
   // UI state
   const [busy, setBusy] = useState<Set<string>>(new Set());
@@ -144,6 +145,14 @@ export default function AttendeesPage() {
     loadMore: isArabic ? "تحميل المزيد" : "Load More",
     offline: isArabic ? "غير متصل" : "Offline",
     retry: isArabic ? "إعادة المحاولة" : "Retry",
+    list: isArabic ? "القائمة" : "List",
+    listActive: isArabic ? "التوزيع الحالي" : "Current distribution",
+    listSouth: isArabic ? "الجنوب (تم الاستلام)" : "South (already collected)",
+    listAll: isArabic ? "الكل" : "All",
+    collectedBadge: isArabic ? "تم الاستلام مسبقاً — الجنوب" : "ALREADY COLLECTED — SOUTH",
+    collectedNote: isArabic
+      ? "استلمت هذه العائلة في توزيع الجنوب. لا يمكن تسجيل المحطات."
+      : "Collected in the south distribution. Stations are locked.",
   };
 
   // Network status monitoring
@@ -173,18 +182,10 @@ export default function AttendeesPage() {
       if (fieldsError) throw fieldsError;
       setFields(fieldRows || []);
 
-      // Load location data for filters (aggregated)
-      const { data: locationRows, error: locationError } = await supabase
-        .from("attendees")
-        .select("governorate,district,area");
-
+      // One tiny RPC instead of pulling every attendee row just to build dropdowns.
+      const { data: triples, error: locationError } = await supabase.rpc("attendee_filter_options");
       if (locationError) throw locationError;
-
-      const governorates = Array.from(new Set(locationRows?.map(r => r.governorate) || [])).sort();
-      const districts = Array.from(new Set(locationRows?.map(r => r.district) || [])).sort();
-      const areas = Array.from(new Set(locationRows?.map(r => r.area) || [])).sort();
-
-      setLocationData({ governorates, districts, areas });
+      setLocationTriples((triples as any[]) || []);
     } catch (error) {
       console.error("Error loading static data:", error);
       setLoadError((error as Error).message);
@@ -205,47 +206,26 @@ export default function AttendeesPage() {
     }
 
     try {
-      // Build optimized query
-      let query = supabase
-        .from("attendees")
-        .select(`
-          id,
-          name,
-          record_number,
-          governorate,
-          district,
-          area,
-          phone,
-          quantity,
-          age
-        `, { count: 'exact' });
-
-      // Apply filters
-      if (debouncedQuery) {
-        const searchTerm = `%${debouncedQuery.toLowerCase()}%`;
-        query = query.or(`name.ilike.${searchTerm},record_number.ilike.${searchTerm},phone.ilike.${searchTerm}`);
-      }
-
-      if (govFilter) query = query.eq("governorate", govFilter);
-      if (districtFilter) query = query.eq("district", districtFilter);
-      if (areaFilter) query = query.eq("area", areaFilter);
-
-      // Apply sorting
-      const ascending = sortDir === "asc";
-      query = query.order(sortKey === "recordNumber" ? "record_number" : sortKey, { ascending });
-
-      // Apply pagination
-      const from = (page - 1) * PAGE_SIZE;
-      const to = from + PAGE_SIZE - 1;
-      query = query.range(from, to);
-
-      const { data, error, count } = await query;
+      // Everything (filter + page + per-attendee statuses) in ONE round trip.
+      const { data, error } = await supabase.rpc("search_attendees", {
+        p_query: debouncedQuery || null,
+        p_governorate: govFilter || null,
+        p_district: districtFilter || null,
+        p_area: areaFilter || null,
+        p_batch: batchFilter,
+        p_field_id: selectedField || null,
+        p_field_state: selectedField ? fieldCheckFilter : "any",
+        p_sort: sortKey === "recordNumber" ? "record_number" : sortKey,
+        p_dir: sortDir,
+        p_limit: PAGE_SIZE,
+        p_offset: (page - 1) * PAGE_SIZE,
+      });
 
       if (signal?.aborted) return;
       if (error) throw error;
 
-      // Transform data
-      const transformedData: AttendeeWithStatus[] = (data || []).map((r: any) => ({
+      const total = ((data as any)?.total as number) ?? 0;
+      const transformed: AttendeeWithStatus[] = (((data as any)?.rows ?? []) as any[]).map((r) => ({
         id: r.id,
         name: r.name,
         recordNumber: r.record_number,
@@ -254,61 +234,26 @@ export default function AttendeesPage() {
         area: r.area,
         phone: r.phone,
         quantity: r.quantity,
+        batch: r.batch,
+        preCollected: !!r.pre_collected,
         ages: Array.isArray(r.age)
-          ? (r.age as any[]).map((x) => (typeof x === "number" ? x : parseInt(String(x), 10))).filter((n) => Number.isFinite(n))
+          ? (r.age as any[])
+              .map((x) => (typeof x === "number" ? x : parseInt(String(x), 10)))
+              .filter((v) => Number.isFinite(v))
           : typeof r.age === "number"
           ? [r.age]
-          : typeof r.age === "string"
-          ? [parseInt(r.age, 10)].filter((n) => Number.isFinite(n))
           : [],
-        fieldStatuses: {}
+        fieldStatuses: Object.fromEntries(
+          Object.entries((r.statuses ?? {}) as Record<string, any>).map(([fid, st]) => [
+            fid,
+            { checkedAt: st?.checked_at ?? null, quantity: st?.quantity ?? 1 },
+          ])
+        ),
       }));
 
-      // Load field statuses for current batch
-      if (transformedData.length > 0) {
-        const attendeeIds = transformedData.map(a => a.id);
-        const { data: statusData, error: statusError } = await supabase
-          .from("attendee_field_status")
-          .select("attendee_id,field_id,checked_at,quantity")
-          .in("attendee_id", attendeeIds);
-
-        if (statusError) throw statusError;
-
-        // Map status data
-        const statusMap: Record<string, Record<string, { checkedAt: string | null; quantity: number }>> = {};
-        (statusData || []).forEach(row => {
-          if (!statusMap[row.attendee_id]) statusMap[row.attendee_id] = {};
-          statusMap[row.attendee_id][row.field_id] = {
-            checkedAt: row.checked_at,
-            quantity: row.quantity || 1
-          };
-        });
-
-        // Apply field check filter if specified
-        let filteredData = transformedData;
-        if (selectedField && fieldCheckFilter !== "any") {
-          filteredData = transformedData.filter(a => {
-            const checked = !!statusMap[a.id]?.[selectedField]?.checkedAt;
-            return fieldCheckFilter === "checked" ? checked : !checked;
-          });
-        }
-
-        // Update field statuses
-        filteredData.forEach(attendee => {
-          attendee.fieldStatuses = statusMap[attendee.id] || {};
-        });
-
-        if (append) {
-          setAttendees(prev => [...prev, ...filteredData]);
-        } else {
-          setAttendees(filteredData);
-        }
-      } else {
-        if (!append) setAttendees([]);
-      }
-
-      setTotalCount(count || 0);
-      setHasMore((count || 0) > page * PAGE_SIZE);
+      setAttendees((prev) => (append ? [...prev, ...transformed] : transformed));
+      setTotalCount(total);
+      setHasMore(total > page * PAGE_SIZE);
 
     } catch (error) {
       if (signal?.aborted) return;
@@ -318,7 +263,7 @@ export default function AttendeesPage() {
       setLoading(false);
       setLoadingMore(false);
     }
-  }, [debouncedQuery, govFilter, districtFilter, areaFilter, selectedField, fieldCheckFilter, sortKey, sortDir]);
+  }, [debouncedQuery, govFilter, districtFilter, areaFilter, batchFilter, selectedField, fieldCheckFilter, sortKey, sortDir]);
 
   // Load more handler
   const handleLoadMore = useCallback(() => {
@@ -332,7 +277,7 @@ export default function AttendeesPage() {
     setCurrentPage(1);
     setAttendees([]);
     setHasMore(true);
-  }, [debouncedQuery, govFilter, districtFilter, areaFilter, selectedField, fieldCheckFilter, sortKey, sortDir]);
+  }, [debouncedQuery, govFilter, districtFilter, areaFilter, batchFilter, selectedField, fieldCheckFilter, sortKey, sortDir]);
 
   // Load data when page changes
   useEffect(() => {
@@ -496,6 +441,28 @@ export default function AttendeesPage() {
 
   const mainField = fields.find(f => f.is_main);
 
+  // Dropdowns cascade off real gov->district->area combinations.
+  const governorates = useMemo(
+    () => Array.from(new Set(locationTriples.map(t => t.governorate).filter(Boolean))).sort(),
+    [locationTriples]
+  );
+  const districts = useMemo(
+    () => Array.from(new Set(
+      locationTriples.filter(t => !govFilter || t.governorate === govFilter)
+                     .map(t => t.district).filter(Boolean)
+    )).sort(),
+    [locationTriples, govFilter]
+  );
+  const areas = useMemo(
+    () => Array.from(new Set(
+      locationTriples
+        .filter(t => (!govFilter || t.governorate === govFilter) &&
+                     (!districtFilter || t.district === districtFilter))
+        .map(t => t.area).filter(Boolean)
+    )).sort(),
+    [locationTriples, govFilter, districtFilter]
+  );
+
   return (
     <div className="space-y-6">
       {/* Offline Banner */}
@@ -537,7 +504,20 @@ export default function AttendeesPage() {
 
       {/* Filters Panel */}
       <div className="glass rounded-2xl">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 text-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-4 text-sm">
+          <div>
+            <label className="text-[var(--muted)] text-sm font-medium mb-2 block">{t.list}</label>
+            <select
+              className="w-full glass rounded-xl px-3 py-2.5 border-[var(--border-glass)] focus:border-[var(--brand)] focus:outline-none transition-all"
+              value={batchFilter}
+              onChange={(e) => setBatchFilter(e.target.value as "active" | "south" | "all")}
+            >
+              <option value="active">{t.listActive}</option>
+              <option value="south">{t.listSouth}</option>
+              <option value="all">{t.listAll}</option>
+            </select>
+          </div>
+
           <div>
             <label className="text-[var(--muted)] text-sm font-medium mb-2 block">{t.governorate}</label>
             <select 
@@ -550,7 +530,7 @@ export default function AttendeesPage() {
               }}
             >
               <option value="">{t.any}</option>
-              {locationData.governorates.map((g) => (
+              {governorates.map((g) => (
                 <option key={g} value={g}>{g}</option>
               ))}
             </select>
@@ -570,11 +550,9 @@ export default function AttendeesPage() {
               disabled={!govFilter}
             >
               <option value="">{t.any}</option>
-              {locationData.districts
-                .filter(d => !govFilter || d === govFilter)
-                .map((d) => (
-                  <option key={d} value={d}>{d}</option>
-                ))}
+              {districts.map((d) => (
+                <option key={d} value={d}>{d}</option>
+              ))}
             </select>
           </div>
           
@@ -587,11 +565,9 @@ export default function AttendeesPage() {
               disabled={!districtFilter}
             >
               <option value="">{t.any}</option>
-              {locationData.areas
-                .filter(a => !districtFilter || a === districtFilter)
-                .map((a) => (
-                  <option key={a} value={a}>{a}</option>
-                ))}
+              {areas.map((a) => (
+                <option key={a} value={a}>{a}</option>
+              ))}
             </select>
           </div>
           
@@ -765,7 +741,16 @@ function AttendeeCard({
         <div className="flex-1 space-y-2">
           <div className="flex flex-col sm:flex-row sm:items-center gap-2">
             <h3 className="font-semibold text-lg text-[var(--foreground)]">{attendee.name}</h3>
-
+            {attendee.preCollected && (
+              <span
+                title={t.collectedNote}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold
+                           bg-[var(--muted)]/15 text-[var(--muted)] border border-[var(--muted)]/30"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--muted)]" />
+                {t.collectedBadge}
+              </span>
+            )}
           </div>
           <div className="flex flex-wrap gap-2 text-sm text-[var(--muted)]">
             {attendee.phone && (
@@ -794,7 +779,9 @@ function AttendeeCard({
             const checked = !!status?.checkedAt;
             const mainChecked = mainField ? !!attendee.fieldStatuses[mainField.id]?.checkedAt : true;
             const roleRestricted = !canUserModifyField(userRole, field.name);
-            const disabled = (!isSuperAdmin && !field.is_main && !mainChecked) || roleRestricted;
+            // Already served offline: nobody checks these in, super admin included.
+            const locked = attendee.preCollected;
+            const disabled = locked || (!isSuperAdmin && !field.is_main && !mainChecked) || roleRestricted;
             const key = `${attendee.id}:${field.id}`;
             const fieldQuantity = status?.checkedAt ? (status.quantity || 1) : 0;
             
@@ -805,6 +792,7 @@ function AttendeeCard({
                 active={checked}
                 disabled={disabled}
                 busy={busy.has(key)}
+                locked={locked}
                 isSuperAdmin={isSuperAdmin}
                 userRole={userRole}
                 fieldName={field.name}
@@ -872,6 +860,7 @@ function Station({
   label, 
   active, 
   disabled = false, 
+  locked = false,
   busy = false, 
   isSuperAdmin = false, 
   userRole, 
@@ -883,6 +872,7 @@ function Station({
   label: string; 
   active: boolean; 
   disabled?: boolean; 
+  locked?: boolean;
   busy?: boolean; 
   isSuperAdmin?: boolean; 
   userRole?: UserRole; 
@@ -892,7 +882,7 @@ function Station({
   onMark: () => Promise<void>;
 }) {
   const canModify = !fieldName || !userRole || canUserModifyField(userRole, fieldName);
-  const isDisabled = disabled || !canModify;
+  const isDisabled = disabled || !canModify || locked;
   const roleRestricted = !canModify && userRole && !['admin', 'super_admin'].includes(userRole);
   
   const baseClasses = "inline-flex items-center justify-center px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200";
@@ -905,9 +895,9 @@ function Station({
     return (
       <button
         disabled={busy || isDisabled}
-        title={isSuperAdmin ? `${label} (click to uncheck)` : label}
+        title={locked ? `${label} (already collected elsewhere)` : isSuperAdmin ? `${label} (click to uncheck)` : label}
         className={activeClasses}
-        onClick={isSuperAdmin && !busy && !isDisabled ? onMark : undefined}
+        onClick={isSuperAdmin && !locked && !busy && !isDisabled ? onMark : undefined}
       >
         {busy ? (
           <>
@@ -942,10 +932,10 @@ function Station({
   
   return (
     <button
-      disabled={busy || (isDisabled && !isSuperAdmin)}
-      title={isDisabled ? (isSuperAdmin ? `${label} (disabled - Super Admin can override)` : roleRestricted ? `${label} (role restricted)` : `${label} (disabled)`) : label}
+      disabled={busy || locked || (isDisabled && !isSuperAdmin)}
+      title={locked ? `${label} (already collected elsewhere)` : isDisabled ? (isSuperAdmin ? `${label} (disabled - Super Admin can override)` : roleRestricted ? `${label} (role restricted)` : `${label} (disabled)`) : label}
       className={inactiveClasses}
-      onClick={!busy && !isDisabled ? onMark : undefined}
+      onClick={!busy && !locked && !isDisabled ? onMark : undefined}
     >
       {busy ? (
         <>

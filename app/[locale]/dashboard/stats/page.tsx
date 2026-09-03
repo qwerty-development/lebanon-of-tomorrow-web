@@ -13,46 +13,51 @@ export default function StatsPage() {
   };
 
   const [total, setTotal] = useState(0);
-  const [fieldCounts, setFieldCounts] = useState<{ id: string; name: string; count: number }[]>([]);
+  const [children, setChildren] = useState(0);
+  const [south, setSouth] = useState({ attendees: 0, children: 0 });
+  const [fieldCounts, setFieldCounts] = useState<{ id: string; name: string; count: number; qty: number }[]>([]);
 
   useEffect(() => {
     let channel: any | null = null;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    let cancelled = false;
+
+    // One RPC for the whole page. Was 1 + (1 per field) queries, re-fired on
+    // every single realtime event.
     async function load() {
-      const { count: totalCount } = await supabase
-        .from("attendees")
-        .select("id", { count: "exact", head: true });
-      setTotal(totalCount ?? 0);
-      const { data: fieldRows } = await supabase
-        .from("fields")
-        .select("id,name,is_enabled,sort_order")
-        .eq("is_enabled", true)
-        .order("sort_order", { ascending: true });
-      const counts: { id: string; name: string; count: number }[] = [];
-      for (const f of fieldRows ?? []) {
-        const { count } = await supabase
-          .from("attendee_field_status")
-          .select("attendee_id", { count: "exact", head: true })
-          .eq("field_id", f.id)
-          .not("checked_at", "is", null);
-        counts.push({ id: f.id, name: f.name, count: count ?? 0 });
-      }
-      setFieldCounts(counts);
+      const { data, error } = await supabase.rpc("stats_summary");
+      if (error || cancelled || !data) return;
+      const d = data as any;
+      setTotal(d.active_attendees ?? 0);
+      setChildren(d.active_children ?? 0);
+      setSouth({ attendees: d.south_attendees ?? 0, children: d.south_children ?? 0 });
+      setFieldCounts(
+        ((d.fields ?? []) as any[]).map((f) => ({
+          id: f.id,
+          name: f.name,
+          count: f.checked_attendees ?? 0,
+          qty: f.checked_quantity ?? 0,
+        }))
+      );
     }
-    async function init() {
-      await load();
-      channel = supabase
-        .channel("stats-realtime")
-        .on("postgres_changes", { event: "*", schema: "public", table: "attendees" }, () => load())
-        .on(
-          "postgres_changes",
-          { event: "*", schema: "public", table: "attendee_field_status" },
-          () => load()
-        )
-        .on("postgres_changes", { event: "*", schema: "public", table: "fields" }, () => load())
-        .subscribe();
+
+    // A busy distribution fires many events per second; coalesce them.
+    function scheduleReload() {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(load, 1000);
     }
-    init();
+
+    load();
+    channel = supabase
+      .channel("stats-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "attendees" }, scheduleReload)
+      .on("postgres_changes", { event: "*", schema: "public", table: "attendee_field_status" }, scheduleReload)
+      .on("postgres_changes", { event: "*", schema: "public", table: "fields" }, scheduleReload)
+      .subscribe();
+
     return () => {
+      cancelled = true;
+      if (timer) clearTimeout(timer);
       if (channel) supabase.removeChannel(channel);
     };
   }, []);
@@ -89,10 +94,36 @@ export default function StatsPage() {
               <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
-              <span className="font-medium">{isArabic ? "إجمالي المسجلين" : "Total registered"}</span>
+              <span className="font-medium">
+                {children.toLocaleString()} {isArabic ? "طفل" : "children"}
+              </span>
             </div>
           </div>
         </div>
+
+        {/* South: already collected offline, excluded from every rate below */}
+        {south.attendees > 0 && (
+          <div className="card p-6 hover:shadow-xl transition-all duration-300 border-l-4 border-l-[var(--muted)] opacity-90">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <div className="text-sm font-medium text-[var(--muted)] mb-2">
+                  {isArabic ? "الجنوب (تم الاستلام)" : "South (already collected)"}
+                </div>
+                <div className="text-3xl font-bold text-[var(--foreground)]">
+                  {south.attendees.toLocaleString()}
+                </div>
+              </div>
+              <div className="w-12 h-12 rounded-full bg-[var(--muted)]/20 flex items-center justify-center">
+                <svg className="w-6 h-6 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            </div>
+            <div className="mt-4 text-sm text-[var(--muted)]">
+              {south.children.toLocaleString()} {isArabic ? "طفل — غير محتسب" : "children — not counted below"}
+            </div>
+          </div>
+        )}
 
         {/* Field Statistics Cards */}
         {fieldCounts.map((f, index) => {

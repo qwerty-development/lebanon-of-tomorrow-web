@@ -1,31 +1,12 @@
 "use client";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { RequireRole } from "@/components/auth/RequireRole";
 
-export default function AddAttendeePage() {
+function AddAttendeePageContent() {
   const { locale } = useParams<{ locale: "en" | "ar" }>();
   const isArabic = locale === "ar";
-  const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
-  const [checkingRole, setCheckingRole] = useState<boolean>(true);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const { data: userData } = await supabase.auth.getUser();
-        const userId = userData.user?.id;
-        if (!userId) return;
-        const { data } = await supabase
-          .from("profiles")
-          .select("role")
-          .eq("id", userId)
-          .maybeSingle();
-        setIsSuperAdmin(data?.role === "super_admin");
-      } finally {
-        setCheckingRole(false);
-      }
-    })();
-  }, []);
 
   const [form, setForm] = useState({
     name: "",
@@ -75,36 +56,6 @@ export default function AddAttendeePage() {
   const [status, setStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  if (checkingRole) {
-    return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="glass rounded-2xl p-8 text-center">
-          <div className="w-8 h-8 border-2 border-[var(--brand)] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-[var(--muted)]">{isArabic ? "جارٍ التحقق..." : "Checking permissions..."}</p>
-        </div>
-      </div>
-    );
-  }
-  
-  if (!isSuperAdmin) {
-    return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="glass rounded-2xl p-8 text-center max-w-md">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
-            <svg className="w-8 h-8 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-            </svg>
-          </div>
-          <h2 className="text-lg font-semibold text-[var(--foreground)] mb-2">
-            {isArabic ? "غير مصرح" : "Access Denied"}
-          </h2>
-          <p className="text-[var(--muted)]">
-            {isArabic ? "ليس لديك صلاحية للوصول إلى هذه الصفحة" : "You don't have permission to access this page"}
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
@@ -460,5 +411,19 @@ export default function AddAttendeePage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function AddAttendeePage() {
+  return (
+    <RequireRole 
+      allowedRoles={['super_admin']}
+      fallbackMessage={{
+        en: "Only Super Admins can add new attendees to the system",
+        ar: "يمكن للمشرف الأعلى فقط إضافة مشاركين جدد للنظام"
+      }}
+    >
+      <AddAttendeePageContent />
+    </RequireRole>
   );
 }

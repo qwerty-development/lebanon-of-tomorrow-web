@@ -3,25 +3,10 @@ import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 // events removed; using global fields
 import { useEffect, useState } from "react";
+import { RequireRole } from "@/components/auth/RequireRole";
+import { exportEverything } from "@/lib/exportData";
 
-async function downloadBlob(blob: Blob, filename: string): Promise<void> {
-  try {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => {
-      URL.revokeObjectURL(url);
-    }, 1000);
-  } catch (err) {
-    console.warn("CSV download failed:", err);
-  }
-}
-
-export default function AdminPage() {
+function AdminPageContent() {
   const { locale } = useParams<{ locale: "en" | "ar" }>();
   const isArabic = locale === "ar";
 
@@ -79,40 +64,18 @@ export default function AdminPage() {
                 onClick={async () => {
               const confirmed = window.confirm(t.confirmReset);
               if (!confirmed) return;
-              // Export CSV first
-              const { data } = await supabase
-                .from("attendees")
-                .select("*")
-                ;
-              const rows = data ?? [];
-              const csv = [
-                [
-                  "id",
-                  "name",
-                  "record_number",
-                  "governorate",
-                  "district",
-                  "area",
-                  "phone",
-                  "quantity",
-                  "created_at",
-                ].join(","),
-                ...rows.map((r: any) =>
-                  [
-                    r.id,
-                    JSON.stringify(r.name),
-                    r.record_number,
-                    JSON.stringify(r.governorate),
-                    JSON.stringify(r.district),
-                    JSON.stringify(r.area),
-                    r.phone ?? "",
-                    r.quantity,
-                    r.created_at,
-                  ].join(",")
-                ),
-              ].join("\n");
-              const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-              await downloadBlob(blob, `attendees-backup-before-reset.csv`);
+              // Export a full backup before touching anything.
+              let counts;
+              try {
+                counts = await exportEverything("backup-before-reset");
+              } catch (err) {
+                alert(`Backup failed, reset aborted: ${(err as Error).message}`);
+                return;
+              }
+              if (!window.confirm(
+                `Backup downloaded: ${counts.attendees} attendees, ${counts.statuses} check-in rows.\n\n` +
+                `Verify the two CSV files opened correctly, then click OK to reset.`
+              )) return;
 
               // Then reset
                   const { error } = await supabase.rpc("reset_attendance");
@@ -150,42 +113,12 @@ export default function AdminPage() {
             <button
               className="btn bg-blue-600 hover:bg-blue-700 text-white border-blue-600 hover:border-blue-700"
               onClick={async () => {
-                const { data, error } = await supabase
-                  .from("attendees")
-                  .select("*");
-                if (error) {
-                  alert(error.message);
-                  return;
+                try {
+                  const counts = await exportEverything("attendees");
+                  alert(`Exported ${counts.attendees} attendees and ${counts.statuses} check-in rows.`);
+                } catch (err) {
+                  alert((err as Error).message);
                 }
-                const rows = data ?? [];
-                const csv = [
-                  [
-                    "id",
-                    "name",
-                    "record_number",
-                    "governorate",
-                    "district",
-                    "area",
-                    "phone",
-                    "quantity",
-                    "created_at",
-                  ].join(","),
-                  ...rows.map((r: any) =>
-                    [
-                      r.id,
-                      JSON.stringify(r.name),
-                      r.record_number,
-                      JSON.stringify(r.governorate),
-                      JSON.stringify(r.district),
-                      JSON.stringify(r.area),
-                      r.phone ?? "",
-                      r.quantity,
-                      r.created_at,
-                    ].join(",")
-                  ),
-                ].join("\n");
-                const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-                await downloadBlob(blob, `attendees.csv`);
               }}
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -446,27 +379,17 @@ function SelectiveReset({
         onClick={async () => {
           const confirmed = window.confirm(labels.confirmSelective);
           if (!confirmed) return;
-          // Export CSV first
-          const { data, error } = await supabase
-            .from("attendees")
-            .select("*");
-          if (error) {
-            alert(error.message);
+          let counts;
+          try {
+            counts = await exportEverything("backup-before-selective-reset");
+          } catch (err) {
+            alert(`Backup failed, reset aborted: ${(err as Error).message}`);
             return;
           }
-          const rows = data ?? [];
-          const header = [
-            "id","name","record_number","governorate","district","area","phone","quantity","created_at"
-          ];
-          const csv = [
-            header.join(","),
-            ...rows.map((r: any) => [
-              r.id, JSON.stringify(r.name), r.record_number, JSON.stringify(r.governorate), JSON.stringify(r.district), JSON.stringify(r.area),
-              r.phone ?? "", r.quantity, r.created_at
-            ].join(","))
-          ].join("\n");
-          const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-          await downloadBlob(blob, `attendees-backup-before-selective-reset.csv`);
+          if (!window.confirm(
+            `Backup downloaded: ${counts.attendees} attendees, ${counts.statuses} check-in rows.\n\n` +
+            `Verify the CSV files, then click OK to reset the selected stations.`
+          )) return;
 
           // Then reset selectively
           const ids = Object.entries(selected)
@@ -486,3 +409,16 @@ function SelectiveReset({
   );
 }
 
+export default function AdminPage() {
+  return (
+    <RequireRole 
+      allowedRoles={['super_admin']}
+      fallbackMessage={{
+        en: "Only Super Admins can access the system administration panel",
+        ar: "يمكن للمشرف الأعلى فقط الوصول إلى لوحة إدارة النظام"
+      }}
+    >
+      <AdminPageContent />
+    </RequireRole>
+  );
+}
