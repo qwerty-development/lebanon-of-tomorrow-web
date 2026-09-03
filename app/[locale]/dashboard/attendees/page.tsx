@@ -1245,11 +1245,11 @@ export default function AttendeesPage() {
 
       {/* Filters Panel */}
       <div className="glass rounded-2xl">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-4 text-sm">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3 md:gap-4 text-sm">
           <div>
             <label className="text-[var(--muted)] text-sm font-medium mb-2 block">{t.list}</label>
             <select
-              className="w-full glass rounded-xl px-3 py-2.5 border-[var(--border-glass)] focus:border-[var(--brand)] focus:outline-none transition-all"
+              className="w-full rounded-xl px-3 py-3 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-[var(--brand)] focus:outline-none transition-all"
               value={batchFilter}
               onChange={(e) => setBatchFilter(e.target.value as "active" | "south" | "all")}
             >
@@ -1262,7 +1262,7 @@ export default function AttendeesPage() {
           <div>
             <label className="text-[var(--muted)] text-sm font-medium mb-2 block">{t.governorate}</label>
             <select 
-              className="w-full glass rounded-xl px-3 py-2.5 border-[var(--border-glass)] focus:border-[var(--brand)] focus:outline-none transition-all" 
+              className="w-full rounded-xl px-3 py-3 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-[var(--brand)] focus:outline-none transition-all" 
               value={govFilter} 
               onChange={(e) => { 
                 setGovFilter(e.target.value); 
@@ -1282,7 +1282,7 @@ export default function AttendeesPage() {
           <div>
             <label className="text-[var(--muted)] text-sm font-medium mb-2 block">{t.district}</label>
             <select 
-              className="w-full glass rounded-xl px-3 py-2.5 border-[var(--border-glass)] focus:border-[var(--brand)] focus:outline-none transition-all" 
+              className="w-full rounded-xl px-3 py-3 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-[var(--brand)] focus:outline-none transition-all" 
               value={districtFilter} 
               onChange={(e) => { 
                 setDistrictFilter(e.target.value); 
@@ -1300,7 +1300,7 @@ export default function AttendeesPage() {
           <div>
             <label className="text-[var(--muted)] text-sm font-medium mb-2 block">{t.area}</label>
             <select 
-              className="w-full glass rounded-xl px-3 py-2.5 border-[var(--border-glass)] focus:border-[var(--brand)] focus:outline-none transition-all" 
+              className="w-full rounded-xl px-3 py-3 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-[var(--brand)] focus:outline-none transition-all" 
               value={areaFilter} 
               onChange={(e) => setAreaFilter(e.target.value)}
               disabled={!districtFilter}
@@ -1315,7 +1315,7 @@ export default function AttendeesPage() {
           <div>
             <label className="text-[var(--muted)] text-sm font-medium mb-2 block">{t.field}</label>
             <select 
-              className="w-full glass rounded-xl px-3 py-2.5 border-[var(--border-glass)] focus:border-[var(--brand)] focus:outline-none transition-all" 
+              className="w-full rounded-xl px-3 py-3 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-[var(--brand)] focus:outline-none transition-all" 
               value={selectedField} 
               onChange={(e) => setSelectedField(e.target.value)}
             >
@@ -1329,7 +1329,7 @@ export default function AttendeesPage() {
           <div>
             <label className="text-[var(--muted)] text-sm font-medium mb-2 block">Status</label>
             <select 
-              className="w-full glass rounded-xl px-3 py-2.5 border-[var(--border-glass)] focus:border-[var(--brand)] focus:outline-none transition-all" 
+              className="w-full rounded-xl px-3 py-3 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-[var(--brand)] focus:outline-none transition-all" 
               value={fieldCheckFilter} 
               onChange={(e) => setFieldCheckFilter(e.target.value as any)}
             >
@@ -1343,7 +1343,7 @@ export default function AttendeesPage() {
             <div>
               <label className="text-[var(--muted)] text-sm font-medium mb-2 block">{t.sortBy}</label>
               <select 
-                className="w-full glass rounded-xl px-3 py-2.5 border-[var(--border-glass)] focus:border-[var(--brand)] focus:outline-none transition-all" 
+                className="w-full rounded-xl px-3 py-3 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-[var(--brand)] focus:outline-none transition-all" 
                 value={sortKey} 
                 onChange={(e) => setSortKey(e.target.value as any)}
               >
@@ -1358,7 +1358,7 @@ export default function AttendeesPage() {
             <div>
               <label className="text-[var(--muted)] text-sm font-medium mb-2 block">{isArabic ? "الاتجاه" : "Order"}</label>
               <select 
-                className="w-full glass rounded-xl px-3 py-2.5 border-[var(--border-glass)] focus:border-[var(--brand)] focus:outline-none transition-all" 
+                className="w-full rounded-xl px-3 py-3 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-[var(--brand)] focus:outline-none transition-all" 
                 value={sortDir} 
                 onChange={(e) => setSortDir(e.target.value as any)}
               >
@@ -1516,10 +1516,10 @@ function AttendeeCard({
 }) {
   return (
     <div className="card p-4 lg:p-6 hover:shadow-xl transition-all duration-300">
-      <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-start gap-4 lg:gap-6">
         {/* Attendee Info */}
-        <div className="flex-1 space-y-2">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+        <div className="space-y-2 lg:w-72 lg:shrink-0">
+          <div className="flex flex-wrap items-center gap-2">
             <h3 className="font-semibold text-lg text-[var(--foreground)]">{attendee.name}</h3>
             {attendee.preCollected && (
               <span
@@ -1539,6 +1539,12 @@ function AttendeeCard({
                 {attendee.phone}
               </span>
             )}
+            {(attendee.district || attendee.area) && (
+              <span className="flex items-center gap-1">
+                <span className="w-1 h-1 rounded-full bg-teal-500" />
+                {[attendee.district, attendee.area].filter(Boolean).join(" — ")}
+              </span>
+            )}
             <span className="flex items-center gap-1 font-medium">
               <span className="w-1 h-1 rounded-full bg-orange-500" />
               {t.quantityLabel}: {attendee.quantity}
@@ -1553,7 +1559,7 @@ function AttendeeCard({
         </div>
         
         {/* Station Actions */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2">
+        <div className="flex-1 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-2 md:gap-3">
           {fields.map((field) => {
             const status = attendee.fieldStatuses[field.id];
             const checked = !!status?.checkedAt;
@@ -1651,132 +1657,106 @@ function AttendeeCard({
   );
 }
 
-// Optimized Station Component
-function Station({ 
-  label, 
-  active, 
-  disabled = false, 
+// Station button — tablet-first: one consistent box, big touch target,
+// label and count always in the same place regardless of state.
+function Station({
+  label,
+  active,
+  disabled = false,
   locked = false,
-  busy = false, 
-  isSuperAdmin = false, 
-  userRole, 
-  fieldName, 
-  quantity = 0, 
-  totalQuantity = 1, 
-  onMark 
-}: { 
-  label: string; 
-  active: boolean; 
-  disabled?: boolean; 
+  busy = false,
+  isSuperAdmin = false,
+  userRole,
+  fieldName,
+  quantity = 0,
+  totalQuantity = 1,
+  onMark
+}: {
+  label: string;
+  active: boolean;
+  disabled?: boolean;
   locked?: boolean;
-  busy?: boolean; 
-  isSuperAdmin?: boolean; 
-  userRole?: UserRole; 
-  fieldName?: string; 
-  quantity?: number; 
-  totalQuantity?: number; 
+  busy?: boolean;
+  isSuperAdmin?: boolean;
+  userRole?: UserRole;
+  fieldName?: string;
+  quantity?: number;
+  totalQuantity?: number;
   onMark: () => Promise<void>;
 }) {
   const canModify = !fieldName || !userRole || canUserModifyField(userRole, fieldName);
   const isDisabled = disabled || !canModify || locked;
-  const roleRestricted = !canModify && userRole && !['admin', 'super_admin'].includes(userRole);
-  
-  const baseClasses = "inline-flex items-center justify-center px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200";
-  
-  if (active) {
-    const activeClasses = isSuperAdmin 
-      ? `${baseClasses} bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg hover:from-green-600 hover:to-green-700 hover:scale-105 active:scale-95 cursor-pointer`
-      : `${baseClasses} bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg`;
-    
-    return (
-      <button
-        disabled={busy || isDisabled}
-        title={locked ? `${label} (already collected elsewhere)` : isSuperAdmin ? `${label} (click to uncheck)` : label}
-        className={activeClasses}
-        onClick={isSuperAdmin && !locked && !busy && !isDisabled ? onMark : undefined}
-      >
-        {busy ? (
-          <>
-            <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin mr-2" />
-            <div className="text-center">
-              <div>{label}</div>
-              {totalQuantity > 1 && (
-                <div className="text-sm font-semibold opacity-90 bg-white/20 px-2 py-1 rounded-lg mt-1">
-                  {quantity}/{totalQuantity}
-                </div>
-              )}
-            </div>
-          </>
-        ) : (
-          <>
-            <span className="w-1.5 h-1.5 rounded-full bg-white/80 mr-2" />
-            <div className="text-center">
-              <div>{label}</div>
-              {totalQuantity > 1 && (
-                <div className="text-sm font-semibold opacity-90 bg-white/20 px-2 py-1 rounded-lg mt-1">
-                  {quantity}/{totalQuantity}
-                </div>
-              )}
-            </div>
-          </>
-        )}
-      </button>
-    );
-  }
+  const roleRestricted = !canModify && userRole && !["admin", "super_admin"].includes(userRole);
 
-  const inactiveClasses = `${baseClasses} glass border-[var(--border-glass)] hover:bg-[var(--surface-glass-hover)] hover:border-[var(--brand)] hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 ${isSuperAdmin && isDisabled ? 'border-orange-500/50 hover:border-orange-500' : ''} ${roleRestricted ? 'border-red-500/50 hover:border-red-500' : ''}`;
-  
+  // Active rows stay clickable for a super admin (to undo), never when locked.
+  const clickable = !busy && !locked && (active ? isSuperAdmin && !isDisabled : !isDisabled);
+
+  const base =
+    "relative w-full min-h-[76px] md:min-h-[84px] flex flex-col items-center justify-center " +
+    "gap-1.5 px-3 py-3 rounded-xl text-sm font-medium leading-tight text-center " +
+    "transition-all duration-200 select-none";
+
+  // NB: --surface-glass / --border-glass are near-transparent white, which makes
+  // a button invisible on a white card. Explicit surfaces instead.
+  const skin = active
+    ? "bg-gradient-to-b from-green-500 to-green-600 text-white border border-green-600 shadow-sm" +
+      (clickable ? " hover:from-green-600 hover:to-green-700 active:scale-[0.97]" : "")
+    : "bg-slate-50 dark:bg-slate-800/70 text-slate-700 dark:text-slate-200 border " +
+      (roleRestricted
+        ? "border-red-400/70 dark:border-red-500/50"
+        : isSuperAdmin && isDisabled && !locked
+        ? "border-orange-400/70 dark:border-orange-500/50"
+        : "border-slate-200 dark:border-slate-700") +
+      (clickable
+        ? " hover:border-[var(--brand)] hover:bg-white dark:hover:bg-slate-800 hover:shadow-sm active:scale-[0.97]"
+        : " opacity-55 cursor-not-allowed");
+
+  const title = locked
+    ? `${label} (already collected elsewhere)`
+    : roleRestricted
+    ? `${label} (role restricted)`
+    : isDisabled
+    ? `${label} (locked until main entrance)`
+    : active && isSuperAdmin
+    ? `${label} (tap to undo)`
+    : label;
+
   return (
     <button
+      type="button"
       disabled={busy || locked || (isDisabled && !isSuperAdmin)}
-      title={locked ? `${label} (already collected elsewhere)` : isDisabled ? (isSuperAdmin ? `${label} (disabled - Super Admin can override)` : roleRestricted ? `${label} (role restricted)` : `${label} (disabled)`) : label}
-      className={inactiveClasses}
-      onClick={!busy && !locked && !isDisabled ? onMark : undefined}
+      title={title}
+      aria-label={title}
+      className={`${base} ${skin}`}
+      onClick={clickable ? onMark : undefined}
     >
       {busy ? (
-        <>
-          <div className="w-3 h-3 border border-current border-t-transparent rounded-full animate-spin mr-2" />
-          <div className="text-center">
-            <div>{label}</div>
-            {totalQuantity > 1 && (
-              <div className="text-sm font-semibold opacity-70 bg-[var(--muted)]/20 px-2 py-1 rounded-lg mt-1">
-                {quantity}/{totalQuantity}
-              </div>
-            )}
-            {isSuperAdmin && isDisabled && !roleRestricted && (
-              <div className="text-xs text-orange-600 font-bold mt-1 px-2 py-1 bg-orange-100/50 rounded border border-orange-300/50">
-                OVERRIDE
-              </div>
-            )}
-            {roleRestricted && (
-              <div className="text-xs text-red-600 font-bold mt-1 px-2 py-1 bg-red-100/50 rounded border border-red-300/50">
-                ROLE RESTRICTED
-              </div>
-            )}
-          </div>
-        </>
+        <span
+          className={`w-4 h-4 rounded-full border-2 border-t-transparent animate-spin ${
+            active ? "border-white" : "border-[var(--muted)]"
+          }`}
+        />
       ) : (
         <>
-          <span className="w-1.5 h-1.5 rounded-full bg-[var(--muted)] mr-2" />
-          <div className="text-center">
-            <div>{label}</div>
-            {totalQuantity > 1 && (
-              <div className="text-sm font-semibold opacity-70 bg-[var(--muted)]/20 px-2 py-1 rounded-lg mt-1">
-                {quantity}/{totalQuantity}
-              </div>
-            )}
-            {isSuperAdmin && isDisabled && !roleRestricted && (
-              <div className="text-xs text-orange-600 font-bold mt-1 px-2 py-1 bg-orange-100/50 rounded border border-orange-300/50">
-                OVERRIDE
-              </div>
-            )}
-            {roleRestricted && (
-              <div className="text-xs text-red-600 font-bold mt-1 px-2 py-1 bg-red-100/50 rounded border border-red-300/50">
-                ROLE RESTRICTED
-              </div>
-            )}
-          </div>
+          <span className="w-full px-1 break-words">{label}</span>
+          {totalQuantity > 1 && (
+            <span
+              className={`px-2 py-0.5 rounded-lg text-xs font-semibold tabular-nums ${
+                active
+                  ? "bg-white/25 text-white"
+                  : "bg-slate-200/80 dark:bg-slate-700 text-slate-600 dark:text-slate-300"
+              }`}
+            >
+              {quantity}/{totalQuantity}
+            </span>
+          )}
         </>
+      )}
+
+      {roleRestricted && !locked && (
+        <span className="text-[10px] font-bold text-red-600 uppercase tracking-wide">
+          restricted
+        </span>
       )}
     </button>
   );

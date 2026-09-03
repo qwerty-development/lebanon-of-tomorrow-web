@@ -52,21 +52,21 @@ export function Navbar() {
             </div>
 
             {/* Desktop navigation */}
-            <nav className="hidden lg:flex items-center gap-2">
+            <nav className="hidden md:flex items-center gap-2">
               {links.map(({ href, label, icon: Icon }) => (
                 <Link 
                   key={href} 
                   href={href} 
                   className="pill inline-flex items-center gap-2 hover:scale-105 active:scale-95"
                 >
-                  <Icon size={16} />
-                  <span className="text-sm font-medium">{label}</span>
+                  <Icon size={18} />
+                  <span className="text-sm font-medium hidden lg:inline">{label}</span>
                 </Link>
               ))}
               <div className="w-px h-6 bg-[var(--border-glass)] mx-2" />
               <div className="flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg shadow-lg">
                 <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                <span className="font-bold text-xs">{getRoleDisplayName(userRole, isArabic)}</span>
+                <span className="font-bold text-xs whitespace-nowrap">{getRoleDisplayName(userRole, isArabic)}</span>
               </div>
               <div className="w-px h-6 bg-[var(--border-glass)] mx-2" />
               <button
@@ -76,14 +76,14 @@ export function Navbar() {
                   window.location.href = `/${locale}/login`;
                 }}
               >
-                <LogOut size={16} />
-                <span className="text-sm font-medium">{isArabic ? "خروج" : "Sign out"}</span>
+                <LogOut size={18} />
+                <span className="text-sm font-medium hidden lg:inline">{isArabic ? "خروج" : "Sign out"}</span>
               </button>
             </nav>
 
             {/* Mobile menu button */}
             <button
-              className="lg:hidden pill w-10 h-10 flex items-center justify-center hover:scale-105 active:scale-95"
+              className="md:hidden pill w-11 h-11 flex items-center justify-center hover:scale-105 active:scale-95"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label="Toggle menu"
             >
@@ -95,7 +95,7 @@ export function Navbar() {
 
       {/* Mobile navigation overlay */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-40 lg:hidden">
+        <div className="fixed inset-0 z-40 md:hidden">
           {/* Backdrop */}
           <div 
             className="absolute inset-0 bg-black/20 backdrop-blur-sm"
