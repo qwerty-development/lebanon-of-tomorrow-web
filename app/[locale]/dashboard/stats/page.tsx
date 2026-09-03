@@ -10,12 +10,20 @@ export default function StatsPage() {
   const t = {
     title: isArabic ? "الإحصائيات" : "Statistics",
     total: isArabic ? "إجمالي المشاركين" : "Total attendees",
+    totalItems: isArabic ? "إجمالي العناصر الموزعة" : "Total Items Distributed",
+    mainEntranceItems: isArabic
+      ? "إجمالي العناصر - المدخل الرئيسي"
+      : "Main Entrance Items Total",
   };
 
   const [total, setTotal] = useState(0);
   const [children, setChildren] = useState(0);
   const [south, setSouth] = useState({ attendees: 0, children: 0 });
-  const [fieldCounts, setFieldCounts] = useState<{ id: string; name: string; count: number; qty: number }[]>([]);
+  const [fieldCounts, setFieldCounts] = useState<
+    { id: string; name: string; accountCount: number; peopleCount: number; isMain: boolean }[]
+  >([]);
+  const [mainEntranceQuantity, setMainEntranceQuantity] = useState(0);
+  const [totalQuantityDistributed, setTotalQuantityDistributed] = useState(0);
 
   useEffect(() => {
     let channel: any | null = null;
@@ -31,14 +39,17 @@ export default function StatsPage() {
       setTotal(d.active_attendees ?? 0);
       setChildren(d.active_children ?? 0);
       setSouth({ attendees: d.south_attendees ?? 0, children: d.south_children ?? 0 });
-      setFieldCounts(
-        ((d.fields ?? []) as any[]).map((f) => ({
-          id: f.id,
-          name: f.name,
-          count: f.checked_attendees ?? 0,
-          qty: f.checked_quantity ?? 0,
-        }))
-      );
+
+      const rows = ((d.fields ?? []) as any[]).map((f) => ({
+        id: f.id,
+        name: f.name,
+        accountCount: f.checked_attendees ?? 0,
+        peopleCount: f.checked_quantity ?? 0,
+        isMain: !!f.is_main,
+      }));
+      setFieldCounts(rows);
+      setMainEntranceQuantity(rows.find((r) => r.isMain)?.peopleCount ?? 0);
+      setTotalQuantityDistributed(rows.reduce((sum, r) => sum + r.peopleCount, 0));
     }
 
     // A busy distribution fires many events per second; coalesce them.
@@ -70,37 +81,14 @@ export default function StatsPage() {
           {t.title}
         </h1>
         <p className="text-[var(--muted)] text-responsive">
-          {isArabic ? "إحصائيات شاملة لحضور المشاركين" : "Comprehensive attendance statistics"}
+          {isArabic
+            ? "إحصائيات شاملة لحضور المشاركين"
+            : "Comprehensive attendance statistics"}
         </p>
       </div>
 
       {/* Statistics Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 lg:gap-6">
-        {/* Total Attendees Card */}
-        <div className="card p-6 hover:shadow-xl transition-all duration-300 border-l-4 border-l-[var(--brand)]">
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <div className="text-sm font-medium text-[var(--muted)] mb-2">{t.total}</div>
-              <div className="text-3xl font-bold text-[var(--foreground)]">{total.toLocaleString()}</div>
-            </div>
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--brand)] to-[var(--brand-600)] flex items-center justify-center">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-              </svg>
-            </div>
-          </div>
-          <div className="mt-4 flex items-center">
-            <div className="flex items-center text-sm text-green-600 dark:text-green-400">
-              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-              </svg>
-              <span className="font-medium">
-                {children.toLocaleString()} {isArabic ? "طفل" : "children"}
-              </span>
-            </div>
-          </div>
-        </div>
-
         {/* South: already collected offline, excluded from every rate below */}
         {south.attendees > 0 && (
           <div className="card p-6 hover:shadow-xl transition-all duration-300 border-l-4 border-l-[var(--muted)] opacity-90">
@@ -125,41 +113,130 @@ export default function StatsPage() {
           </div>
         )}
 
-        {/* Field Statistics Cards */}
+        {/* Field Statistics Cards - All Fields */}
         {fieldCounts.map((f, index) => {
+          // Adjust colors for all fields including main entrance
           const colors = [
-            { from: "from-green-500", to: "to-green-600", border: "border-l-green-500" },
-            { from: "from-blue-500", to: "to-blue-600", border: "border-l-blue-500" },
-            { from: "from-purple-500", to: "to-purple-600", border: "border-l-purple-500" },
-            { from: "from-orange-500", to: "to-orange-600", border: "border-l-orange-500" },
-            { from: "from-pink-500", to: "to-pink-600", border: "border-l-pink-500" },
-            { from: "from-indigo-500", to: "to-indigo-600", border: "border-l-indigo-500" },
+            {
+              from: "from-amber-500", // Different color for main entrance
+              to: "to-amber-600",
+              border: "border-l-amber-500",
+            },
+            {
+              from: "from-green-500",
+              to: "to-green-600",
+              border: "border-l-green-500",
+            },
+            {
+              from: "from-blue-500",
+              to: "to-blue-600",
+              border: "border-l-blue-500",
+            },
+            {
+              from: "from-purple-500",
+              to: "to-purple-600",
+              border: "border-l-purple-500",
+            },
+            {
+              from: "from-orange-500",
+              to: "to-orange-600",
+              border: "border-l-orange-500",
+            },
+            {
+              from: "from-pink-500",
+              to: "to-pink-600",
+              border: "border-l-pink-500",
+            },
+            {
+              from: "from-indigo-500",
+              to: "to-indigo-600",
+              border: "border-l-indigo-500",
+            },
           ];
-          const colorSet = colors[index % colors.length];
-          const percentage = total > 0 ? ((f.count / total) * 100).toFixed(1) : "0";
+          
+          // Use amber for main entrance (index 0), then cycle through other colors
+          const colorSet = f.isMain ? colors[0] : colors[(index % (colors.length - 1)) + 1];
+          const accountPercentage = total > 0 ? ((f.accountCount / total) * 100).toFixed(1) : "0";
 
           return (
-            <div key={f.id} className={`card p-6 hover:shadow-xl transition-all duration-300 border-l-4 ${colorSet.border}`}>
-              <div className="flex items-center justify-between">
+            <div
+              key={f.id}
+              className={`card p-6 hover:shadow-xl transition-all duration-300 border-l-4 ${colorSet.border} ${f.isMain ? 'ring-2 ring-amber-200 dark:ring-amber-800' : ''}`}
+            >
+              <div className="flex items-center justify-between mb-3">
                 <div className="flex-1">
-                  <div className="text-sm font-medium text-[var(--muted)] mb-2">{f.name}</div>
-                  <div className="text-3xl font-bold text-[var(--foreground)]">{f.count.toLocaleString()}</div>
+                  <div className="text-sm font-medium text-[var(--muted)] mb-2 flex items-center gap-2">
+                    {f.name}
+                    {f.isMain && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200">
+                        {isArabic ? "رئيسي" : "Main"}
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-2xl font-bold text-[var(--foreground)] mb-1">
+                    {f.peopleCount.toLocaleString()}
+                  </div>
+                  <div className="text-xs text-[var(--muted)]">
+                    {f.accountCount.toLocaleString()} {isArabic ? "حساب" : "accounts"}
+                  </div>
                 </div>
-                <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${colorSet.from} ${colorSet.to} flex items-center justify-center`}>
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <div
+                  className={`w-12 h-12 rounded-full bg-gradient-to-br ${colorSet.from} ${colorSet.to} flex items-center justify-center`}
+                >
+                  <svg
+                    className="w-6 h-6 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    {f.isMain ? (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                      />
+                    ) : (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    )}
                   </svg>
                 </div>
               </div>
-              <div className="mt-4 flex items-center justify-between">
-                <div className="flex items-center text-sm text-[var(--muted)]">
-                  <span>{percentage}% {isArabic ? "من الإجمالي" : "of total"}</span>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center text-sm text-[var(--muted)]">
+                    <span>
+                      {f.peopleCount} {isArabic ? "شخص" : "people"}
+                    </span>
+                  </div>
+                  <div className="w-16 h-2 bg-[var(--surface-2)] rounded-full overflow-hidden">
+                    <div
+                      className={`h-full bg-gradient-to-r ${colorSet.from} ${colorSet.to} rounded-full transition-all duration-500`}
+                      style={{
+                        width: `${Math.min(100, (f.peopleCount / Math.max(1, totalQuantityDistributed)) * 100)}%`,
+                      }}
+                    />
+                  </div>
                 </div>
-                <div className="w-16 h-2 bg-[var(--surface-2)] rounded-full overflow-hidden">
-                  <div 
-                    className={`h-full bg-gradient-to-r ${colorSet.from} ${colorSet.to} rounded-full transition-all duration-500`}
-                    style={{ width: `${Math.min(100, parseFloat(percentage))}%` }}
-                  />
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center text-xs text-[var(--muted)]">
+                    <span>
+                      {accountPercentage}% {isArabic ? "من الحسابات" : "of accounts"}
+                    </span>
+                  </div>
+                  <div className="w-16 h-1.5 bg-[var(--surface-2)] rounded-full overflow-hidden">
+                    <div
+                      className={`h-full bg-gradient-to-r ${colorSet.from} ${colorSet.to} rounded-full transition-all duration-500 opacity-60`}
+                      style={{
+                        width: `${Math.min(100, parseFloat(accountPercentage))}%`,
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -174,13 +251,33 @@ export default function StatsPage() {
             <span className="w-2 h-2 rounded-full bg-[var(--brand)]" />
             {isArabic ? "ملخص الإحصائيات" : "Statistics Summary"}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
             <div className="text-center">
               <div className="text-2xl font-bold text-[var(--foreground)] mb-1">
-                {fieldCounts.reduce((sum, f) => sum + f.count, 0).toLocaleString()}
+                {children.toLocaleString()}
               </div>
               <div className="text-sm text-[var(--muted)]">
-                {isArabic ? "إجمالي الفحوصات" : "Total Checkpoints"}
+                {isArabic ? "الأطفال المسجلون" : "Registered Children"}
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-[var(--foreground)] mb-1">
+                {fieldCounts
+                  .reduce((sum, f) => sum + f.peopleCount, 0)
+                  .toLocaleString()}
+              </div>
+              <div className="text-sm text-[var(--muted)]">
+                {isArabic ? "إجمالي الزوار (أشخاص)" : "Total Visitors (People)"}
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-[var(--foreground)] mb-1">
+                {fieldCounts
+                  .reduce((sum, f) => sum + f.accountCount, 0)
+                  .toLocaleString()}
+              </div>
+              <div className="text-sm text-[var(--muted)]">
+                {isArabic ? "إجمالي الزوار (حسابات)" : "Total Visitors (Accounts)"}
               </div>
             </div>
             <div className="text-center">
@@ -193,7 +290,14 @@ export default function StatsPage() {
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-[var(--foreground)] mb-1">
-                {total > 0 ? Math.round((fieldCounts.reduce((sum, f) => sum + f.count, 0) / (total * fieldCounts.length)) * 100) : 0}%
+                {total > 0
+                  ? Math.round(
+                      (fieldCounts.reduce((sum, f) => sum + f.accountCount, 0) /
+                        (total * fieldCounts.length)) *
+                        100
+                    )
+                  : 0}
+                %
               </div>
               <div className="text-sm text-[var(--muted)]">
                 {isArabic ? "معدل الإنجاز" : "Completion Rate"}
@@ -205,4 +309,3 @@ export default function StatsPage() {
     </div>
   );
 }
-
