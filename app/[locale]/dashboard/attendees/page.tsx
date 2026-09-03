@@ -718,6 +718,7 @@ export default function AttendeesPage() {
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<UserRole>('admin');
   const [loadError, setLoadError] = useState<string>("");
   const [isOnline, setIsOnline] = useState(true);
@@ -869,6 +870,9 @@ export default function AttendeesPage() {
     listSouth: isArabic ? "الجنوب (تم الاستلام)" : "South (already collected)",
     listAll: isArabic ? "الكل" : "All",
     collectedBadge: isArabic ? "تم الاستلام مسبقاً — الجنوب" : "ALREADY COLLECTED — SOUTH",
+    alreadyChecked: isArabic
+      ? "تم تسجيل هذه المحطة بالفعل من قبل مستخدم آخر"
+      : "This station was already checked in by someone else",
     collectedNote: isArabic
       ? "استلمت هذه العائلة في توزيع الجنوب. لا يمكن تسجيل المحطات."
       : "Collected in the south distribution. Stations are locked.",
@@ -1099,6 +1103,7 @@ export default function AttendeesPage() {
           .single();
           
         if (isMounted && profile) {
+          setUserId(user.id);
           setUserRole(profile.role);
           setIsSuperAdmin(profile.role === "super_admin");
         }
@@ -1124,33 +1129,45 @@ export default function AttendeesPage() {
     setBusy(prev => new Set(prev).add(key));
 
     try {
-      const result = await withRetry(async () => {
-        if (isUnchecking) {
-          return await supabase
-            .from("attendee_field_status")
-            .update({ checked_at: null, quantity: 1 })
-            .eq("attendee_id", attendee.id)
-            .eq("field_id", field.id);
-        } else {
-          return await supabase
-            .from("attendee_field_status")
-            .upsert(
-              { 
-                attendee_id: attendee.id, 
-                field_id: field.id, 
-                checked_at: new Date().toISOString(),
-                quantity: selectedQty
-              }, 
-              { onConflict: "attendee_id,field_id" }
-            );
+      if (isUnchecking) {
+        const { error } = await withRetry(async () =>
+          await supabase.rpc("undo_check_in", {
+            p_attendee_id: attendee.id,
+            p_field_id: field.id,
+          })
+        );
+        if (error) throw error;
+      } else {
+        // Atomic claim: the database decides who wins, not the browser.
+        const { data, error } = await withRetry(async () =>
+          await supabase.rpc("check_in_field", {
+            p_attendee_id: attendee.id,
+            p_field_id: field.id,
+            p_quantity: selectedQty,
+          })
+        );
+        if (error) throw error;
+
+        const res = data as any;
+        // claimed === false means someone else got there first. (Unless it was
+        // us: a retry after a lost response still reports our own id.)
+        if (res && res.claimed === false && res.checked_by !== userId) {
+          const when = res.checked_at
+            ? new Date(res.checked_at).toLocaleTimeString(isArabic ? "ar" : "en", {
+                hour: "2-digit", minute: "2-digit",
+              })
+            : "";
+          const who = res.checked_by_email ? ` (${res.checked_by_email})` : "";
+          alert(`${t.alreadyChecked}\n\n${field.name} — ${attendee.name}\n${when}${who}`);
+          // Reflect the winner's state immediately rather than waiting on realtime.
+          setAttendees(prev => prev.map(a =>
+            a.id === attendee.id
+              ? { ...a, fieldStatuses: { ...a.fieldStatuses, [field.id]: {
+                    checkedAt: res.checked_at, quantity: res.quantity ?? 1 } } }
+              : a
+          ));
         }
-      });
-
-      if (result.error) {
-        throw result.error;
       }
-
-      // Optimistic update will be handled by real-time subscription
     } catch (error) {
       console.error("Database error:", error);
       alert(`${t.failed}: ${(error as Error).message}`);
@@ -1161,7 +1178,7 @@ export default function AttendeesPage() {
         return next;
       });
     }
-  }, [t.failed]);
+  }, [t.failed, t.alreadyChecked, userId, isArabic]);
 
   const mainField = fields.find(f => f.is_main);
 
