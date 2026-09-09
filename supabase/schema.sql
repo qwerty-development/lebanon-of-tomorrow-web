@@ -6,33 +6,109 @@ create extension if not exists pgcrypto;
 create extension if not exists pg_trgm;
 
 -- Roles enum
+-- Station roles mirror the 2026 stations one-for-one. `admin` and
+-- `super_admin` keep full access. On an existing database the retired 2025
+-- values are renamed in place rather than dropped: Postgres cannot remove an
+-- enum value, and re-typing profiles.role fails because RLS policies read it
+-- ("cannot alter type of a column used in a policy definition").
+-- See supabase/migration_2026d_station_roles.sql.
 do $$
+declare
+  r record;
 begin
   if not exists (
     select 1 from pg_type typ
     join pg_namespace nsp on nsp.oid = typ.typnamespace
     where typ.typname = 'user_role' and nsp.nspname = 'public'
   ) then
-    create type public.user_role as enum ('admin','super_admin','shabebik','optic_et_vision','medical','dental');
+    create type public.user_role as enum (
+      'admin',
+      'super_admin',
+      'main_entrance',
+      'stationary_backpacks',
+      'dental_usj',
+      'medical_lau',
+      'optic_et_vision',
+      'lg_sealco',
+      'bey_1',
+      'none'
+    );
   else
-    -- Update existing enum if it doesn't have the new roles
-    if not exists (select 1 from pg_enum where enumtypid = (select oid from pg_type where typname = 'user_role') and enumlabel = 'shabebik') then
-      alter type public.user_role add value 'shabebik';
-    end if;
-    if not exists (select 1 from pg_enum where enumtypid = (select oid from pg_type where typname = 'user_role') and enumlabel = 'optic_et_vision') then
-      alter type public.user_role add value 'optic_et_vision';
-    end if;
-    if not exists (select 1 from pg_enum where enumtypid = (select oid from pg_type where typname = 'user_role') and enumlabel = 'medical') then
-      alter type public.user_role add value 'medical';
-    end if;
-    if not exists (select 1 from pg_enum where enumtypid = (select oid from pg_type where typname = 'user_role') and enumlabel = 'dental') then
-      alter type public.user_role add value 'dental';
-    end if;
+    -- Carry 2025 accounts over. 'shabebik' has no 2026 equivalent, so those
+    -- accounts are parked on 'none' and have to be reassigned by hand.
+    for r in
+      select * from (values
+        ('shabebik', 'none'),
+        ('medical',  'medical_lau'),
+        ('dental',   'dental_usj')
+      ) as t(old_label, new_label)
+    loop
+      -- Already renamed by an earlier run.
+      if not exists (
+        select 1 from pg_enum
+        where enumtypid = 'public.user_role'::regtype and enumlabel = r.old_label
+      ) then
+        continue;
+      end if;
+
+      -- Both labels present, which happens if something re-added the retired one
+      -- (re-running migration_role_based_access.sql does exactly that). A label
+      -- cannot be dropped, so leave it alone and say so rather than failing.
+      if exists (
+        select 1 from pg_enum
+        where enumtypid = 'public.user_role'::regtype and enumlabel = r.new_label
+      ) then
+        raise notice 'user_role still carries retired label %; % already exists, so no rename. Reassign any account on % by hand.',
+          r.old_label, r.new_label, r.old_label;
+        continue;
+      end if;
+
+      execute format('alter type public.user_role rename value %L to %L', r.old_label, r.new_label);
+      raise notice 'renamed user_role value % -> %', r.old_label, r.new_label;
+    end loop;
   end if;
 end$$;
 
--- Function to check if user can modify a specific field
-create or replace function public.can_user_modify_field(user_role public.user_role, field_name text)
+-- Values the rename above cannot produce. Top-level, not inside the do-block:
+-- "add value" must not be followed by a use of that value in the same
+-- transaction, and each of these is individually idempotent.
+alter type public.user_role add value if not exists 'main_entrance';
+alter type public.user_role add value if not exists 'stationary_backpacks';
+alter type public.user_role add value if not exists 'lg_sealco';
+alter type public.user_role add value if not exists 'bey_1';
+alter type public.user_role add value if not exists 'none';
+alter type public.user_role add value if not exists 'medical_lau';
+alter type public.user_role add value if not exists 'dental_usj';
+
+-- Case-insensitive substring match of a station name against a keyword list
+create or replace function public.field_matches_any(field_name text, patterns text[])
+returns boolean
+language sql
+immutable
+as $$
+  select exists (
+    select 1
+    from unnest(patterns) as p
+    where position(p in lower(coalesce(field_name, ''))) > 0
+  );
+$$;
+
+grant execute on function public.field_matches_any(text, text[]) to authenticated;
+
+-- The 2025 signature was (user_role, text); the is_main flag is new. Leaving
+-- both versions in place would make a two-argument call ambiguous, so the old
+-- one goes, along with the debug view that depends on it (rebuilt below, once
+-- public.fields exists).
+drop view if exists public.role_field_permissions;
+drop function if exists public.can_user_modify_field(public.user_role, text);
+
+-- Which station a role is allowed to check in.
+-- Keep in sync with ROLE_FIELD_PATTERNS in lib/roleUtils.ts.
+create or replace function public.can_user_modify_field(
+  user_role     public.user_role,
+  field_name    text,
+  field_is_main boolean default false
+)
 returns boolean
 language plpgsql
 stable
@@ -43,22 +119,34 @@ begin
   if user_role in ('super_admin', 'admin') then
     return true;
   end if;
-  
-  -- Role-specific field access (case insensitive matching)
-  case user_role
-    when 'shabebik' then
-      return lower(field_name) like '%shabebik%' or lower(field_name) like '%شبابيك%';
-    when 'optic_et_vision' then  
-      return lower(field_name) like '%optic%' or lower(field_name) like '%vision%' or lower(field_name) like '%بصر%' or lower(field_name) like '%عيون%';
-    when 'medical' then
-      return lower(field_name) like '%medical%' or lower(field_name) like '%طبي%';
-    when 'dental' then
-      return lower(field_name) like '%dental%' or lower(field_name) like '%أسنان%';
+
+  -- Whoever runs the door owns the main station, whatever it is named
+  if user_role = 'main_entrance' and coalesce(field_is_main, false) then
+    return true;
+  end if;
+
+  return case user_role
+    when 'main_entrance' then
+      public.field_matches_any(field_name, array['main entrance', 'main gate', 'مدخل'])
+    when 'stationary_backpacks' then
+      public.field_matches_any(field_name, array['stationary', 'stationery', 'backpack', 'قرطاسية', 'حقائب', 'حقيبة'])
+    when 'dental_usj' then
+      public.field_matches_any(field_name, array['dental', 'usj', 'أسنان'])
+    when 'medical_lau' then
+      public.field_matches_any(field_name, array['medical', 'lau', 'طبي'])
+    when 'optic_et_vision' then
+      public.field_matches_any(field_name, array['optic', 'vision', 'بصر', 'نظر', 'عيون'])
+    when 'lg_sealco' then
+      public.field_matches_any(field_name, array['sealco'])
+    when 'bey_1' then
+      public.field_matches_any(field_name, array['bey 1', 'bey1', 'بيروت 1'])
     else
-      return false;
-  end case;
+      false   -- 'none', and anything added later without a mapping
+  end;
 end;
 $$;
+
+grant execute on function public.can_user_modify_field(public.user_role, text, boolean) to authenticated;
 
 -- Profiles (Auth users)
 create table if not exists public.profiles (
@@ -108,6 +196,18 @@ create table if not exists public.fields (
 );
 -- Ensure only one main field globally
 create unique index if not exists uniq_one_main_field on public.fields ((is_main)) where is_main;
+
+-- Debug view: which role reaches which station
+create or replace view public.role_field_permissions as
+select
+  r.role,
+  f.name as field_name,
+  public.can_user_modify_field(r.role, f.name, f.is_main) as can_modify
+from (select unnest(enum_range(null::public.user_role)) as role) r
+cross join public.fields f
+order by r.role, f.sort_order;
+
+grant select on public.role_field_permissions to authenticated;
 
 create table if not exists public.attendees (
   id uuid primary key default gen_random_uuid(),
@@ -234,12 +334,12 @@ begin
   from public.profiles p 
   where p.id = auth.uid();
   
-  select f.name into field_name 
+  select f.name, f.is_main into field_name, is_main_field
   from public.fields f 
   where f.id = new.field_id;
   
   -- Check if user can modify this field
-  if not public.can_user_modify_field(user_role, field_name) then
+  if not public.can_user_modify_field(user_role, field_name, coalesce(is_main_field, false)) then
     raise exception 'You do not have permission to modify this field';
   end if;
   
@@ -272,7 +372,6 @@ begin
   end if;
 
   -- gating: if field is not main, ensure main is checked for same attendee
-  select is_main into is_main_field from public.fields where id = new.field_id;
   if coalesce(is_main_field, false) = false then
     select exists(
       select 1 from public.attendee_field_status s
@@ -366,10 +465,13 @@ begin
     raise exception 'Only super admins can list all users';
   end if;
   
+  -- auth.users.email is varchar(255); this function declares text, and
+  -- RETURN QUERY demands an exact type match. Without the cast:
+  --   "structure of query does not match function result type"
   return query
   select 
     p.id,
-    u.email,
+    u.email::text,
     p.role,
     p.created_at
   from public.profiles p

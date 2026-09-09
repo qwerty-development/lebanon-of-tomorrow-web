@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { UserRole, canUserModifyField } from "@/lib/roleUtils";
+import { UserRole, canUserModifyField, isFullAccessRole } from "@/lib/roleUtils";
 
 type Attendee = {
   id: string;
@@ -1564,7 +1564,7 @@ function AttendeeCard({
             const status = attendee.fieldStatuses[field.id];
             const checked = !!status?.checkedAt;
             const mainChecked = mainField ? !!attendee.fieldStatuses[mainField.id]?.checkedAt : true;
-            const roleRestricted = !canUserModifyField(userRole, field.name);
+            const roleRestricted = !canUserModifyField(userRole, field.name, field.is_main);
             // Already served offline: nobody checks these in, super admin included.
             const locked = attendee.preCollected;
             const disabled = locked || (!isSuperAdmin && !field.is_main && !mainChecked) || roleRestricted;
@@ -1582,6 +1582,7 @@ function AttendeeCard({
                 isSuperAdmin={isSuperAdmin}
                 userRole={userRole}
                 fieldName={field.name}
+                isMainField={field.is_main}
                 quantity={fieldQuantity}
                 totalQuantity={attendee.quantity}
                 onMark={async () => {
@@ -1668,6 +1669,7 @@ function Station({
   isSuperAdmin = false,
   userRole,
   fieldName,
+  isMainField = false,
   quantity = 0,
   totalQuantity = 1,
   onMark
@@ -1680,13 +1682,14 @@ function Station({
   isSuperAdmin?: boolean;
   userRole?: UserRole;
   fieldName?: string;
+  isMainField?: boolean;
   quantity?: number;
   totalQuantity?: number;
   onMark: () => Promise<void>;
 }) {
-  const canModify = !fieldName || !userRole || canUserModifyField(userRole, fieldName);
+  const canModify = !fieldName || !userRole || canUserModifyField(userRole, fieldName, isMainField);
   const isDisabled = disabled || !canModify || locked;
-  const roleRestricted = !canModify && userRole && !["admin", "super_admin"].includes(userRole);
+  const roleRestricted = !canModify && !!userRole && !isFullAccessRole(userRole);
 
   // Active rows stay clickable for a super admin (to undo), never when locked.
   const clickable = !busy && !locked && (active ? isSuperAdmin && !isDisabled : !isDisabled);

@@ -1,130 +1,162 @@
-# Role-Based Field Access System
+# Role-Based Station Access
 
-## Overview
+Every account has exactly one role. The role decides which station that account
+can check attendees in at. Enforcement is in the database, so it holds no matter
+what the UI does.
 
-This system implements role-based field access control for the Lebanon of Tomorrow attendance management application. Users are assigned specific roles that determine which fields they can check/uncheck for attendees.
+## Roles (2026)
 
-## User Roles
+### Full access — unchanged
+- **`admin`** — can check in at every station
+- **`super_admin`** — every station, plus undo/reset, add attendees, and the
+  Super Admin panel
 
-### Full Access Roles
-- **`admin`** - Can access and modify all fields
-- **`super_admin`** - Can access and modify all fields, plus override restrictions
+### One station each
+| Role | Station |
+|---|---|
+| `main_entrance` | Main entrance |
+| `stationary_backpacks` | Stationary and Backpacks |
+| `dental_usj` | Dental Check (USJ) |
+| `medical_lau` | Medical test (LAU) |
+| `optic_et_vision` | Optic et vision |
+| `lg_sealco` | LG Sealco |
+| `bey_1` | Bey 1 |
 
-### Restricted Access Roles
-- **`shabebik`** - Can only modify fields containing "shabebik" or "شبابيك"
-- **`optic_et_vision`** - Can only modify fields containing "optic", "vision", "بصر", or "عيون"
-- **`medical`** - Can only modify fields containing "medical" or "طبي"
-- **`dental`** - Can only modify fields containing "dental" or "أسنان"
+### No station
+- **`none`** — signed in, can search and view attendees, cannot check anyone in
+  anywhere. Where accounts land when their old role is retired.
 
-## Implementation Details
+The 2025 roles `shabebik`, `medical` and `dental` are gone. `medical` and
+`dental` accounts carried over to `medical_lau` and `dental_usj` (same station,
+new venue); `shabebik` accounts are parked on `none` and have to be reassigned.
 
-### Database Changes
+## How a role is matched to a station
 
-1. **Updated `user_role` enum** - Added new role values
-2. **New function `can_user_modify_field()`** - Checks if a user can modify a specific field
-3. **Updated trigger function** - Enforces role-based access at the database level
-4. **Sample fields** - Added test fields for each role type
-5. **Admin functions** - `list_all_users()` and `update_user_role()` for super admin management
+`public.can_user_modify_field(role, field_name, field_is_main)` matches keywords
+against the station **name**, case-insensitively, as substrings. The keyword
+lists live in two places and must stay in sync:
 
-### Frontend Changes
+- `supabase/schema.sql` — `can_user_modify_field()`
+- `lib/roleUtils.ts` — `ROLE_FIELD_PATTERNS`
 
-1. **Role utilities** (`lib/roleUtils.ts`) - Helper functions for role checking and display
-2. **Updated attendees page** - Integrates role-based field access
-3. **Enhanced Station component** - Shows role restrictions visually
-4. **Updated Navbar** - Displays current user's role
+The database is what actually enforces access; the TypeScript copy only greys
+out the buttons an operator cannot use.
 
-### Visual Indicators
+Substring matching means renaming a station to
+`Dental Check (USJ) - tent 2` keeps working. Renaming it to something with none
+of its keywords left **locks its operators out** — either keep a keyword in the
+name, or add the new keyword to both lists above.
 
-- **Green fields** - Fields the user can modify
-- **Red borders** - Role-restricted fields (cannot modify)
-- **Orange borders** - Disabled fields (can be overridden by super admin)
-- **Role badges** - Shows current user's role in navbar
+`main_entrance` is the exception: it also owns whichever station is flagged
+`is_main`, whatever that station is called.
 
-## Usage
+### Adding a station next year
+A new station needs a new enum value (Postgres cannot add one inside a
+transaction that uses it, so do it in its own migration), a keyword list in both
+files, and a display name in `ROLE_NAMES` in `lib/roleUtils.ts`.
 
-### Assigning Roles
+## Assigning roles
 
-Roles are assigned through the admin panel or using the admin functions. Only super admins can change user roles.
+Use **Super Admin → Users & Roles** in the app. It lists every account with a
+role picker, shows which stations each role actually reaches (resolved against
+the live station list), flags accounts sitting on `none`, and warns you before
+you demote your own super-admin account.
 
-#### Using Admin Functions (Recommended)
-
-```sql
--- List all users (super admin only)
-SELECT * FROM public.list_all_users();
-
--- Update user role (super admin only)
-SELECT public.update_user_role('user-uuid-here', 'shabebik');
-```
-
-#### Direct Database Update (Alternative)
-
-```sql
-UPDATE public.profiles 
-SET role = 'shabebik' 
-WHERE id = 'user-uuid-here';
-```
-
-### Field Naming Convention
-
-Fields should be named to match the role they're intended for:
-
-- **Shabebik fields**: Include "shabebik" or "شبابيك"
-- **Optics fields**: Include "optic", "vision", "بصر", or "عيون"
-- **Medical fields**: Include "medical" or "طبي"
-- **Dental fields**: Include "dental" or "أسنان"
-
-### Testing Role Access
-
-Use the `role_field_permissions` view to see what each role can access:
+It goes through the same super-admin-only RPCs you can call directly:
 
 ```sql
-SELECT * FROM public.role_field_permissions 
-WHERE role = 'shabebik';
+-- who exists and what they hold
+select * from public.list_all_users();
+
+-- assign
+select public.update_user_role('user-uuid-here', 'dental_usj');
 ```
 
-## Security Features
+## Where enforcement happens
 
-1. **Database-level enforcement** - Role checks happen in database triggers
-2. **Frontend validation** - UI prevents unauthorized actions
-3. **Audit trail** - All field modifications are logged with user context
-4. **Super admin override** - Super admins can bypass role restrictions
+1. **Database trigger** — `status_enforce_rules()` on `attendee_field_status`
+   (BEFORE INSERT and BEFORE UPDATE) calls `can_user_modify_field()` and raises
+   `You do not have permission to modify this field`. This covers the
+   `check_in_field()` RPC and any direct write, so it cannot be bypassed from
+   the client.
+2. **UI** — the attendees page greys the station out with a red border and a
+   "role restricted" tooltip, so an operator does not tap a button that is going
+   to fail.
+
+Other rules that stack on top, unchanged:
+- Main entrance has to be checked before any other station for that attendee.
+- Only `super_admin` can uncheck (`undo_check_in`).
+- Attendees marked pre-collected are locked for everyone.
+- `/dashboard/add` and `/dashboard/admin` are `super_admin` only.
+
+## Debugging
+
+```sql
+-- full role x station grid
+select * from public.role_field_permissions order by role, field_name;
+
+-- one role
+select field_name, can_modify
+from public.role_field_permissions
+where role = 'dental_usj';
+
+-- one combination
+select public.can_user_modify_field('dental_usj', 'Dental Check (USJ)', false);
+```
 
 ## Migration
 
-To apply the role-based access system:
+Run `supabase/migration_2026d_station_roles.sql`. It is idempotent — running it
+twice is harmless.
 
-1. Run the migration file: `supabase/migration_role_based_access.sql`
-2. Update existing user roles as needed
-3. Ensure field names follow the naming convention
-4. Test with different user roles
+It **renames** the retired enum values in place and adds the missing ones. It
+does not rebuild the type. The obvious approach — create a new enum, re-cast
+`profiles.role`, drop the old type — fails on the live database:
 
-## Troubleshooting
-
-### Common Issues
-
-1. **"You do not have permission to modify this field"** - User's role doesn't match field name
-2. **Fields not showing as restricted** - Check field naming convention
-3. **Role not updating** - Verify database migration ran successfully
-4. **Can only see own user in admin panel** - RLS policies are working correctly; use admin functions instead
-
-### Debug Queries
-
-```sql
--- Check user's current role
-SELECT role FROM public.profiles WHERE id = auth.uid();
-
--- Check field permissions for a role
-SELECT field_name, can_modify 
-FROM public.role_field_permissions 
-WHERE role = 'shabebik';
-
--- Test role function directly
-SELECT public.can_user_modify_field('shabebik', 'Medical Check');
+```
+ERROR: cannot alter type of a column used in a policy definition
+DETAIL: policy attendee_field_status_delete on table attendee_field_status
+        depends on column "role"
 ```
 
-## Future Enhancements
+RLS policies read `profiles.role`, so the column's type cannot be changed
+without dropping and recreating every policy that touches it — including ones
+that exist only in the live database and are in no file here. Renaming values
+avoids all of it: no policy, view, function or trigger has to be dropped.
 
-1. **Role hierarchy** - Allow roles to inherit permissions
-2. **Custom field permissions** - Database table for role-field mappings
-3. **Temporary permissions** - Time-limited role assignments
-4. **Audit logging** - Track all permission checks and violations
+The rename carries each account over with its value:
+
+| 2025 | becomes | why |
+|---|---|---|
+| `medical` | `medical_lau` | same station, new venue |
+| `dental` | `dental_usj` | same station, new venue |
+| `shabebik` | `none` | retired, no 2026 equivalent — reassign by hand |
+| `optic_et_vision` | unchanged | station still exists |
+| `admin`, `super_admin` | unchanged | full access |
+
+Do **not** re-run `supabase/migration_role_based_access.sql` afterwards — it is
+the 2025 version and would put the retired roles back.
+
+One cosmetic consequence: because values were renamed rather than recreated, the
+enum's internal order is `admin, super_admin, none, optic_et_vision,
+medical_lau, dental_usj, main_entrance, …` rather than something tidy. That only
+affects the order Supabase's own table editor lists them in. The app's role
+picker uses `STATION_ROLES` in `lib/roleUtils.ts` and is ordered by station.
+
+### After migrating
+Reassign anyone parked on `none`, and anyone whose carried-over station is wrong.
+Super Admin → Users & Roles does this in the app, or:
+
+```sql
+select id, email, role from public.list_all_users();
+select public.update_user_role('<uuid>', 'main_entrance');
+```
+
+## Known gaps
+
+- `handle_new_user()` still gives every brand-new auth user `role = 'admin'`,
+  i.e. full access until a super admin changes it. Consider defaulting new
+  signups to `'none'` if accounts are ever created by anyone but the organisers.
+- Roles are an enum, so stations and roles have to be added in lockstep. A
+  `fields.required_role` column (or the unused `user_field_access` table) would
+  let the super admin wire this up in the app instead of in a migration.

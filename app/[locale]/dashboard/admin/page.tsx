@@ -2,9 +2,17 @@
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 // events removed; using global fields
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { RequireRole } from "@/components/auth/RequireRole";
 import { exportEverything } from "@/lib/exportData";
+import {
+  FULL_ACCESS_ROLES,
+  STATION_ROLES,
+  UserRole,
+  canUserModifyField,
+  getRoleDisplayName,
+  isFullAccessRole,
+} from "@/lib/roleUtils";
 
 function AdminPageContent() {
   const { locale } = useParams<{ locale: "en" | "ar" }>();
@@ -42,6 +50,9 @@ function AdminPageContent() {
 
       {/* Fields Management Section */}
       <FieldsManager />
+
+      {/* Users & Roles Section */}
+      <UsersRolesManager isArabic={isArabic} />
       
       {/* Data Management Section */}
       <div className="glass rounded-2xl p-6 lg:p-8">
@@ -129,6 +140,200 @@ function AdminPageContent() {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+type ManagedUser = {
+  id: string;
+  email: string | null;
+  role: UserRole;
+  created_at: string;
+};
+
+// Assign one station per account. Reads through list_all_users() and writes
+// through update_user_role() — both super-admin-only in the database, so this
+// panel cannot hand out access even if it is rendered by mistake.
+function UsersRolesManager({ isArabic }: { isArabic: boolean }) {
+  const [users, setUsers] = useState<ManagedUser[]>([]);
+  const [fields, setFields] = useState<Array<{ name: string; is_main: boolean }>>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [savingId, setSavingId] = useState<string | null>(null);
+  const [myId, setMyId] = useState<string | null>(null);
+
+  const t = {
+    title: isArabic ? "المستخدمون والأدوار" : "Users & Roles",
+    subtitle: isArabic
+      ? "لكل حساب دور واحد يحدد المحطة التي يمكنه تسجيل الحضور فيها"
+      : "One role per account decides which station it can check attendees in at",
+    fullAccess: isArabic ? "وصول كامل" : "Full access",
+    stations: isArabic ? "المحطات" : "Stations",
+    noStation: isArabic ? "بدون محطة" : "No station",
+    reload: isArabic ? "تحديث" : "Reload",
+    loading: isArabic ? "جارٍ التحميل..." : "Loading users...",
+    empty: isArabic ? "لا يوجد مستخدمون" : "No users found",
+    canCheck: isArabic ? "يمكنه تسجيل:" : "Can check in at:",
+    nothing: isArabic ? "لا شيء" : "nothing",
+    everything: isArabic ? "كل المحطات" : "all stations",
+    parked: isArabic
+      ? "حسابات بدون محطة — خصّص لها دورًا:"
+      : "Accounts with no station yet — assign them a role:",
+  };
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    const [{ data: me }, usersRes, fieldsRes] = await Promise.all([
+      supabase.auth.getUser(),
+      supabase.rpc("list_all_users"),
+      supabase.from("fields").select("name,is_main").order("sort_order", { ascending: true }),
+    ]);
+    setMyId(me.user?.id ?? null);
+    if (usersRes.error) {
+      setError(usersRes.error.message);
+      setUsers([]);
+    } else {
+      setUsers((usersRes.data ?? []) as ManagedUser[]);
+    }
+    setFields(fieldsRes.data ?? []);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  // What a role actually reaches, resolved against the live station list, so the
+  // super admin sees the effect of a role rather than having to trust its name.
+  function stationsFor(role: UserRole): string {
+    if (isFullAccessRole(role)) return t.everything;
+    const reachable = fields
+      .filter((f) => canUserModifyField(role, f.name, f.is_main))
+      .map((f) => f.name);
+    return reachable.length ? reachable.join(", ") : t.nothing;
+  }
+
+  async function changeRole(user: ManagedUser, nextRole: UserRole) {
+    if (nextRole === user.role) return;
+
+    // Demoting yourself out of super_admin locks this panel behind an account
+    // you no longer have. Worth one confirmation.
+    if (user.id === myId && user.role === "super_admin" && nextRole !== "super_admin") {
+      const warning = isArabic
+        ? "أنت تغيّر دورك الخاص وستفقد صلاحية المشرف الأعلى. هل أنت متأكد؟"
+        : "You are changing your OWN role and will lose super admin access. Continue?";
+      if (!window.confirm(warning)) return;
+    }
+
+    setSavingId(user.id);
+    const { error: rpcError } = await supabase.rpc("update_user_role", {
+      p_user_id: user.id,
+      p_new_role: nextRole,
+    });
+    setSavingId(null);
+
+    if (rpcError) {
+      alert(rpcError.message);
+      return;
+    }
+    setUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, role: nextRole } : u)));
+  }
+
+  const parked = users.filter((u) => u.role === "none");
+
+  return (
+    <div className="glass rounded-2xl p-6 lg:p-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+        <div>
+          <h2 className="text-lg font-semibold text-[var(--foreground)] flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-purple-500" />
+            {t.title}
+          </h2>
+          <p className="text-sm text-[var(--muted)] mt-1">{t.subtitle}</p>
+        </div>
+        <button className="btn glass px-4 shrink-0" onClick={load} disabled={loading}>
+          {t.reload}
+        </button>
+      </div>
+
+      {error && (
+        <div className="mb-4 p-4 rounded-xl border border-red-200 bg-red-50/50 dark:border-red-800 dark:bg-red-900/20 text-sm text-red-700 dark:text-red-300">
+          {error}
+        </div>
+      )}
+
+      {parked.length > 0 && (
+        <div className="mb-4 p-4 rounded-xl border border-amber-200 bg-amber-50/50 dark:border-amber-800 dark:bg-amber-900/20">
+          <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
+            {t.parked}
+          </p>
+          <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
+            {parked.map((u) => u.email || u.id).join(", ")}
+          </p>
+        </div>
+      )}
+
+      {loading ? (
+        <p className="text-[var(--muted)]">{t.loading}</p>
+      ) : users.length === 0 ? (
+        <p className="text-[var(--muted)]">{t.empty}</p>
+      ) : (
+        <div className="space-y-3">
+          {users.map((u) => (
+            <div
+              key={u.id}
+              className="glass-strong rounded-xl p-4 border border-[var(--border-glass)]"
+            >
+              <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-[var(--foreground)] truncate">
+                    {u.email || u.id}
+                    {u.id === myId && (
+                      <span className="ml-2 text-xs font-normal text-[var(--muted)]">
+                        {isArabic ? "(أنت)" : "(you)"}
+                      </span>
+                    )}
+                  </p>
+                  <p className="text-xs text-[var(--muted)] mt-1">
+                    {t.canCheck} {stationsFor(u.role)}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3 shrink-0">
+                  {savingId === u.id && (
+                    <span className="w-4 h-4 border-2 border-[var(--brand)] border-t-transparent rounded-full animate-spin" />
+                  )}
+                  <select
+                    className="rounded-xl px-3 py-3 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-[var(--brand)] focus:outline-none transition-all"
+                    value={u.role}
+                    disabled={savingId === u.id}
+                    onChange={(e) => changeRole(u, e.target.value as UserRole)}
+                  >
+                    <optgroup label={t.fullAccess}>
+                      {FULL_ACCESS_ROLES.map((r) => (
+                        <option key={r} value={r}>
+                          {getRoleDisplayName(r, isArabic)}
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label={t.stations}>
+                      {STATION_ROLES.map((r) => (
+                        <option key={r} value={r}>
+                          {getRoleDisplayName(r, isArabic)}
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label={t.noStation}>
+                      <option value="none">{getRoleDisplayName("none", isArabic)}</option>
+                    </optgroup>
+                  </select>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -1,3 +1,8 @@
+-- ⚠️ SUPERSEDED (2025 stations) — DO NOT RUN on a 2026 database.
+-- Kept for history only. This file re-adds the retired 'shabebik' / 'medical' /
+-- 'dental' enum values and overwrites can_user_modify_field() with the 2025
+-- mapping. The live role model is supabase/migration_2026d_station_roles.sql.
+
 -- Migration: Add role-based field access system
 -- This migration adds new user roles and implements role-based field access control
 
