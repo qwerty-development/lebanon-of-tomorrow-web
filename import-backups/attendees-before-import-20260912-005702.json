@@ -1,0 +1,8506 @@
+[
+ {
+  "name": "آدي شهاب مارون",
+  "record_number": "188",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03431008",
+  "quantity": 1,
+  "age": [
+   13
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ابراهيم احمد المحمد المصطفى",
+  "record_number": "57",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "70577547",
+  "quantity": 3,
+  "age": [
+   15,
+   12,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ابراهيم احمد شحاده",
+  "record_number": "120",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "81065920",
+  "quantity": 1,
+  "age": [
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ابراهيم جرجس اسحق",
+  "record_number": "76",
+  "governorate": "الشمال",
+  "district": "زغرتا",
+  "area": "شدرا",
+  "phone": "03495484",
+  "quantity": 2,
+  "age": [
+   12,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ابراهيم خليل ابراهيم",
+  "record_number": "76",
+  "governorate": "عكار",
+  "district": "عكار",
+  "area": "العوينات",
+  "phone": "03928121",
+  "quantity": 1,
+  "age": [
+   14
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ابراهيم خليل ابراهيم",
+  "record_number": "76",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "كوكبا",
+  "phone": "03928121",
+  "quantity": 1,
+  "age": [
+   15
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "إبراهيم خليل رحمة",
+  "record_number": "29",
+  "governorate": "الجنوب",
+  "district": "جزين",
+  "area": "الريحان",
+  "phone": "75476376",
+  "quantity": 1,
+  "age": [
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ابراهيم ذيب نقولا",
+  "record_number": "220",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03601249",
+  "quantity": 2,
+  "age": [
+   10,
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ابراهيم شكرالله لعصفور",
+  "record_number": "14",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "ابو قمحة",
+  "phone": "71592582",
+  "quantity": 1,
+  "age": [
+   13
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ابراهيم فهد ايوب",
+  "record_number": "6",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03108868",
+  "quantity": 1,
+  "age": [
+   11
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ابراهيم محمد جويلي",
+  "record_number": "119",
+  "governorate": "الجنوب",
+  "district": "صيدا",
+  "area": "الكسكية",
+  "phone": "03409894",
+  "quantity": 2,
+  "age": [
+   10,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ابراهيم مرقص رزق",
+  "record_number": "109",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "79121335",
+  "quantity": 1,
+  "age": [
+   15
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "اتيان ايلي رفول",
+  "record_number": "1795",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "03598731",
+  "quantity": 2,
+  "age": [
+   9,
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "احمد الخطيب",
+  "record_number": "25",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "81935051",
+  "quantity": 2,
+  "age": [
+   8,
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "احمد المحمود",
+  "record_number": "36",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "71451394",
+  "quantity": 3,
+  "age": [
+   11,
+   10,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "أحمد حسن صالح",
+  "record_number": "43",
+  "governorate": "جبل لبنان",
+  "district": "عاليه",
+  "area": "العمروسية-عاليه",
+  "phone": "03084534",
+  "quantity": 3,
+  "age": [
+   14,
+   12,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "احمد حسين الدياب",
+  "record_number": "59",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "71408662",
+  "quantity": 2,
+  "age": [
+   6,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "احمد خالد دياب",
+  "record_number": "200",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "78759924",
+  "quantity": 2,
+  "age": [
+   16,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "احمد سمير المحمود",
+  "record_number": "58",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "76990325",
+  "quantity": 3,
+  "age": [
+   8,
+   6,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "احمد سمير المحمود",
+  "record_number": "58",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "78854166",
+  "quantity": 3,
+  "age": [
+   8,
+   5,
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "احمد شاهين شاهين",
+  "record_number": "60",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "70940747",
+  "quantity": 2,
+  "age": [
+   14,
+   11
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "أحمد عبد الباسط الخطيب",
+  "record_number": "86",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "76657299",
+  "quantity": 3,
+  "age": [
+   12,
+   6,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "احمد عبد الباسط الخطيب",
+  "record_number": "86",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "70810665",
+  "quantity": 3,
+  "age": [
+   12,
+   7,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "احمد عبد اللطيف جراب",
+  "record_number": "6898",
+  "governorate": "بيروت",
+  "district": "بيروت الثانية",
+  "area": "المزرعة",
+  "phone": "70092454",
+  "quantity": 1,
+  "age": [
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "احمد فؤاد ابراهيم",
+  "record_number": "148",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "70742652",
+  "quantity": 1,
+  "age": [
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "احمد محمد الخطيب",
+  "record_number": "84",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "70905175",
+  "quantity": 2,
+  "age": [
+   8,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "احمد محمد العلي",
+  "record_number": "160",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "71128537",
+  "quantity": 3,
+  "age": [
+   13,
+   11,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "احمد محمد العلي",
+  "record_number": "160",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "71128537",
+  "quantity": 3,
+  "age": [
+   13,
+   11,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "احمد محمد المحمد",
+  "record_number": "5600",
+  "governorate": "بيروت",
+  "district": "بيروت الثانية",
+  "area": "مزرعة",
+  "phone": "78821782",
+  "quantity": 2,
+  "age": [
+   13,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "احمد محمود مصطفى",
+  "record_number": "13",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "70684607",
+  "quantity": 1,
+  "age": [
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "أحمد ناصر طالب",
+  "record_number": "145",
+  "governorate": "الشمال",
+  "district": "عكار",
+  "area": "مشمش-عكار",
+  "phone": "70360481",
+  "quantity": 5,
+  "age": [
+   15,
+   12,
+   10,
+   7,
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "احمد وليد الخطيب",
+  "record_number": "25",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "70715674",
+  "quantity": 2,
+  "age": [
+   7,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "أحمد وليد حماد",
+  "record_number": "10",
+  "governorate": "الشمال",
+  "district": "طرابلس",
+  "area": "القلمون",
+  "phone": "03413604",
+  "quantity": 2,
+  "age": [
+   10,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "إدمون إيلي عبدو",
+  "record_number": "146",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "76545453",
+  "quantity": 1,
+  "age": [
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ادوار بركات الجواهره",
+  "record_number": "3493",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "71303690",
+  "quantity": 2,
+  "age": [
+   10,
+   15
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "اسبر هاني اسبر",
+  "record_number": "42",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "راشيا الفخار",
+  "phone": "03643859",
+  "quantity": 3,
+  "age": [
+   12,
+   11,
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "اسعد الياس الغريب",
+  "record_number": "6",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "راشيا الفخار",
+  "phone": "03294893",
+  "quantity": 1,
+  "age": [
+   15
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "اسعد خليل رفول",
+  "record_number": "1",
+  "governorate": "النبطية",
+  "district": "بنت جبيل",
+  "area": "صفد البطيخ",
+  "phone": "71894125",
+  "quantity": 1,
+  "age": [
+   12
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "أسعد مخايل الحاج",
+  "record_number": "170",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "71950549",
+  "quantity": 2,
+  "age": [
+   11,
+   13
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "اسعد نعمة الله فارس",
+  "record_number": "35",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "كوكبا",
+  "phone": "03491617",
+  "quantity": 1,
+  "age": [
+   15
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "أفي جورج ضاهر",
+  "record_number": "57",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03365188",
+  "quantity": 1,
+  "age": [
+   15
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "الان عبدالله سعيد",
+  "record_number": "58",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03452308",
+  "quantity": 3,
+  "age": [
+   11,
+   9,
+   6
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "الياس أنطوان الحمصي",
+  "record_number": "54",
+  "governorate": "جبل لبنان",
+  "district": "بعبدا",
+  "area": "حارة حريك",
+  "phone": "03143503",
+  "quantity": 2,
+  "age": [
+   13,
+   15
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "الياس بشاره راجحه",
+  "record_number": "26",
+  "governorate": "جبل لبنان",
+  "district": "الشوف",
+  "area": "دير دوريت",
+  "phone": "71659152",
+  "quantity": 2,
+  "age": [
+   5,
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "إلياس بطرس ابو ضاهر",
+  "record_number": "171",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "٠٣/٠٠٩٩٦٢",
+  "quantity": 1,
+  "age": [
+   8
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "الياس بطرس جبيل",
+  "record_number": "1381",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "70320543",
+  "quantity": 2,
+  "age": [
+   14,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "الياس بيار سلامه",
+  "record_number": "56",
+  "governorate": "جبل لبنان",
+  "district": "المتن",
+  "area": "الفنار",
+  "phone": "71333573",
+  "quantity": 2,
+  "age": [
+   15,
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "إلياس جان متى",
+  "record_number": "5",
+  "governorate": "جبل لبنان",
+  "district": "المتن",
+  "area": "المنصورية",
+  "phone": "03030174",
+  "quantity": 3,
+  "age": [
+   4,
+   6,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "الياس جورج منير",
+  "record_number": "1246",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "03113523",
+  "quantity": 1,
+  "age": [
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "الياس حنا رومانوس",
+  "record_number": "٢٢٨",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03698558",
+  "quantity": 2,
+  "age": [
+   8,
+   9
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "إلياس حنا كلكش",
+  "record_number": "46",
+  "governorate": "جبل لبنان",
+  "district": "المتن",
+  "area": "سد البوشرية",
+  "phone": "71312777",
+  "quantity": 2,
+  "age": [
+   6,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "الياس خريستو كورد",
+  "record_number": "1323",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "70790371",
+  "quantity": 2,
+  "age": [
+   9,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "الياس راشد حبيب",
+  "record_number": "68",
+  "governorate": "الجنوب",
+  "district": "280",
+  "area": "بسري",
+  "phone": "71480703",
+  "quantity": 2,
+  "age": [
+   8,
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "الياس رفعت الزين",
+  "record_number": "95",
+  "governorate": "جبل لبنان",
+  "district": "المتن",
+  "area": "البوشرية",
+  "phone": "71837332",
+  "quantity": 2,
+  "age": [
+   10,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "الياس روبير راشد",
+  "record_number": "18",
+  "governorate": "الجنوب",
+  "district": "صور",
+  "area": "حي الارثوذكس",
+  "phone": "78458828",
+  "quantity": 2,
+  "age": [
+   14,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "الياس سلامة",
+  "record_number": "56",
+  "governorate": "بيروت",
+  "district": "الجديدة",
+  "area": "الفنار",
+  "phone": "03065046",
+  "quantity": 2,
+  "age": [
+   13,
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "الياس سليم متري",
+  "record_number": "13",
+  "governorate": "جبل لبنان",
+  "district": "الشوف",
+  "area": "ديبية",
+  "phone": "76342717",
+  "quantity": 2,
+  "age": [
+   6,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "الياس شهاب مارون",
+  "record_number": "188",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "71714898",
+  "quantity": 1,
+  "age": [
+   11
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "الياس صبحي لحود",
+  "record_number": "60",
+  "governorate": "جبل لبنان",
+  "district": "الشوف",
+  "area": "كفرنيس",
+  "phone": "71838350",
+  "quantity": 3,
+  "age": [
+   13,
+   6,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "الياس طانيوس بيطار",
+  "record_number": "24",
+  "governorate": "جبل لبنان",
+  "district": "المتن",
+  "area": "برج حمود",
+  "phone": "03083984",
+  "quantity": 1,
+  "age": [
+   11
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "الياس عادل الشدايده",
+  "record_number": "962",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "71215242",
+  "quantity": 2,
+  "age": [
+   13,
+   15
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "الياس عيسى عطية",
+  "record_number": "3573",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "الاشرفية",
+  "phone": "71315921",
+  "quantity": 2,
+  "age": [
+   6,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "الياس غسان مقدسي",
+  "record_number": "72",
+  "governorate": "جبل لبنان",
+  "district": "بعبدا",
+  "area": "تحويطة النهر",
+  "phone": "76363111",
+  "quantity": 1,
+  "age": [
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "الياس فرجالله الخوري",
+  "record_number": "122",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "71102215",
+  "quantity": 3,
+  "age": [
+   12,
+   10,
+   8
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "الياس مارون ابو راشد",
+  "record_number": "42",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "كوكبا",
+  "phone": "70883363",
+  "quantity": 2,
+  "age": [
+   8,
+   4
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "الياس مراد",
+  "record_number": "211",
+  "governorate": "بيروت",
+  "district": "الاشرفية",
+  "area": "الاشرفية",
+  "phone": "71758105",
+  "quantity": 2,
+  "age": [
+   11,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "الياس منصور شاهين",
+  "record_number": "193",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "76801701",
+  "quantity": 4,
+  "age": [
+   12,
+   10,
+   8,
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "اليان زوين",
+  "record_number": "32",
+  "governorate": "جبل لبنان",
+  "district": "كسروان",
+  "area": "الصفرا",
+  "phone": "70291494",
+  "quantity": 2,
+  "age": [
+   10,
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "اليان زوين",
+  "record_number": "32",
+  "governorate": "جبل لبنان",
+  "district": "كسروان",
+  "area": "الصفرا",
+  "phone": "70/291494",
+  "quantity": 2,
+  "age": [
+   10,
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "اميل جورج ضو",
+  "record_number": "969",
+  "governorate": "جبل لبنان",
+  "district": "بعبدا",
+  "area": "بليبل",
+  "phone": "07117887",
+  "quantity": 1,
+  "age": [
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "اميلي خراط",
+  "record_number": "11",
+  "governorate": "البقاع",
+  "district": "الهرمل",
+  "area": "وادي الرطل",
+  "phone": "71079148",
+  "quantity": 1,
+  "age": [
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "اميلي خراط",
+  "record_number": "11",
+  "governorate": "البقاع",
+  "district": "الهرمل",
+  "area": "وادي الرطل",
+  "phone": "71/079148",
+  "quantity": 1,
+  "age": [
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "أمين انطوان سعيد",
+  "record_number": "58",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03492623",
+  "quantity": 3,
+  "age": [
+   7,
+   11,
+   15
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "أمين بطرس نجم",
+  "record_number": "7",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03236707",
+  "quantity": 1,
+  "age": [
+   9
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "انطوان وديع الظواهره",
+  "record_number": "1606",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الرميل",
+  "phone": "76380989",
+  "quantity": 1,
+  "age": [
+   15
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "انطون جان صوفان",
+  "record_number": "978",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "الرميل",
+  "phone": "76912608",
+  "quantity": 1,
+  "age": [
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "انيس يوسف ناصيف",
+  "record_number": "74",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "كوكبا",
+  "phone": "03695817",
+  "quantity": 3,
+  "age": [
+   15,
+   15,
+   13
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ايلي بطرس ونا",
+  "record_number": "129",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70407758",
+  "quantity": 1,
+  "age": [
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ايلي جان ابو نقول",
+  "record_number": "50",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "كوكبا",
+  "phone": "03894470",
+  "quantity": 3,
+  "age": [
+   12,
+   9,
+   10
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ايلي جورج بعينو",
+  "record_number": "85",
+  "governorate": "جبل لبنان",
+  "district": "كسروان",
+  "area": "ميروبا",
+  "phone": "81440124",
+  "quantity": 3,
+  "age": [
+   13,
+   11,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ايلي جورج رزق",
+  "record_number": "37",
+  "governorate": "جبل لبنان",
+  "district": "جبيل",
+  "area": "غليون",
+  "phone": "70466454",
+  "quantity": 2,
+  "age": [
+   5,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ايلي خيرالله مارون",
+  "record_number": "154",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03231571",
+  "quantity": 2,
+  "age": [
+   12,
+   15
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ايلي رزق",
+  "record_number": "37",
+  "governorate": "جبل لبنان",
+  "district": "جبيل",
+  "area": "غلبون",
+  "phone": "70466454",
+  "quantity": 2,
+  "age": [
+   7,
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ايلي سابا",
+  "record_number": "155",
+  "governorate": "الشمال",
+  "district": "عكار",
+  "area": "رحبه",
+  "phone": "70/946904",
+  "quantity": 2,
+  "age": [
+   13,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ايلي سابا",
+  "record_number": "155",
+  "governorate": "الشمال",
+  "district": "عكار",
+  "area": "رحبه",
+  "phone": "70946904",
+  "quantity": 2,
+  "age": [
+   13,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ايلي سمير غنيم",
+  "record_number": "9",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "ابو قمحة",
+  "phone": "03906018",
+  "quantity": 1,
+  "age": [
+   12
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ايلي شوقي ابو كسم",
+  "record_number": "40",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03504415",
+  "quantity": 1,
+  "age": [
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ايلي عزيز سلوم",
+  "record_number": "13",
+  "governorate": "النبطية",
+  "district": "بنت جبيل",
+  "area": "يارون",
+  "phone": "03903782",
+  "quantity": 1,
+  "age": [
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ايلي فواد صايغ",
+  "record_number": "1345",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "76399458",
+  "quantity": 3,
+  "age": [
+   8,
+   8,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ايلي قزحيا كرم",
+  "record_number": "311",
+  "governorate": "جبل لبنان",
+  "district": "جبيل",
+  "area": "قرطبا",
+  "phone": "70167744",
+  "quantity": 2,
+  "age": [
+   12,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ايلي مارون نهرا",
+  "record_number": "123",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03637326",
+  "quantity": 1,
+  "age": [
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ايلي مرهج",
+  "record_number": "200",
+  "governorate": "جبل لبنان",
+  "district": "المتن",
+  "area": "السبتية",
+  "phone": "70235267",
+  "quantity": 2,
+  "age": [
+   12,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ايلي نقولا عبدو",
+  "record_number": "146",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "76603636",
+  "quantity": 1,
+  "age": [
+   13
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ايليا ادمون عازار",
+  "record_number": "46",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "03559614",
+  "quantity": 1,
+  "age": [
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ايليا تةفيق ابو نقول",
+  "record_number": "50",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "كوكبا",
+  "phone": "03264855",
+  "quantity": 1,
+  "age": [
+   15
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ايليان ضاهر",
+  "record_number": "267",
+  "governorate": "الجنوب",
+  "district": "بنت جبيل",
+  "area": "رميش",
+  "phone": "70/022255",
+  "quantity": 2,
+  "age": [
+   11,
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "أيمن جورج جرجس",
+  "record_number": "274",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "79196331",
+  "quantity": 1,
+  "age": [
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ايهاب مروان كيوف",
+  "record_number": "208",
+  "governorate": "جبل لبنان",
+  "district": "الشوف",
+  "area": "شحيم حي الشريفة",
+  "phone": "71529230",
+  "quantity": 3,
+  "age": [
+   15,
+   11,
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "باسكال عصام فارس",
+  "record_number": "35",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "كوكبا",
+  "phone": "03243971",
+  "quantity": 1,
+  "age": [
+   10
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "باسكال ميلاد عزام",
+  "record_number": "446",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الرميل",
+  "phone": "70737670",
+  "quantity": 2,
+  "age": [
+   14,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "باسكال ميلاد عزام",
+  "record_number": "446",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الرميل",
+  "phone": "71445433",
+  "quantity": 2,
+  "age": [
+   13,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "بسام جورج عطيه",
+  "record_number": "51",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "كوكبا",
+  "phone": "71539709",
+  "quantity": 1,
+  "age": [
+   14
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "بسام علوية",
+  "record_number": "174",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "70871731",
+  "quantity": 1,
+  "age": [
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "بشارة ميلاد ابو سمرا",
+  "record_number": "40",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "81831214",
+  "quantity": 2,
+  "age": [
+   11,
+   12
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "بشاره لوزي ترنتيك",
+  "record_number": "1480",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "03801399",
+  "quantity": 2,
+  "age": [
+   14,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "بشاره نهاد غريب",
+  "record_number": "41",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الصيفي",
+  "phone": "03974519",
+  "quantity": 1,
+  "age": [
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "بشير جوزيف نهرا",
+  "record_number": "123",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70114856",
+  "quantity": 1,
+  "age": [
+   12
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "بشير دوميط حايك",
+  "record_number": "30",
+  "governorate": "جبل لبنان",
+  "district": "جبيل",
+  "area": "جاج",
+  "phone": "03117352",
+  "quantity": 2,
+  "age": [
+   10,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "بشير طنوس البطحاني",
+  "record_number": "46",
+  "governorate": "بعلبك",
+  "district": "بعلبك",
+  "area": "دير الاحمر",
+  "phone": "70327367",
+  "quantity": 2,
+  "age": [
+   10,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "بشير طوني أبو عقل",
+  "record_number": "8",
+  "governorate": "الجنوب",
+  "district": "جزين",
+  "area": "قيتولي",
+  "phone": "71980717",
+  "quantity": 3,
+  "age": [
+   15,
+   10,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "بشير عماد ضاهر",
+  "record_number": "33",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "71994426",
+  "quantity": 1,
+  "age": [
+   12
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "بطرس شليطا",
+  "record_number": "213",
+  "governorate": "الشمال",
+  "district": "البترون",
+  "area": "تنورين",
+  "phone": "03/187768",
+  "quantity": 1,
+  "age": [
+   13
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "بطرس شليطا",
+  "record_number": "213",
+  "governorate": "الشمال",
+  "district": "البترون",
+  "area": "تنورين",
+  "phone": "03187768",
+  "quantity": 1,
+  "age": [
+   13
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "بطرس فندي ابو حمد",
+  "record_number": "203",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70899104",
+  "quantity": 3,
+  "age": [
+   13,
+   10,
+   8
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "بكر خالد شحاده",
+  "record_number": "183",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "71243882",
+  "quantity": 1,
+  "age": [
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "بلال جهاد حرب",
+  "record_number": "180",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "71203384",
+  "quantity": 2,
+  "age": [
+   9,
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "بلال علي الحسن",
+  "record_number": "180",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "70049523",
+  "quantity": 3,
+  "age": [
+   14,
+   11,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "بلال محمد الحسن",
+  "record_number": "191",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "03560017",
+  "quantity": 1,
+  "age": [
+   13
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "بلال محمد عيسى مشلب مطر",
+  "record_number": "131",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "71402088",
+  "quantity": 1,
+  "age": [
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "بلال محمود بشير",
+  "record_number": "1",
+  "governorate": "جبل لبنان",
+  "district": "الشوف",
+  "area": "السعديات",
+  "phone": "78952024",
+  "quantity": 1,
+  "age": [
+   15
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "بنوا احسان شاهين",
+  "record_number": "506",
+  "governorate": "جبل لبنان",
+  "district": "المتن",
+  "area": "ضبية",
+  "phone": "71919389",
+  "quantity": 3,
+  "age": [
+   7,
+   5,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "بول بيار نوجا",
+  "record_number": "6",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الرميل",
+  "phone": "71099048",
+  "quantity": 1,
+  "age": [
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "بول جوزيف مرحة",
+  "record_number": "623",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03329424",
+  "quantity": 2,
+  "age": [
+   13,
+   9
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "بول نبيل بدران",
+  "record_number": "178",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "الاشرفية",
+  "phone": "71727974",
+  "quantity": 1,
+  "age": [
+   15
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "بولص منير الدبعي",
+  "record_number": "1278",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "03898488",
+  "quantity": 4,
+  "age": [
+   13,
+   12,
+   5,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "بيار باسيل كعدي",
+  "record_number": "273",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "78848199",
+  "quantity": 1,
+  "age": [
+   11
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "بيار جورج سلامة",
+  "record_number": "69",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70248837",
+  "quantity": 2,
+  "age": [
+   12,
+   13
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "بيار حنا مخلوف",
+  "record_number": "3",
+  "governorate": "الشمال",
+  "district": "بشري",
+  "area": "بقاعكفرا",
+  "phone": "76860984",
+  "quantity": 2,
+  "age": [
+   11,
+   11
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "بيار خليل شحادة",
+  "record_number": "55",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "03954176",
+  "quantity": 1,
+  "age": [
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "بيار عبدالله حنبوري",
+  "record_number": "494",
+  "governorate": "جبل لبنان",
+  "district": "المتن",
+  "area": "برج حمود",
+  "phone": "03110067",
+  "quantity": 1,
+  "age": [
+   11
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "بيار موريس نصر",
+  "record_number": "1118",
+  "governorate": "جبل لبنان",
+  "district": "المتن",
+  "area": "السبتية",
+  "phone": "71616151",
+  "quantity": 1,
+  "age": [
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "بيتر ريمون نهرا",
+  "record_number": "123",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "71769027",
+  "quantity": 1,
+  "age": [
+   5
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "تيسير طارق غادر",
+  "record_number": "319",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "شبعا غربي",
+  "phone": "03084154",
+  "quantity": 2,
+  "age": [
+   10,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جاد رباح ضاهر",
+  "record_number": "62",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03326185",
+  "quantity": 1,
+  "age": [
+   13
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جاسم عثمان مطر",
+  "record_number": "131",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "71806672",
+  "quantity": 2,
+  "age": [
+   5,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جاك جورج الجاسوس",
+  "record_number": "3552",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "03923064",
+  "quantity": 1,
+  "age": [
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جاكلين زاكاريا قيومجيان",
+  "record_number": "12",
+  "governorate": "الجنوب",
+  "district": "صيدا",
+  "area": "مجدليون",
+  "phone": "78964699",
+  "quantity": 2,
+  "age": [
+   12,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جان بولس خوري",
+  "record_number": "122",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70352833",
+  "quantity": 1,
+  "age": [
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جان بيار نبيل قسيس",
+  "record_number": "424",
+  "governorate": "جبل لبنان",
+  "district": "جبيل",
+  "area": "قرطبا",
+  "phone": "70303634",
+  "quantity": 1,
+  "age": [
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جان جريس جبور",
+  "record_number": "12",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "71776543",
+  "quantity": 3,
+  "age": [
+   9,
+   11,
+   13
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جان جوزيف الذيب",
+  "record_number": "1318",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "الاشرفية",
+  "phone": "76168011",
+  "quantity": 2,
+  "age": [
+   8,
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جان جوزيف رحمة",
+  "record_number": "60",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "81709030",
+  "quantity": 2,
+  "age": [
+   8,
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جان مهنا شليويط",
+  "record_number": "3509",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "76487548",
+  "quantity": 1,
+  "age": [
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جان موريس بو نعمه",
+  "record_number": "215",
+  "governorate": "الشمال",
+  "district": "زغرتا",
+  "area": "زغرتا حي الصليب الجنوبي",
+  "phone": "03521117",
+  "quantity": 2,
+  "age": [
+   12,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جان نقولا نقولا",
+  "record_number": "28",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70170994",
+  "quantity": 2,
+  "age": [
+   12,
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جبريل يحي سلوم",
+  "record_number": "21",
+  "governorate": "جبل لبنان",
+  "district": "المتن",
+  "area": "الدكوانه",
+  "phone": "78847659",
+  "quantity": 2,
+  "age": [
+   11,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جرجس بولس ابو حمد",
+  "record_number": "203",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70127520",
+  "quantity": 1,
+  "age": [
+   10
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جرجس رامز بولس",
+  "record_number": "24",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03552007",
+  "quantity": 2,
+  "age": [
+   13,
+   11
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جرجس رزق رزق",
+  "record_number": "278",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70105358",
+  "quantity": 2,
+  "age": [
+   10,
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جرجس يوسف مراد",
+  "record_number": "33",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "راشيا الفخار",
+  "phone": "70725656",
+  "quantity": 4,
+  "age": [
+   13,
+   11,
+   8,
+   6
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جرجس يوسف مردان",
+  "record_number": "61",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "راشيا الفخار",
+  "phone": "03538388",
+  "quantity": 2,
+  "age": [
+   10,
+   9
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جريس الياس عوض",
+  "record_number": "N/A",
+  "governorate": "",
+  "district": "",
+  "area": "",
+  "phone": "81665146",
+  "quantity": 1,
+  "age": [
+   12
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جريس انطوان تابت",
+  "record_number": "21",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "الاشرفية",
+  "phone": "70603639",
+  "quantity": 1,
+  "age": [
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جف شاكر اللبيان",
+  "record_number": "213",
+  "governorate": "الشمال",
+  "district": "زغرتا",
+  "area": "زغرتا حي المعاصر",
+  "phone": "76508009",
+  "quantity": 1,
+  "age": [
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جلال محمد مشيك",
+  "record_number": "34",
+  "governorate": "البقاع",
+  "district": "بعلبك",
+  "area": "الحدث",
+  "phone": "71346462",
+  "quantity": 3,
+  "age": [
+   12,
+   9,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جمال احمد العثمان",
+  "record_number": "130",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "71334850",
+  "quantity": 2,
+  "age": [
+   14,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جميل محمد حرب",
+  "record_number": "154",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "الاشرفية",
+  "phone": "81699921",
+  "quantity": 2,
+  "age": [
+   10,
+   12
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جهاد بطرس ميني",
+  "record_number": "1248",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "70303662",
+  "quantity": 1,
+  "age": [
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جهاد فؤاد رحال",
+  "record_number": "٢٠",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "٧١٠٢٣٠٥٨",
+  "quantity": 2,
+  "age": [
+   9,
+   9
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جهاد محمد حرب",
+  "record_number": "180",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "03856416",
+  "quantity": 1,
+  "age": [
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جهاد هاني اسبر",
+  "record_number": "42",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "راشيا الفخار",
+  "phone": "03429745",
+  "quantity": 3,
+  "age": [
+   7,
+   7,
+   6
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جو قزحيا قزحيا",
+  "record_number": "59",
+  "governorate": "الجنوب",
+  "district": "280",
+  "area": "صفارية",
+  "phone": "76568725",
+  "quantity": 2,
+  "age": [
+   5,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جورج اديب نهرا",
+  "record_number": "21",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "حاصبيا",
+  "phone": "76022420",
+  "quantity": 2,
+  "age": [
+   8,
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جورج انترانيك كورغيان",
+  "record_number": "260",
+  "governorate": "بيروت",
+  "district": "بيروت الثانية",
+  "area": "مينا الحصن",
+  "phone": "03445926",
+  "quantity": 1,
+  "age": [
+   15
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جورج بطرس نهرا",
+  "record_number": "123",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70544803",
+  "quantity": 2,
+  "age": [
+   12,
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جورج تادوس",
+  "record_number": "Palestinian",
+  "governorate": "",
+  "district": "",
+  "area": "",
+  "phone": "76565677",
+  "quantity": 1,
+  "age": [
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جورج جوزيف ايلو",
+  "record_number": "167",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "الاشرفية",
+  "phone": "70664259",
+  "quantity": 1,
+  "age": [
+   11
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جورج روجيه نهرا",
+  "record_number": "16",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "كوكبا",
+  "phone": "70273608",
+  "quantity": 1,
+  "age": [
+   5
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جورج سليم ابي زيد",
+  "record_number": "25",
+  "governorate": "الجنوب",
+  "district": "صيدا",
+  "area": "ابو قمحة",
+  "phone": "03156318",
+  "quantity": 1,
+  "age": [
+   8
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جورج سمير خليفة",
+  "record_number": "3117",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "03243214",
+  "quantity": 2,
+  "age": [
+   10,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جورج طانس ضاهر",
+  "record_number": "57",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70552579",
+  "quantity": 2,
+  "age": [
+   11,
+   10
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جورج غسان طوبيا",
+  "record_number": "30",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70850109",
+  "quantity": 2,
+  "age": [
+   8,
+   10
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جورج فارس رزق",
+  "record_number": "N/A",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "76866877",
+  "quantity": 4,
+  "age": [
+   11,
+   9,
+   8,
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جورج قزحيا مخلوف",
+  "record_number": "212",
+  "governorate": "جبل لبنان",
+  "district": "بعبدا",
+  "area": "بسابا",
+  "phone": "03099136",
+  "quantity": 1,
+  "age": [
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جورج كريم سمراني",
+  "record_number": "148",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "70987610",
+  "quantity": 1,
+  "age": [
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جورج مرشد نهرا",
+  "record_number": "201",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "71715679",
+  "quantity": 2,
+  "age": [
+   7,
+   12
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جورج ميشال سلامة",
+  "record_number": "47",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70292005",
+  "quantity": 2,
+  "age": [
+   11,
+   9
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جورج ميشال ياسمين",
+  "record_number": "3633",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "81014590",
+  "quantity": 2,
+  "age": [
+   10,
+   12
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جورج نزيه فارس",
+  "record_number": "5",
+  "governorate": "عكار",
+  "district": "عكار",
+  "area": "بينو",
+  "phone": "70158289",
+  "quantity": 3,
+  "age": [
+   12,
+   8,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جورج نصار",
+  "record_number": "85",
+  "governorate": "جبل لبنان",
+  "district": "المتن",
+  "area": "ضهور شوير",
+  "phone": "03608007",
+  "quantity": 2,
+  "age": [
+   12,
+   15
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جورج نهاد سعاده",
+  "record_number": "6",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "الماري",
+  "phone": "70181829",
+  "quantity": 2,
+  "age": [
+   13,
+   8
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جورج يوسف سقلاوي",
+  "record_number": "12",
+  "governorate": "جبل لبنان",
+  "district": "المتن",
+  "area": "الدكوانه",
+  "phone": "71651851",
+  "quantity": 2,
+  "age": [
+   12,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جورجيو جورج حنين",
+  "record_number": "46",
+  "governorate": "جبل لبنان",
+  "district": "بعبدا",
+  "area": "المريجه",
+  "phone": "70980141",
+  "quantity": 1,
+  "age": [
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جوزاف العلم",
+  "record_number": "35",
+  "governorate": "الشمال",
+  "district": "الكورة",
+  "area": "مجدل الكورة",
+  "phone": "03/793787",
+  "quantity": 1,
+  "age": [
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جوزاف العلم",
+  "record_number": "35",
+  "governorate": "الشمال",
+  "district": "الكورة",
+  "area": "مجدل الكورة",
+  "phone": "03793787",
+  "quantity": 1,
+  "age": [
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جوزف ابو النصر",
+  "record_number": "19",
+  "governorate": "جبل لبنان",
+  "district": "الناعمة الشوف",
+  "area": "الناعمة الشوف",
+  "phone": "03974232",
+  "quantity": 2,
+  "age": [
+   13,
+   3
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جوزف العلم",
+  "record_number": "87",
+  "governorate": "الشمال",
+  "district": "الكورة",
+  "area": "الكورة",
+  "phone": "03191351",
+  "quantity": 3,
+  "age": [
+   13,
+   12,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جوزف جورج حنين",
+  "record_number": "46",
+  "governorate": "جبل لبنان",
+  "district": "بعبدا",
+  "area": "المريجه",
+  "phone": "03981677",
+  "quantity": 3,
+  "age": [
+   14,
+   12,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جوزيان فايز ابو عيد",
+  "record_number": "72",
+  "governorate": "البقاع",
+  "district": "زحلة",
+  "area": "زحلة",
+  "phone": "81490440",
+  "quantity": 1,
+  "age": [
+   13
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جوزيف الخوري",
+  "record_number": "27",
+  "governorate": "جبل لبنان",
+  "district": "الشوف",
+  "area": "الدامور",
+  "phone": "03/576649",
+  "quantity": 2,
+  "age": [
+   11,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جوزيف الخوري",
+  "record_number": "27",
+  "governorate": "جبل لبنان",
+  "district": "الشوف",
+  "area": "الدامور",
+  "phone": "03576649",
+  "quantity": 2,
+  "age": [
+   11,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جوزيف انطوان شماس",
+  "record_number": "6",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الرميل",
+  "phone": "70140310",
+  "quantity": 1,
+  "age": [
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جوزيف بشارة الجبيلي",
+  "record_number": "464",
+  "governorate": "بيروت",
+  "district": "بيروت الاواى",
+  "area": "الصيفي",
+  "phone": "71291124",
+  "quantity": 2,
+  "age": [
+   8,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جوزيف جان حداد",
+  "record_number": "3469",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "70106749",
+  "quantity": 1,
+  "age": [
+   11
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جوزيف جورج الجاسوس",
+  "record_number": "3552",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "70300165",
+  "quantity": 1,
+  "age": [
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جوزيف فؤاد مسعود",
+  "record_number": "26",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "ابو قمحة",
+  "phone": "70125233",
+  "quantity": 1,
+  "age": [
+   12
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جوزيف كرمالله سلامي",
+  "record_number": "243",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03986895",
+  "quantity": 1,
+  "age": [
+   9
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جوزيف ميلاد مقلد",
+  "record_number": "108",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03408879",
+  "quantity": 2,
+  "age": [
+   15,
+   11
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جول سليم سليم",
+  "record_number": "143",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "76969539",
+  "quantity": 2,
+  "age": [
+   7,
+   6
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جون كندي كفوري",
+  "record_number": "25",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70611468",
+  "quantity": 1,
+  "age": [
+   11
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جوني الياس حصروني",
+  "record_number": "5",
+  "governorate": "النبطية",
+  "district": "بنت جبيل",
+  "area": "عين ابل",
+  "phone": "71969314",
+  "quantity": 1,
+  "age": [
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جوني أنطوان الحاج",
+  "record_number": "36",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03015936",
+  "quantity": 2,
+  "age": [
+   7,
+   10
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جوني جوزيف الغريب",
+  "record_number": "20",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "راشيا الفخار",
+  "phone": "79841625",
+  "quantity": 2,
+  "age": [
+   14,
+   12
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جوني جوزيف عبود",
+  "record_number": "245",
+  "governorate": "الشمال",
+  "district": "بشري",
+  "area": "حصرون",
+  "phone": "70876416",
+  "quantity": 2,
+  "age": [
+   11,
+   15
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جوني فؤاد الغريب",
+  "record_number": "79",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "راشيا الفخار",
+  "phone": "81479130",
+  "quantity": 1,
+  "age": [
+   6
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "جوني يوسف السقيم",
+  "record_number": "43",
+  "governorate": "كسروان",
+  "district": "كسروان",
+  "area": "بطحا",
+  "phone": "03834778",
+  "quantity": 3,
+  "age": [
+   14,
+   12,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جوي شربل سعد",
+  "record_number": "17",
+  "governorate": "جبل لبنان",
+  "district": "جبيل",
+  "area": "مشمش",
+  "phone": "71505705",
+  "quantity": 2,
+  "age": [
+   14,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "جيلبير جرجس جبور",
+  "record_number": "12",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03414320",
+  "quantity": 1,
+  "age": [
+   13
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "حاتم احمد الزهران",
+  "record_number": "303",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "71167212",
+  "quantity": 1,
+  "age": [
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حاتم احمد الزهران",
+  "record_number": "303",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "71168212",
+  "quantity": 2,
+  "age": [
+   7,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حبيب اسكندر جرجوره",
+  "record_number": "1949",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "71715535",
+  "quantity": 1,
+  "age": [
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حسام امين شوربا",
+  "record_number": "46",
+  "governorate": "جبل لبنان",
+  "district": "بعبدا",
+  "area": "بعبدا",
+  "phone": "03886862",
+  "quantity": 1,
+  "age": [
+   13
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حسام خالد الضو",
+  "record_number": "96",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "03295107",
+  "quantity": 2,
+  "age": [
+   11,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حسان فوزي عواد",
+  "record_number": "149",
+  "governorate": "جبل لبنان",
+  "district": "جبيل",
+  "area": "علمات",
+  "phone": "71490556",
+  "quantity": 3,
+  "age": [
+   15,
+   12,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حسان محمد مسلماني",
+  "record_number": "25",
+  "governorate": "البقاع",
+  "district": "بعلبك",
+  "area": "جديدة الفاكهة",
+  "phone": "71157273",
+  "quantity": 2,
+  "age": [
+   12,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حسن احمد الدياب",
+  "record_number": "143",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "70884232",
+  "quantity": 2,
+  "age": [
+   14,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حسن حسين مطلق",
+  "record_number": "125",
+  "governorate": "البقاع",
+  "district": "المتن",
+  "area": "سعدنايل",
+  "phone": "76972262",
+  "quantity": 3,
+  "age": [
+   16,
+   14,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حسن راتب الدياب",
+  "record_number": "143",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "81858044",
+  "quantity": 2,
+  "age": [
+   11,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حسن سمير سويدان",
+  "record_number": "8",
+  "governorate": "البقاع",
+  "district": "بعلبك",
+  "area": "شمسطار",
+  "phone": "70530209",
+  "quantity": 1,
+  "age": [
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حسن شحاده الشحاده النعيمي",
+  "record_number": "255",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "70918172",
+  "quantity": 1,
+  "age": [
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حسن عبد العزيز ادريس",
+  "record_number": "437",
+  "governorate": "جبل لبنان",
+  "district": "بعبدا",
+  "area": "المريجة",
+  "phone": "03632845",
+  "quantity": 1,
+  "age": [
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حسن عمر حسين",
+  "record_number": "36",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "03090314",
+  "quantity": 2,
+  "age": [
+   11,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حسين جمال فرحات",
+  "record_number": "118",
+  "governorate": "النبطية",
+  "district": "بنت جبيل",
+  "area": "برعشيت",
+  "phone": "71/493795",
+  "quantity": 2,
+  "age": [
+   7,
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حسين جميل سويدان",
+  "record_number": "88",
+  "governorate": "الجنوب",
+  "district": "النبطية",
+  "area": "ياطر",
+  "phone": "70605313",
+  "quantity": 4,
+  "age": [
+   15,
+   13,
+   10,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حسين حمود",
+  "record_number": "150",
+  "governorate": "البقاع",
+  "district": "بعلبك",
+  "area": "نحلة",
+  "phone": "03/010425",
+  "quantity": 2,
+  "age": [
+   12,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حسين سعيد حوشيه",
+  "record_number": "3859",
+  "governorate": "بيروت",
+  "district": "بيروت الثانية",
+  "area": "المزرعة",
+  "phone": "79127344",
+  "quantity": 2,
+  "age": [
+   8,
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حسين علي ترحيني",
+  "record_number": "1710",
+  "governorate": "بيروت",
+  "district": "بيروت",
+  "area": "الشياح",
+  "phone": "03793230",
+  "quantity": 2,
+  "age": [
+   9,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حسين عمر",
+  "record_number": "10",
+  "governorate": "البقاع",
+  "district": "بعلبك",
+  "area": "عين السودا",
+  "phone": "03741481",
+  "quantity": 3,
+  "age": [
+   9,
+   7,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حسين عمر",
+  "record_number": "10",
+  "governorate": "البقاع",
+  "district": "بعلبك",
+  "area": "عين السودا",
+  "phone": "03/741481",
+  "quantity": 3,
+  "age": [
+   9,
+   7,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حسين قاسم العوض",
+  "record_number": "175",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "71401443",
+  "quantity": 3,
+  "age": [
+   15,
+   14,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حمزة المصطفى",
+  "record_number": "13",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "03363889",
+  "quantity": 2,
+  "age": [
+   13,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حمزة طراف طراف",
+  "record_number": "53",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "81904149",
+  "quantity": 2,
+  "age": [
+   10,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حمزة مشهور الخضر",
+  "record_number": "7",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "71526619",
+  "quantity": 2,
+  "age": [
+   15,
+   13
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حمزه احمد الزهران",
+  "record_number": "257",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "71160779",
+  "quantity": 2,
+  "age": [
+   9,
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حمزه محمد امين مصطفى",
+  "record_number": "13",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "03363889",
+  "quantity": 3,
+  "age": [
+   14,
+   12,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حنا امطانس عطيه",
+  "record_number": "123",
+  "governorate": "الجنوب",
+  "district": "صور",
+  "area": "حي الكاتوليك",
+  "phone": "70267472",
+  "quantity": 2,
+  "age": [
+   10,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حنا توفيق الجبيلي",
+  "record_number": "464",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "الصيفي",
+  "phone": "70724050",
+  "quantity": 4,
+  "age": [
+   16,
+   14,
+   7,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حنا طانيوس بجون",
+  "record_number": "1315",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "الاشرفية",
+  "phone": "70350488",
+  "quantity": 1,
+  "age": [
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حنا عطيه",
+  "record_number": "123",
+  "governorate": "الجنوب",
+  "district": "صور",
+  "area": "صور",
+  "phone": "70267472",
+  "quantity": 2,
+  "age": [
+   10,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "حنا هاشم ضاهر",
+  "record_number": "N/A",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "71742291",
+  "quantity": 1,
+  "age": [
+   5
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "خالد احمد احمد السعيد",
+  "record_number": "54",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "70986313",
+  "quantity": 3,
+  "age": [
+   12,
+   11,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "خالد احمد السعيد",
+  "record_number": "54",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "70986313",
+  "quantity": 3,
+  "age": [
+   12,
+   11,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "خالد احمد شحاده",
+  "record_number": "183",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "71323786",
+  "quantity": 3,
+  "age": [
+   11,
+   10,
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "خالد جمال الغوش",
+  "record_number": "265",
+  "governorate": "جبل لبنان",
+  "district": "الشوف",
+  "area": "برجا",
+  "phone": "70262072",
+  "quantity": 3,
+  "age": [
+   15,
+   14,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "خالد حمد",
+  "record_number": "39",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "81855987",
+  "quantity": 1,
+  "age": [
+   12
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "خالد محمد الضو",
+  "record_number": "96",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "70952537",
+  "quantity": 3,
+  "age": [
+   11,
+   9,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "خالد محمد حرب",
+  "record_number": "154",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "الاشرفية",
+  "phone": "70868856",
+  "quantity": 2,
+  "age": [
+   15,
+   12
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "خالد مهنا عواد",
+  "record_number": "37",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "راشيا الفخار",
+  "phone": "03170433",
+  "quantity": 2,
+  "age": [
+   13,
+   12
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "خالد وليد القاسم",
+  "record_number": "92",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "03045986",
+  "quantity": 2,
+  "age": [
+   11,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "خضر خالد طه",
+  "record_number": "119",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "81852144",
+  "quantity": 1,
+  "age": [
+   11
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "خضر غازي خضر",
+  "record_number": "8",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "76653637",
+  "quantity": 2,
+  "age": [
+   10,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "خضر محمود العثمان",
+  "record_number": "195",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "71316426",
+  "quantity": 2,
+  "age": [
+   12,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "خليل كرم الله سعيد",
+  "record_number": "N/A",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "81309059",
+  "quantity": 1,
+  "age": [
+   9
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "خيرات احمد ضاهر",
+  "record_number": "233",
+  "governorate": "الشمال",
+  "district": "عكار",
+  "area": "مراح الخوخ",
+  "phone": "70/314352",
+  "quantity": 4,
+  "age": [
+   12,
+   10,
+   7,
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "داني سعدالله كساب",
+  "record_number": "128",
+  "governorate": "جبل لبنان",
+  "district": "بعبدا",
+  "area": "العبادية",
+  "phone": "70199512",
+  "quantity": 1,
+  "age": [
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "داني شاهين سعاده",
+  "record_number": "6",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "الماري",
+  "phone": "79169216",
+  "quantity": 3,
+  "age": [
+   11,
+   10,
+   6
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "داني غسان نهرا",
+  "record_number": "13",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70108220",
+  "quantity": 2,
+  "age": [
+   12,
+   8
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "داني لياس عبد النور",
+  "record_number": "2",
+  "governorate": "الشمال",
+  "district": "زغرتا",
+  "area": "بوسيط",
+  "phone": "03863502",
+  "quantity": 1,
+  "age": [
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "داني منير خيشو",
+  "record_number": "3485",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "76728151",
+  "quantity": 2,
+  "age": [
+   8,
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "داني ميلاد ابو رحال",
+  "record_number": "196",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03778731",
+  "quantity": 2,
+  "age": [
+   7,
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "داني نسيم فرحات",
+  "record_number": "7",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "ابو قمحة",
+  "phone": "70018636",
+  "quantity": 1,
+  "age": [
+   12
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "دانيال نقولا نقولا",
+  "record_number": "28",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03543149",
+  "quantity": 1,
+  "age": [
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "دجو الياس مطر",
+  "record_number": "85",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "76155474",
+  "quantity": 2,
+  "age": [
+   13,
+   9
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ديب يوسف العموري مطر",
+  "record_number": "174",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "71254113",
+  "quantity": 2,
+  "age": [
+   12,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ديب يوسف مطر",
+  "record_number": "174",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "71254113",
+  "quantity": 2,
+  "age": [
+   13,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "رأفت الحاج حسن",
+  "record_number": "109",
+  "governorate": "البقاع",
+  "district": "شمسطار",
+  "area": "شمسطار",
+  "phone": "70620563",
+  "quantity": 2,
+  "age": [
+   11,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "رامي اسبيرو سليم",
+  "record_number": "80",
+  "governorate": "جبل لبنان",
+  "district": "الشوف",
+  "area": "كفرشيما",
+  "phone": "03897172",
+  "quantity": 2,
+  "age": [
+   6,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "رامي غسان طوبيا",
+  "record_number": "30",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "71538263",
+  "quantity": 2,
+  "age": [
+   12,
+   9
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "رامي فارس جبور",
+  "record_number": "35",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "كوكبا",
+  "phone": "71576567",
+  "quantity": 1,
+  "age": [
+   5
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "رامي نعمة الله نعمة الله",
+  "record_number": "158",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70162947",
+  "quantity": 2,
+  "age": [
+   8,
+   5
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "راني بسام الحاصباني",
+  "record_number": "173",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03762836",
+  "quantity": 2,
+  "age": [
+   8,
+   6
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ربيع ايلي شديد",
+  "record_number": "128",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03923952",
+  "quantity": 1,
+  "age": [
+   10
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ربيع كريم سمراني",
+  "record_number": "148",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "71010149",
+  "quantity": 2,
+  "age": [
+   15,
+   11
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ربيع مفيد ابو مراد",
+  "record_number": "28",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "78950525",
+  "quantity": 2,
+  "age": [
+   9,
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ربيع ميشال حبيب",
+  "record_number": "4",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "71714700",
+  "quantity": 3,
+  "age": [
+   12,
+   6,
+   10
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "رجا عبد الباسط الخطيب",
+  "record_number": "86",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "81984230",
+  "quantity": 2,
+  "age": [
+   10,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "رجا غطاس غنيم",
+  "record_number": "9",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "ابو قمحة",
+  "phone": "03962007",
+  "quantity": 1,
+  "age": [
+   10
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "رجاء احمد الحسن",
+  "record_number": "191",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "78854867",
+  "quantity": 1,
+  "age": [
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "رشيد جان شمعون",
+  "record_number": "45",
+  "governorate": "البقاع",
+  "district": "بعلبك",
+  "area": "سرعين التحتا",
+  "phone": "76195823",
+  "quantity": 1,
+  "age": [
+   11
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "رضوان محمد الخطيب",
+  "record_number": "84",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "70989753",
+  "quantity": 1,
+  "age": [
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "رلى علي ضاهر",
+  "record_number": "63",
+  "governorate": "الجنوب",
+  "district": "صور",
+  "area": "مجدل زون",
+  "phone": "03475556",
+  "quantity": 3,
+  "age": [
+   10,
+   8,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "روبيرتو نعمه كعوى",
+  "record_number": "227",
+  "governorate": "الشمال",
+  "district": "زغرتا",
+  "area": "زغرتا حي السيدة الغربي",
+  "phone": "03867941",
+  "quantity": 1,
+  "age": [
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "روبين كرم الله رزق",
+  "record_number": "153",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "71139848",
+  "quantity": 1,
+  "age": [
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "روجيه جوزيف مراد",
+  "record_number": "60",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "راشيا الفخار",
+  "phone": "03856574",
+  "quantity": 1,
+  "age": [
+   10
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "روجيه زياد سعاده",
+  "record_number": "6",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "الماري",
+  "phone": "76061041",
+  "quantity": 2,
+  "age": [
+   14,
+   10
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "رودريك اللياس",
+  "record_number": "7",
+  "governorate": "الجنوب",
+  "district": "صيدا",
+  "area": "صيدا",
+  "phone": "03113743",
+  "quantity": 2,
+  "age": [
+   4,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "رودي الياس الحاصباني",
+  "record_number": "173",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03668410",
+  "quantity": 2,
+  "age": [
+   12,
+   12
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "رودي أنطوان مارون",
+  "record_number": "188",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "71204241",
+  "quantity": 2,
+  "age": [
+   7,
+   15
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "رومل الياس الجاج",
+  "record_number": "176",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70591973",
+  "quantity": 1,
+  "age": [
+   5
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "روني الياس مطر",
+  "record_number": "85",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70129318",
+  "quantity": 1,
+  "age": [
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "روني جون نادر",
+  "record_number": "26",
+  "governorate": "الجنوب",
+  "district": "زحلته",
+  "area": "زحلته",
+  "phone": "70199512",
+  "quantity": 1,
+  "age": [
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "روي ريمون بو ضاهر",
+  "record_number": "171",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03864795",
+  "quantity": 3,
+  "age": [
+   13,
+   15,
+   8
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "روي سهيل سعادة",
+  "record_number": "6",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "كوكبا",
+  "phone": "70708404",
+  "quantity": 3,
+  "age": [
+   11,
+   7,
+   5
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ريشار اكرم عساف",
+  "record_number": "1",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "الماري",
+  "phone": "70425201",
+  "quantity": 2,
+  "age": [
+   14,
+   13
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "زاهر حسن يحفوفي",
+  "record_number": "49",
+  "governorate": "بعلبك",
+  "district": "بعلبك",
+  "area": "زحلة",
+  "phone": "71513153",
+  "quantity": 1,
+  "age": [
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "زاهي جورج بو زيد",
+  "record_number": "32",
+  "governorate": "الجنوب",
+  "district": "جزين",
+  "area": "بليبل",
+  "phone": "03902576",
+  "quantity": 1,
+  "age": [
+   15
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "زكريا بو خاطر",
+  "record_number": "30",
+  "governorate": "البقاع",
+  "district": "زحلة",
+  "area": "زحلة",
+  "phone": "70818331",
+  "quantity": 3,
+  "age": [
+   13,
+   9,
+   12
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "زكريا سعيد فرح",
+  "record_number": "27",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "78962373",
+  "quantity": 1,
+  "age": [
+   6
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "زياد الفاني",
+  "record_number": "266",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "71326446",
+  "quantity": 2,
+  "age": [
+   13,
+   11
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "زياد ايليا حسون",
+  "record_number": "1120",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الرميل",
+  "phone": "70949705",
+  "quantity": 1,
+  "age": [
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "زياد حبلي",
+  "record_number": "911",
+  "governorate": "بيروت",
+  "district": "بيروت",
+  "area": "الباشورة",
+  "phone": "03/271480",
+  "quantity": 1,
+  "age": [
+   15
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "زياد حبلي",
+  "record_number": "911",
+  "governorate": "بيروت",
+  "district": "بيروت",
+  "area": "الباشورة",
+  "phone": "03271480",
+  "quantity": 1,
+  "age": [
+   15
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "زياد ميلاد شديد",
+  "record_number": "3440",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "76400236",
+  "quantity": 1,
+  "age": [
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "زين العابدين محمد زغيب",
+  "record_number": "39",
+  "governorate": "البقاع",
+  "district": "زحلة",
+  "area": "بليبل",
+  "phone": "71196853",
+  "quantity": 1,
+  "age": [
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "سابين صودير",
+  "record_number": "58",
+  "governorate": "جبل لبنان",
+  "district": "عاليه",
+  "area": "بحمدون المحطة",
+  "phone": "70680131",
+  "quantity": 2,
+  "age": [
+   8,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "سابين صودير",
+  "record_number": "58",
+  "governorate": "جبل لبنان",
+  "district": "عاليه",
+  "area": "بحمدون المحطة",
+  "phone": "70/680131",
+  "quantity": 2,
+  "age": [
+   8,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "سامر شادي الاشقر",
+  "record_number": "8",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "ابو قمحة",
+  "phone": "76089741",
+  "quantity": 1,
+  "age": [
+   5
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ساندرا الحلو",
+  "record_number": "33",
+  "governorate": "الجنوب",
+  "district": "جزين",
+  "area": "قتالي",
+  "phone": "78/827237",
+  "quantity": 1,
+  "age": [
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ساندرا الحلو",
+  "record_number": "33",
+  "governorate": "الجنوب",
+  "district": "جزين",
+  "area": "قتالي",
+  "phone": "78827237",
+  "quantity": 1,
+  "age": [
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "سبيرو نادر عقل",
+  "record_number": "170",
+  "governorate": "البقاع",
+  "district": "البقاع الغربي",
+  "area": "زحلة",
+  "phone": "70638876",
+  "quantity": 1,
+  "age": [
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ستافرو نصار",
+  "record_number": "85",
+  "governorate": "جبل لبنان",
+  "district": "المتن",
+  "area": "ضهور شوير",
+  "phone": "70908920",
+  "quantity": 1,
+  "age": [
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "سعد الدين محمد الضو",
+  "record_number": "96",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "71173660",
+  "quantity": 1,
+  "age": [
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "سعدالله ابراهيم فرح",
+  "record_number": "88",
+  "governorate": "جبل لبنان",
+  "district": "المتن",
+  "area": "برج حمود",
+  "phone": "03743715",
+  "quantity": 2,
+  "age": [
+   13,
+   15
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "سعود الياس رزق",
+  "record_number": "150",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03515998",
+  "quantity": 3,
+  "age": [
+   10,
+   13,
+   13
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "سعيد بولس الخوري",
+  "record_number": "122",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03284479",
+  "quantity": 2,
+  "age": [
+   7,
+   6
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "سعيد سليمان سعيد",
+  "record_number": "89",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03434961",
+  "quantity": 2,
+  "age": [
+   7,
+   13
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "سعيد شعبان النقيب",
+  "record_number": "533",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "الاشرفية",
+  "phone": "03134155",
+  "quantity": 1,
+  "age": [
+   12
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "سعيد مهنا عواد",
+  "record_number": "37",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "راشيا الفخار",
+  "phone": "71028078",
+  "quantity": 1,
+  "age": [
+   6
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "سلام جوزيف رزق",
+  "record_number": "109",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70308825",
+  "quantity": 2,
+  "age": [
+   10,
+   11
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "سلام سعد سعد",
+  "record_number": "131",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70130360",
+  "quantity": 1,
+  "age": [
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "سليم جورج غلام",
+  "record_number": "384",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "الرميل",
+  "phone": "03414573",
+  "quantity": 2,
+  "age": [
+   15,
+   13
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "سليم نجيب نصير",
+  "record_number": "989",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الرميل",
+  "phone": "03804206",
+  "quantity": 2,
+  "age": [
+   11,
+   15
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "سمير عبدالله مراد",
+  "record_number": "67",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "راشيا الفخار",
+  "phone": "03486064",
+  "quantity": 2,
+  "age": [
+   13,
+   10
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "سمير فؤاد صايغ",
+  "record_number": "1345",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "71232334",
+  "quantity": 1,
+  "age": [
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "سمير منير جابر",
+  "record_number": "34",
+  "governorate": "الجنوب",
+  "district": "صور",
+  "area": "ينوح",
+  "phone": "71121523",
+  "quantity": 3,
+  "age": [
+   15,
+   14,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "سميره علي البزال",
+  "record_number": "22",
+  "governorate": "جبل لبنان",
+  "district": "جبيل",
+  "area": "قرقريا",
+  "phone": "70632502",
+  "quantity": 2,
+  "age": [
+   9,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "سيزار روبير جبرايل",
+  "record_number": "196",
+  "governorate": "جبل لبنان",
+  "district": "بعبدا",
+  "area": "كفرشيما",
+  "phone": "79136741",
+  "quantity": 1,
+  "age": [
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "سيلفو انطوان غصن",
+  "record_number": "117",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الصيفي",
+  "phone": "70676747",
+  "quantity": 2,
+  "age": [
+   15,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "سيمون اميل لسعد",
+  "record_number": "6",
+  "governorate": "جبل لبنان",
+  "district": "الشوف",
+  "area": "جون",
+  "phone": "03735623",
+  "quantity": 2,
+  "age": [
+   11,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "سيمون سلوم",
+  "record_number": "1",
+  "governorate": "الشمال",
+  "district": "عكار",
+  "area": "تلعباس الغربي",
+  "phone": "70362844",
+  "quantity": 2,
+  "age": [
+   6,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "سيمون نصري سلوم",
+  "record_number": "1",
+  "governorate": "عكار",
+  "district": "عكار",
+  "area": "تل عباس غربي",
+  "phone": "70362844",
+  "quantity": 1,
+  "age": [
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "شادي بولس فرح",
+  "record_number": "27",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70699256",
+  "quantity": 2,
+  "age": [
+   8,
+   11
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "شادي جوزيف ضاهر",
+  "record_number": "57",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "81694446",
+  "quantity": 2,
+  "age": [
+   10,
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "شادي شمعون",
+  "record_number": "378",
+  "governorate": "البقاع",
+  "district": "زحلة",
+  "area": "معلقة",
+  "phone": "03609236",
+  "quantity": 2,
+  "age": [
+   3,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "شادي عيد رزق",
+  "record_number": "109",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03\\111603",
+  "quantity": 2,
+  "age": [
+   13,
+   10
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "شادي هاني جلبوط",
+  "record_number": "26",
+  "governorate": "الجنوب",
+  "district": "مرجعيون",
+  "area": "الخيام",
+  "phone": "79113535",
+  "quantity": 1,
+  "age": [
+   11
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "شارل ميناس ميناسيان",
+  "record_number": "4845",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "03475680",
+  "quantity": 3,
+  "age": [
+   15,
+   9,
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "شحود حكمت ضحاك",
+  "record_number": "92",
+  "governorate": "جبل لبنان",
+  "district": "المتن",
+  "area": "البوشرية",
+  "phone": "03058125",
+  "quantity": 2,
+  "age": [
+   9,
+   11
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "شربل أسعد شلهوب",
+  "record_number": "106",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "76518303",
+  "quantity": 2,
+  "age": [
+   12,
+   9
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "شربل السيدة",
+  "record_number": "56",
+  "governorate": "الشمال",
+  "district": "بشري",
+  "area": "بشري",
+  "phone": "03191351",
+  "quantity": 3,
+  "age": [
+   10,
+   9,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "شربل ألفرد نصّور",
+  "record_number": "1",
+  "governorate": "جبل لبنان",
+  "district": "عاليه",
+  "area": "كفرعميه",
+  "phone": "70538539",
+  "quantity": 2,
+  "age": [
+   7,
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "شربل الياس عيد",
+  "record_number": "66",
+  "governorate": "الجنوب",
+  "district": "صيدا",
+  "area": "القرية",
+  "phone": "70098683",
+  "quantity": 1,
+  "age": [
+   15
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "شربل اوهنس اوقيان",
+  "record_number": "577",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الرميل",
+  "phone": "76352295",
+  "quantity": 3,
+  "age": [
+   7,
+   7,
+   13
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "شربل جوزيف غاليه",
+  "record_number": "134",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "71947294",
+  "quantity": 1,
+  "age": [
+   12
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "شربل حبيقة",
+  "record_number": "22",
+  "governorate": "الشوف",
+  "district": "الباروك",
+  "area": "الباروك",
+  "phone": "03038602",
+  "quantity": 1,
+  "age": [
+   16
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "شربل حزوري",
+  "record_number": "37",
+  "governorate": "الشمال",
+  "district": "المنية",
+  "area": "حقل العزيمة",
+  "phone": "03/741513",
+  "quantity": 4,
+  "age": [
+   15,
+   14,
+   11,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "شربل حنا كرم",
+  "record_number": "N/A",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "81773375",
+  "quantity": 1,
+  "age": [
+   5
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "شربل حنا وهبه",
+  "record_number": "77",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "راشيا الفخار",
+  "phone": "03630796",
+  "quantity": 2,
+  "age": [
+   11,
+   12
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "شربل رامز بولس",
+  "record_number": "24",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70167454",
+  "quantity": 1,
+  "age": [
+   10
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "شربل زياد سعادة",
+  "record_number": "N/A",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03113767",
+  "quantity": 1,
+  "age": [
+   5
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "شربل زياد سعاده",
+  "record_number": "6",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "الماري",
+  "phone": "81300605",
+  "quantity": 1,
+  "age": [
+   6
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "شربل كلود مقلد",
+  "record_number": "108",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03228992",
+  "quantity": 1,
+  "age": [
+   10
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "شربل منير عيد",
+  "record_number": "20",
+  "governorate": "جبل لبنان",
+  "district": "الشوف",
+  "area": "المطله",
+  "phone": "03524619",
+  "quantity": 2,
+  "age": [
+   6,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "شيخ موسى احمد الزين",
+  "record_number": "3283",
+  "governorate": "بيروت",
+  "district": "بيروت الثانية",
+  "area": "المصيطبة",
+  "phone": "71103814",
+  "quantity": 1,
+  "age": [
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "طارق زياد الهناوي",
+  "record_number": "191",
+  "governorate": "جبل لبنان",
+  "district": "عاليه",
+  "area": "بعورتا",
+  "phone": "03062936",
+  "quantity": 2,
+  "age": [
+   5,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "طالب محمد عيسى مشلب مطر",
+  "record_number": "131",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "71137682",
+  "quantity": 2,
+  "age": [
+   8,
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "طانيوس الحاج موسى",
+  "record_number": "19",
+  "governorate": "البقاع",
+  "district": "ايعات",
+  "area": "ايعات",
+  "phone": "03139662",
+  "quantity": 3,
+  "age": [
+   3,
+   6,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "طانيوس جان ابو نقول",
+  "record_number": "50",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "كوكبا",
+  "phone": "79176173",
+  "quantity": 1,
+  "age": [
+   15
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "طانيوس سمعان شلش",
+  "record_number": "1288",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "76150259",
+  "quantity": 2,
+  "age": [
+   8,
+   12
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "طانيوس مارون نهرا",
+  "record_number": "184",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03487243",
+  "quantity": 4,
+  "age": [
+   12,
+   11,
+   10,
+   8
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "طاهر احمد سالم",
+  "record_number": "Palestinian",
+  "governorate": "",
+  "district": "",
+  "area": "",
+  "phone": "03650336",
+  "quantity": 2,
+  "age": [
+   7,
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "طه خالد طه",
+  "record_number": "118",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "03158911",
+  "quantity": 2,
+  "age": [
+   13,
+   11
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "طوني الازوط",
+  "record_number": "5",
+  "governorate": "الجنوب",
+  "district": "صيدا",
+  "area": "درب السيم",
+  "phone": "03346629",
+  "quantity": 3,
+  "age": [
+   12,
+   8,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "طوني الازوط",
+  "record_number": "5",
+  "governorate": "الجنوب",
+  "district": "صيدا",
+  "area": "درب السيم",
+  "phone": "03/346629",
+  "quantity": 3,
+  "age": [
+   12,
+   8,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "طوني الياس بصيبص",
+  "record_number": "121",
+  "governorate": "جبل لبنان",
+  "district": "بعبدا",
+  "area": "بسابا",
+  "phone": "70913596",
+  "quantity": 1,
+  "age": [
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "طوني بولس شديد",
+  "record_number": "11",
+  "governorate": "الجنوب",
+  "district": "280",
+  "area": "الجرمق",
+  "phone": "70267080",
+  "quantity": 2,
+  "age": [
+   13,
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "طوني جان مقدسي",
+  "record_number": "60",
+  "governorate": "جبل لبنان",
+  "district": "بعبدا",
+  "area": "تحويطة النهر",
+  "phone": "70951569",
+  "quantity": 1,
+  "age": [
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "طوني جميل مارون",
+  "record_number": "154",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03411224",
+  "quantity": 2,
+  "age": [
+   13,
+   10
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "طوني عادل نصر",
+  "record_number": "204",
+  "governorate": "جبل لبنان",
+  "district": "المتن",
+  "area": "سد البوشرية",
+  "phone": "03565846",
+  "quantity": 3,
+  "age": [
+   13,
+   14,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "طوني محسن فنيانوس",
+  "record_number": "267",
+  "governorate": "الشمال",
+  "district": "زغرتا",
+  "area": "زغرتا حي المعاصر",
+  "phone": "76917779",
+  "quantity": 2,
+  "age": [
+   15,
+   12
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "طوني معز",
+  "record_number": "101",
+  "governorate": "جبل لبنان",
+  "district": "المتن",
+  "area": "مار روكز",
+  "phone": "71994657",
+  "quantity": 2,
+  "age": [
+   13,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "طوني نواف الجلبوط",
+  "record_number": "37",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "71318229",
+  "quantity": 3,
+  "age": [
+   12,
+   11,
+   11
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "عادل مخايل خليل",
+  "record_number": "29",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "راشيا الفخار",
+  "phone": "79030694",
+  "quantity": 2,
+  "age": [
+   12,
+   9
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "عامر فياض دعيبس",
+  "record_number": "90",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03045264",
+  "quantity": 2,
+  "age": [
+   11,
+   10
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "عامر محمد يوسف",
+  "record_number": "206",
+  "governorate": "الشمال",
+  "district": "عكار",
+  "area": "جبل اكروم",
+  "phone": "70601560",
+  "quantity": 3,
+  "age": [
+   12,
+   10,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "عامر نبيل سمارة",
+  "record_number": "51",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "71502001",
+  "quantity": 1,
+  "age": [
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "عباس اسد الله طعمة",
+  "record_number": "95",
+  "governorate": "النبطية",
+  "district": "بنت جبيل",
+  "area": "كونين",
+  "phone": "70820811",
+  "quantity": 1,
+  "age": [
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "عباس شور",
+  "record_number": "3",
+  "governorate": "الجنوب",
+  "district": "صور / الجنوب",
+  "area": "صور / الجنوب",
+  "phone": "70839258",
+  "quantity": 1,
+  "age": [
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "عبد الحميد محمد شحاده",
+  "record_number": "120",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "78813885",
+  "quantity": 2,
+  "age": [
+   12,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "عبد الرحمن غازي خضر",
+  "record_number": "8",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "03879909",
+  "quantity": 4,
+  "age": [
+   15,
+   13,
+   10,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "عبد الله وانس الغيث",
+  "record_number": "724",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الرميل",
+  "phone": "03804272",
+  "quantity": 3,
+  "age": [
+   7,
+   12,
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "عبد علوية",
+  "record_number": "174",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "70763786",
+  "quantity": 1,
+  "age": [
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "عزات خليل بو رحال",
+  "record_number": "110",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03516757",
+  "quantity": 4,
+  "age": [
+   8,
+   7,
+   6,
+   5
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "عصام علي سكافي",
+  "record_number": "12",
+  "governorate": "النبطية",
+  "district": "النبطية",
+  "area": "كفرصير",
+  "phone": "03035318",
+  "quantity": 2,
+  "age": [
+   14,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "علا علي عابدين",
+  "record_number": "165",
+  "governorate": "بيروت",
+  "district": "بيروت",
+  "area": "زقاق البلاط",
+  "phone": "70770248",
+  "quantity": 1,
+  "age": [
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "علاء اسعد العيسى",
+  "record_number": "650",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الرميل",
+  "phone": "71328835",
+  "quantity": 2,
+  "age": [
+   11,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "علاء الشاعر",
+  "record_number": "1570",
+  "governorate": "بيروت",
+  "district": "بيروت",
+  "area": "الباشورة",
+  "phone": "71/971295",
+  "quantity": 1,
+  "age": [
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "علاء زلغوط",
+  "record_number": "21",
+  "governorate": "الجنوب",
+  "district": "بيت ليف",
+  "area": "بيت ليف",
+  "phone": "78958578",
+  "quantity": 2,
+  "age": [
+   9,
+   11
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "علي احمد العبادي",
+  "record_number": "325",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "81662328",
+  "quantity": 3,
+  "age": [
+   6,
+   10,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "علي احمد حسام",
+  "record_number": "106",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "71161038",
+  "quantity": 1,
+  "age": [
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "علي احمد حسام",
+  "record_number": "106",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "70934790",
+  "quantity": 1,
+  "age": [
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "علي احمد مطر",
+  "record_number": "131",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "03064322",
+  "quantity": 2,
+  "age": [
+   13,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "علي الشمعة",
+  "record_number": "551",
+  "governorate": "الشوف",
+  "district": "برجا الشوف",
+  "area": "برجا الشوف",
+  "phone": "03021912",
+  "quantity": 3,
+  "age": [
+   4,
+   12,
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "علي العبد مشرف",
+  "record_number": "4",
+  "governorate": "الجنوب",
+  "district": "صيدا",
+  "area": "بنعفول",
+  "phone": "76195897",
+  "quantity": 2,
+  "age": [
+   9,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "علي المصري",
+  "record_number": "385",
+  "governorate": "جبل لبنان",
+  "district": "بعبدا",
+  "area": "الغبيري",
+  "phone": "70/689804",
+  "quantity": 1,
+  "age": [
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "علي المصري",
+  "record_number": "385",
+  "governorate": "جبل لبنان",
+  "district": "بعبدا",
+  "area": "الغبيري",
+  "phone": "70689804",
+  "quantity": 1,
+  "age": [
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "علي أمهز",
+  "record_number": "14",
+  "governorate": "البقاع",
+  "district": "نبحة",
+  "area": "نبحة",
+  "phone": "76000643",
+  "quantity": 2,
+  "age": [
+   9,
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "علي حسن الموسوي",
+  "record_number": "117",
+  "governorate": "جبل لبنان",
+  "district": "بعبدا",
+  "area": "بيروت",
+  "phone": "70783436",
+  "quantity": 1,
+  "age": [
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "علي حيدر احمد",
+  "record_number": "96",
+  "governorate": "البقاع",
+  "district": "اللبوة",
+  "area": "اللبوة",
+  "phone": "70033365",
+  "quantity": 2,
+  "age": [
+   8,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "علي خليل شعبان",
+  "record_number": "97",
+  "governorate": "بيروت",
+  "district": "بيروت الثانية",
+  "area": "زقاق البلاط",
+  "phone": "03767926",
+  "quantity": 1,
+  "age": [
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "علي سماحة",
+  "record_number": "68",
+  "governorate": "البقاع",
+  "district": "شمسطار",
+  "area": "شمسطار",
+  "phone": "70009931",
+  "quantity": 3,
+  "age": [
+   11,
+   9,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "علي محمد شديد",
+  "record_number": "149",
+  "governorate": "بعلبك الهرمل",
+  "district": "بعلبك",
+  "area": "شمسطار",
+  "phone": "70555577",
+  "quantity": 1,
+  "age": [
+   15
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "علي منصور احمد",
+  "record_number": "427",
+  "governorate": "الشمال",
+  "district": "طرابلس",
+  "area": "التبانة",
+  "phone": "71833629",
+  "quantity": 2,
+  "age": [
+   16,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "عمر جمعه مشلب مطر",
+  "record_number": "131",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "76004770",
+  "quantity": 3,
+  "age": [
+   15,
+   13,
+   12
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "عمر عياره",
+  "record_number": "104",
+  "governorate": "البقاع",
+  "district": "بعلبك",
+  "area": "بعلبك",
+  "phone": "03912692",
+  "quantity": 2,
+  "age": [
+   4,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "عمر محمد السعيد",
+  "record_number": "153",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "76744602",
+  "quantity": 1,
+  "age": [
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "عمر محمد دغيش",
+  "record_number": "21",
+  "governorate": "البقاع",
+  "district": "راشيا",
+  "area": "الرفيد",
+  "phone": "76935386",
+  "quantity": 2,
+  "age": [
+   6,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "عيد طانوس فرح",
+  "record_number": "27",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03137276",
+  "quantity": 1,
+  "age": [
+   9
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "عيسى مصطفى بعلبكي",
+  "record_number": "1485",
+  "governorate": "بيروت",
+  "district": "بيروت الثانية",
+  "area": "باشورة",
+  "phone": "03641960",
+  "quantity": 2,
+  "age": [
+   15,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "غابي بشاره عواد",
+  "record_number": "981",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "الاشرفية",
+  "phone": "76450419",
+  "quantity": 2,
+  "age": [
+   15,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "غدي خليل تابت",
+  "record_number": "1952",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الرميل",
+  "phone": "70551778",
+  "quantity": 2,
+  "age": [
+   7,
+   12
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "غسان احمد خباز",
+  "record_number": "320",
+  "governorate": "بيروت",
+  "district": "بيروت الثانية",
+  "area": "المرفأ",
+  "phone": "70985261",
+  "quantity": 1,
+  "age": [
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "غنوى احمد",
+  "record_number": "672",
+  "governorate": "بيروت",
+  "district": "بيروت",
+  "area": "الباشورة",
+  "phone": "70459722",
+  "quantity": 1,
+  "age": [
+   11
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "غنوى احمد",
+  "record_number": "672",
+  "governorate": "بيروت",
+  "district": "بيروت",
+  "area": "الباشورة",
+  "phone": "70/459722",
+  "quantity": 1,
+  "age": [
+   11
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "فؤاد يوسف بطرس",
+  "record_number": "24",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70579892",
+  "quantity": 1,
+  "age": [
+   12
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "فادي حسين حسين",
+  "record_number": "36",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "71573992",
+  "quantity": 2,
+  "age": [
+   15,
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "فادي رمال",
+  "record_number": "4",
+  "governorate": "النبطية",
+  "district": "النبطية",
+  "area": "الدوير",
+  "phone": "76/814014",
+  "quantity": 2,
+  "age": [
+   8,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "فادي رمال",
+  "record_number": "4",
+  "governorate": "النبطية",
+  "district": "النبطية",
+  "area": "الدوير",
+  "phone": "76814014",
+  "quantity": 2,
+  "age": [
+   8,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "فادي سمير متري",
+  "record_number": "3",
+  "governorate": "جبل لبنان",
+  "district": "البترون",
+  "area": "بجدرفل",
+  "phone": "03191351",
+  "quantity": 4,
+  "age": [
+   13,
+   10,
+   13,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "فادي عساف جليان",
+  "record_number": "130",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03172962",
+  "quantity": 2,
+  "age": [
+   13,
+   11
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "فادي كريم سمراني",
+  "record_number": "148",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "03802310",
+  "quantity": 1,
+  "age": [
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "فادي محمد السعيد",
+  "record_number": "153",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "71486419",
+  "quantity": 1,
+  "age": [
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "فادي محمد السعيد",
+  "record_number": "153",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "81988326",
+  "quantity": 1,
+  "age": [
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "فادي مخايل العدس",
+  "record_number": "59",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "راشيا الفخار",
+  "phone": "03841625",
+  "quantity": 1,
+  "age": [
+   12
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "فادي مصباح بيضون",
+  "record_number": "127",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "الاشرفية",
+  "phone": "03032449",
+  "quantity": 1,
+  "age": [
+   12
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "فادي نعمة الله فارس",
+  "record_number": "35",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "كوكبا",
+  "phone": "76550577",
+  "quantity": 2,
+  "age": [
+   12,
+   10
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "فادي وليد مومنه",
+  "record_number": "80",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "70873206",
+  "quantity": 1,
+  "age": [
+   15
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "فادي يوسف عزام",
+  "record_number": "356",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "70883714",
+  "quantity": 1,
+  "age": [
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "فارس شحادة اللحام",
+  "record_number": "53",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "حاصبيا",
+  "phone": "03916650",
+  "quantity": 2,
+  "age": [
+   8,
+   8
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "فارس عطيه",
+  "record_number": "118",
+  "governorate": "الشوف",
+  "district": "مجد المعوش",
+  "area": "مجد المعوش",
+  "phone": "70704137",
+  "quantity": 2,
+  "age": [
+   4,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "فايز سالم كحيل",
+  "record_number": "154",
+  "governorate": "الشمال",
+  "district": "طرابلس",
+  "area": "التلل",
+  "phone": "70171920",
+  "quantity": 3,
+  "age": [
+   7,
+   9,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "فراس فاعور",
+  "record_number": "439\\168",
+  "governorate": "الجنوب",
+  "district": "الخيام",
+  "area": "الخيام",
+  "phone": "03520073",
+  "quantity": 2,
+  "age": [
+   10,
+   12
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "فراس محمد جابر",
+  "record_number": "5",
+  "governorate": "بيروت",
+  "district": "بيروت الثانية",
+  "area": "رأس بيروت",
+  "phone": "70178814",
+  "quantity": 1,
+  "age": [
+   12
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "فهد خيرالله سلامة",
+  "record_number": "69",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70516800",
+  "quantity": 1,
+  "age": [
+   15
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "فهد فؤاد شامية",
+  "record_number": "34",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "راشيا الفخار",
+  "phone": "03439966",
+  "quantity": 1,
+  "age": [
+   12
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "فوزي الخطيب",
+  "record_number": "25",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "03934592",
+  "quantity": 3,
+  "age": [
+   11,
+   7,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "فوزي وليد الخطيب",
+  "record_number": "25",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "03934592",
+  "quantity": 3,
+  "age": [
+   10,
+   4,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "قاسم احمد القاسم",
+  "record_number": "92",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "03679905",
+  "quantity": 3,
+  "age": [
+   15,
+   13,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "قاسم جمال الشحاده",
+  "record_number": "75",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "76936679",
+  "quantity": 3,
+  "age": [
+   7,
+   6,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "قاسم محمد العبادي",
+  "record_number": "328",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "76600695",
+  "quantity": 2,
+  "age": [
+   12,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "قيص سليم سلامة",
+  "record_number": "66",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "71215438",
+  "quantity": 2,
+  "age": [
+   9,
+   8
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "كابي عيد الخوري",
+  "record_number": "175",
+  "governorate": "البقاع",
+  "district": "المتن",
+  "area": "زحلة",
+  "phone": "70301511",
+  "quantity": 2,
+  "age": [
+   15,
+   11
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "كابي فضيل ونا",
+  "record_number": "5",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03493672",
+  "quantity": 1,
+  "age": [
+   13
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "كاربيس اغوب مهرانيان",
+  "record_number": "2306",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "76992309",
+  "quantity": 2,
+  "age": [
+   15,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "كارلوس فهيم الحاج",
+  "record_number": "1697",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "76468442",
+  "quantity": 1,
+  "age": [
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "كايد احمد الدياب",
+  "record_number": "143",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "71338919",
+  "quantity": 2,
+  "age": [
+   12,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "كرم جرجس نعمة الله",
+  "record_number": "158",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03916483",
+  "quantity": 1,
+  "age": [
+   13
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "كرم عيد الصفوي",
+  "record_number": "44",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "راشيا الفخار",
+  "phone": "70026306",
+  "quantity": 2,
+  "age": [
+   7,
+   6
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "كرم ميلاد مقلد",
+  "record_number": "15",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03459481",
+  "quantity": 1,
+  "age": [
+   8
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "كريس حنا",
+  "record_number": "66",
+  "governorate": "الجنوب",
+  "district": "بنت جبيل",
+  "area": "دبل",
+  "phone": "70229062",
+  "quantity": 3,
+  "age": [
+   8,
+   6,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "كريكور زاوين طفليان",
+  "record_number": "5114",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "70258551",
+  "quantity": 2,
+  "age": [
+   6,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "كريكور قرهبت",
+  "record_number": "4568",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "03140868",
+  "quantity": 1,
+  "age": [
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "كريم فارس مراد",
+  "record_number": "67",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "راشيا الفخار",
+  "phone": "70621083",
+  "quantity": 1,
+  "age": [
+   6
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "كلود مارون نهرا",
+  "record_number": "123",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "81640356",
+  "quantity": 1,
+  "age": [
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "كلود موسى خليل",
+  "record_number": "29",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "راشيا الفخار",
+  "phone": "81650997",
+  "quantity": 2,
+  "age": [
+   9,
+   6
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "كمال منصور عباس",
+  "record_number": "31",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "كوكبا",
+  "phone": "03430001",
+  "quantity": 1,
+  "age": [
+   15
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "كميل فضل الصباغ",
+  "record_number": "6",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "حاصبيا",
+  "phone": "03259647",
+  "quantity": 3,
+  "age": [
+   14,
+   11,
+   11
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "كميل نمر نمر",
+  "record_number": "232",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03325134",
+  "quantity": 2,
+  "age": [
+   10,
+   11
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "كنان مراد",
+  "record_number": "11",
+  "governorate": "البقاع",
+  "district": "بعلبك",
+  "area": "بعلبك",
+  "phone": "03405086",
+  "quantity": 2,
+  "age": [
+   6,
+   11
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ماجد حسين الاسكندراني",
+  "record_number": "132",
+  "governorate": "الجنوب",
+  "district": "صيدا",
+  "area": "صيدا حي الدكرمان",
+  "phone": "03818751",
+  "quantity": 1,
+  "age": [
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "مارك جرجس نهرا",
+  "record_number": "95",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": null,
+  "quantity": 2,
+  "age": [
+   9,
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "مارون اسعد صياح",
+  "record_number": "150",
+  "governorate": "جبل لبنان",
+  "district": "بعبدا",
+  "area": "كفرشيما",
+  "phone": "70984620",
+  "quantity": 1,
+  "age": [
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "مارون الياس نعمة",
+  "record_number": "188",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03030799",
+  "quantity": 2,
+  "age": [
+   8,
+   13
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "مارون بشارة زيدان",
+  "record_number": "116",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "76406536",
+  "quantity": 2,
+  "age": [
+   10,
+   8
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "مارون جوزيف الذيب",
+  "record_number": "1318",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "الاشرفية",
+  "phone": "71651263",
+  "quantity": 3,
+  "age": [
+   10,
+   7,
+   3
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "مارون ذيب بولس",
+  "record_number": "74",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70773027",
+  "quantity": 4,
+  "age": [
+   11,
+   7,
+   12,
+   13
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "مارون سهيل كرم",
+  "record_number": "78",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03920751",
+  "quantity": 1,
+  "age": [
+   8
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ماريو ابو صعب",
+  "record_number": "3",
+  "governorate": "جبل لبنان",
+  "district": "الشوف",
+  "area": "سرجبال",
+  "phone": "76381182",
+  "quantity": 1,
+  "age": [
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ماريو ابو صعب",
+  "record_number": "3",
+  "governorate": "جبل لبنان",
+  "district": "الشوف",
+  "area": "سرجبال",
+  "phone": "76/381182",
+  "quantity": 1,
+  "age": [
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "مازن كمال علوش",
+  "record_number": "32",
+  "governorate": "عكار",
+  "district": "عكار",
+  "area": "مشحا",
+  "phone": "81310874",
+  "quantity": 4,
+  "age": [
+   14,
+   12,
+   8,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "مالك فياض دعيبس",
+  "record_number": "90",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70393956",
+  "quantity": 1,
+  "age": [
+   13
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ماهر كمال شعلان",
+  "record_number": "102",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "حاصبيا",
+  "phone": "71060710",
+  "quantity": 2,
+  "age": [
+   10,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "مايك سليمان نهرا",
+  "record_number": "123",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "71871917",
+  "quantity": 1,
+  "age": [
+   11
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "مايك وارغراض كردليان",
+  "record_number": "3912",
+  "governorate": "بيروت",
+  "district": "المدور",
+  "area": "برج حمود",
+  "phone": "70870062",
+  "quantity": 2,
+  "age": [
+   9,
+   5
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "متري جان حداد",
+  "record_number": "3469",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "70857971",
+  "quantity": 2,
+  "age": [
+   5,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد ابراهيم شحاده",
+  "record_number": "782",
+  "governorate": "بيروت",
+  "district": "بيروت الثانية",
+  "area": "المرفأ",
+  "phone": "71163882",
+  "quantity": 2,
+  "age": [
+   9,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد احمد حمد",
+  "record_number": "39",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "70018152",
+  "quantity": 2,
+  "age": [
+   9,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد الحمصي",
+  "record_number": "310",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "70844574",
+  "quantity": 3,
+  "age": [
+   13,
+   11,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد امين المغربل",
+  "record_number": "1806",
+  "governorate": "بيروت",
+  "district": "بيروت الثانية",
+  "area": "المصيطبة",
+  "phone": null,
+  "quantity": 2,
+  "age": [
+   15,
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد انور مغبط",
+  "record_number": "1715",
+  "governorate": "بيروت",
+  "district": "بيروت الثانية",
+  "area": "زقاق البلاط",
+  "phone": "70717568",
+  "quantity": 1,
+  "age": [
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد حمد",
+  "record_number": "39",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "76814199",
+  "quantity": 3,
+  "age": [
+   10,
+   7,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد حمعه مشلب مطر",
+  "record_number": "131",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "03616387",
+  "quantity": 1,
+  "age": [
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد حمود",
+  "record_number": "110",
+  "governorate": "النبطية",
+  "district": "بنت جبيل",
+  "area": "كفره",
+  "phone": "70656966",
+  "quantity": 2,
+  "age": [
+   6,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد حنوش",
+  "record_number": "36",
+  "governorate": "الجنوب",
+  "district": "الشوف",
+  "area": "برجين",
+  "phone": "76076791",
+  "quantity": 1,
+  "age": [
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد خالد الصالح",
+  "record_number": "201",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "76717258",
+  "quantity": 2,
+  "age": [
+   15,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد خالد طه",
+  "record_number": "118",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "78834234",
+  "quantity": 1,
+  "age": [
+   12
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد شلهوب",
+  "record_number": "114",
+  "governorate": "الجنوب",
+  "district": "صور",
+  "area": "صور",
+  "phone": "76421677",
+  "quantity": 2,
+  "age": [
+   6,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد صالح",
+  "record_number": "27",
+  "governorate": "الشمال",
+  "district": "طرابلس",
+  "area": "طرابلس",
+  "phone": "70/838310",
+  "quantity": 2,
+  "age": [
+   13,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد عباس",
+  "record_number": "170",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "71306594",
+  "quantity": 1,
+  "age": [
+   15
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد عبدالله البرازي",
+  "record_number": "737",
+  "governorate": "بيروت",
+  "district": "بيروت الثانية",
+  "area": "المزرعة",
+  "phone": "03782407",
+  "quantity": 2,
+  "age": [
+   6,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد علوية",
+  "record_number": "174",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "70916703",
+  "quantity": 1,
+  "age": [
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد علي الحاج",
+  "record_number": "69",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "70765051",
+  "quantity": 1,
+  "age": [
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد علي الزهران النعيم",
+  "record_number": "1838",
+  "governorate": "بيروت",
+  "district": "بيروت الثانية",
+  "area": "الباشورة",
+  "phone": "81605801",
+  "quantity": 1,
+  "age": [
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد عمر حسين",
+  "record_number": "36",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "03010634",
+  "quantity": 5,
+  "age": [
+   15,
+   14,
+   13,
+   11,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد قاسم شحاده",
+  "record_number": "70",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "86869184",
+  "quantity": 1,
+  "age": [
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد محمود السوالمه",
+  "record_number": "330",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "03213857",
+  "quantity": 3,
+  "age": [
+   14,
+   10,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد محمود حسين",
+  "record_number": "36",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "71372294",
+  "quantity": 4,
+  "age": [
+   13,
+   10,
+   9,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد محمود مطر",
+  "record_number": "131",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "76369334",
+  "quantity": 4,
+  "age": [
+   12,
+   10,
+   9,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد مصطفى",
+  "record_number": "57",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "71281103",
+  "quantity": 1,
+  "age": [
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد مصطفى بعلبكي",
+  "record_number": "1486",
+  "governorate": "بيروت",
+  "district": "بيروت الثانية",
+  "area": "باشورة",
+  "phone": "71838332",
+  "quantity": 2,
+  "age": [
+   12,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد مصطفى مشلب مطر",
+  "record_number": "131",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "76934822",
+  "quantity": 1,
+  "age": [
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد نور الدياب",
+  "record_number": "143",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "03540731",
+  "quantity": 3,
+  "age": [
+   14,
+   9,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمد نور شحاده",
+  "record_number": "183",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "76955383",
+  "quantity": 2,
+  "age": [
+   6,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمود احمد حمد",
+  "record_number": "39",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "81939816",
+  "quantity": 1,
+  "age": [
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمود احمد حمد",
+  "record_number": "39",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "81939816",
+  "quantity": 2,
+  "age": [
+   6,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمود احمد قطايا",
+  "record_number": "22",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "70128424",
+  "quantity": 3,
+  "age": [
+   14,
+   12,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمود الحمصي",
+  "record_number": "310",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "76070016",
+  "quantity": 3,
+  "age": [
+   6,
+   5,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمود المير",
+  "record_number": "1423",
+  "governorate": "بيروت",
+  "district": "بيروت",
+  "area": "المزرعة",
+  "phone": "03380376",
+  "quantity": 1,
+  "age": [
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمود حسين حسين",
+  "record_number": "52",
+  "governorate": "النبطية",
+  "district": "بنت جبيل",
+  "area": "راميا",
+  "phone": "70712980",
+  "quantity": 4,
+  "age": [
+   14,
+   15,
+   10,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمود حمد",
+  "record_number": "39",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "81939816",
+  "quantity": 2,
+  "age": [
+   6,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمود عبد الشحاده",
+  "record_number": "75",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "76755974",
+  "quantity": 3,
+  "age": [
+   13,
+   12,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمود علي السوالمه",
+  "record_number": "256",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "81864579",
+  "quantity": 2,
+  "age": [
+   6,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمود علي زهران",
+  "record_number": "131",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "81708317",
+  "quantity": 1,
+  "age": [
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محمود فريز خالد",
+  "record_number": "2158",
+  "governorate": "بيروت",
+  "district": "بيروت الثانية",
+  "area": "المصيطبة",
+  "phone": "70901071",
+  "quantity": 1,
+  "age": [
+   11
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "محي الدين علوية",
+  "record_number": "174",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "76792601",
+  "quantity": 2,
+  "age": [
+   10,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "مروان ابو لطوف",
+  "record_number": "269",
+  "governorate": "الشمال",
+  "district": "البترون",
+  "area": "تنورين",
+  "phone": "03/114778",
+  "quantity": 2,
+  "age": [
+   15,
+   12
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "مروان جميل نهرا",
+  "record_number": "16",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03450882",
+  "quantity": 1,
+  "age": [
+   11
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "مروان طلال الكيال",
+  "record_number": "1416",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "03160605",
+  "quantity": 3,
+  "age": [
+   6,
+   11,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "مروان علي زعيتر",
+  "record_number": "95",
+  "governorate": "البقاع",
+  "district": "بعلبك",
+  "area": "ايعات",
+  "phone": "76840660",
+  "quantity": 3,
+  "age": [
+   9,
+   6,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "مصطفى جمعه مشلب مطر",
+  "record_number": "131",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "70778636",
+  "quantity": 2,
+  "age": [
+   11,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "مصطفى حمية",
+  "record_number": "307",
+  "governorate": "جبل لبنان",
+  "district": "الشوف",
+  "area": "برجا",
+  "phone": "70681136",
+  "quantity": 1,
+  "age": [
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "مصطفى حمية",
+  "record_number": "307",
+  "governorate": "جبل لبنان",
+  "district": "الشوف",
+  "area": "برجا",
+  "phone": "70/681136",
+  "quantity": 1,
+  "age": [
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "مصطفى خالد الضو",
+  "record_number": "96",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "70076059",
+  "quantity": 1,
+  "age": [
+   15
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "منصور حنا رزق",
+  "record_number": "25",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "71056156",
+  "quantity": 1,
+  "age": [
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "منير عنتر",
+  "record_number": "25",
+  "governorate": "الشمال",
+  "district": "عكار",
+  "area": "حرار عكار",
+  "phone": "03068490",
+  "quantity": 3,
+  "age": [
+   8,
+   10,
+   12
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "منير محمد بيضون",
+  "record_number": "20",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "الاشرفية",
+  "phone": "70200048",
+  "quantity": 1,
+  "age": [
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "موريل ماجد غاوي",
+  "record_number": "20",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70182865",
+  "quantity": 3,
+  "age": [
+   12,
+   11,
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "موسى سميح ابراهيم",
+  "record_number": "45",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "الماري",
+  "phone": "71758309",
+  "quantity": 3,
+  "age": [
+   13,
+   12,
+   8
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ميشال جان قطاع",
+  "record_number": "12",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الصيفي",
+  "phone": "03898633",
+  "quantity": 3,
+  "age": [
+   11,
+   10,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ميشال جرجس سعد",
+  "record_number": "131",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "71838972",
+  "quantity": 2,
+  "age": [
+   11,
+   15
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ميشال غسان مقدسي",
+  "record_number": "72",
+  "governorate": "جبل لبنان",
+  "district": "بعبدا",
+  "area": "تحويطة النهر",
+  "phone": "71710033",
+  "quantity": 1,
+  "age": [
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ميشال يوسف بربور",
+  "record_number": "70",
+  "governorate": "الشمال",
+  "district": "بشري",
+  "area": "قنات",
+  "phone": "03214247",
+  "quantity": 1,
+  "age": [
+   12
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ميشل فريد مخول",
+  "record_number": "3676",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "03415103",
+  "quantity": 2,
+  "age": [
+   1314,
+   11
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "ميلاد كرم الله سعيد",
+  "record_number": "44",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03294114",
+  "quantity": 1,
+  "age": [
+   15
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ميلاد منوال نعمة الله",
+  "record_number": "169",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "71014694",
+  "quantity": 1,
+  "age": [
+   13
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "ناصر نصري سعد",
+  "record_number": "6",
+  "governorate": "البقاع",
+  "district": "البقاع",
+  "area": "القاع",
+  "phone": "71686869",
+  "quantity": 2,
+  "age": [
+   12,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "نبيل انطون رباط",
+  "record_number": "279",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "الاشرفية",
+  "phone": "70846823",
+  "quantity": 2,
+  "age": [
+   12,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "نبيه علي كوثراني",
+  "record_number": "25",
+  "governorate": "الجنوب",
+  "district": "صيدا",
+  "area": "تفاحتا",
+  "phone": "03870586",
+  "quantity": 2,
+  "age": [
+   11,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "نسيب اديب الخوري",
+  "record_number": "78",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "حاصبيا",
+  "phone": "70802672",
+  "quantity": 2,
+  "age": [
+   6,
+   11
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "نسيم إيلي عبد النور",
+  "record_number": "2498",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "الاشرفية",
+  "phone": "03437274",
+  "quantity": 2,
+  "age": [
+   5,
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "نسيم منير ابو حمد",
+  "record_number": "203",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70200362",
+  "quantity": 1,
+  "age": [
+   9
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "نعمة راشد ابو راشد",
+  "record_number": "1",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "ابو قمحة",
+  "phone": "76688172",
+  "quantity": 2,
+  "age": [
+   10,
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "نقولا أديب رحال",
+  "record_number": "20",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03174377",
+  "quantity": 3,
+  "age": [
+   11,
+   9,
+   7
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "نقولا نقولا بابادوبولو",
+  "record_number": "296",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "الرميل",
+  "phone": "76720098",
+  "quantity": 1,
+  "age": [
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "نمر وسام ضاهر",
+  "record_number": "62",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03668510",
+  "quantity": 2,
+  "age": [
+   7,
+   6
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "نوال رفول",
+  "record_number": "1397",
+  "governorate": "جبل لبنان",
+  "district": "المتن",
+  "area": "برج حمود",
+  "phone": "70517072",
+  "quantity": 1,
+  "age": [
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "نوال رفول",
+  "record_number": "1397",
+  "governorate": "جبل لبنان",
+  "district": "المتن",
+  "area": "برج حمود",
+  "phone": "70/517072",
+  "quantity": 1,
+  "age": [
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "نور الخطيب",
+  "record_number": "36",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "81699218",
+  "quantity": 2,
+  "age": [
+   11,
+   8
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "هشام سليمان الحاصباني",
+  "record_number": "28",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "دير ميماس",
+  "phone": "76606118",
+  "quantity": 1,
+  "age": [
+   11
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "وائل عيسى سيده",
+  "record_number": "775",
+  "governorate": "بيروت",
+  "district": "بيروت الثانية",
+  "area": "المزرعة",
+  "phone": "71274675",
+  "quantity": 2,
+  "age": [
+   4,
+   3
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "وائل نظار قازان",
+  "record_number": "396",
+  "governorate": "جبل لبنان",
+  "district": "بعبدا",
+  "area": "الغبيري",
+  "phone": "03407311",
+  "quantity": 1,
+  "age": [
+   14
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "وديع جورج تاجي",
+  "record_number": "71",
+  "governorate": "جبل لبنان",
+  "district": "بعبدا",
+  "area": "تحويطة النهر",
+  "phone": "76898284",
+  "quantity": 1,
+  "age": [
+   11
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "وسام الفاني",
+  "record_number": "266",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "70656831",
+  "quantity": 1,
+  "age": [
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "وسام راشد بازرباشي",
+  "record_number": "178",
+  "governorate": "الشمال",
+  "district": "طرابلس",
+  "area": "نوري",
+  "phone": "71424659",
+  "quantity": 1,
+  "age": [
+   4
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "وسام عبدالله الياس",
+  "record_number": "2",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "راشيا الفخار",
+  "phone": "71674332",
+  "quantity": 1,
+  "age": [
+   6
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "وسام علي الحسن",
+  "record_number": "180",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "81058491",
+  "quantity": 1,
+  "age": [
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "وسيم ابراهيم الحاج",
+  "record_number": "11",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "76933356",
+  "quantity": 2,
+  "age": [
+   7,
+   6
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "وسيم الجوني",
+  "record_number": "3",
+  "governorate": "النبطية",
+  "district": "النبطية",
+  "area": "عزه",
+  "phone": "70843693",
+  "quantity": 1,
+  "age": [
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "وسيم الجوني",
+  "record_number": "3",
+  "governorate": "النبطية",
+  "district": "النبطية",
+  "area": "عزه",
+  "phone": "70/843693",
+  "quantity": 1,
+  "age": [
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "وسيم مصباح بيضون",
+  "record_number": "127",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "الاشرفية",
+  "phone": "70685727",
+  "quantity": 2,
+  "age": [
+   11,
+   7
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "وليد الجمال",
+  "record_number": "4879",
+  "governorate": "بيروت",
+  "district": "بيروت",
+  "area": "المزرعة",
+  "phone": "70/932143",
+  "quantity": 1,
+  "age": [
+   15
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "وليد خالد الصالح",
+  "record_number": "201",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "76093904",
+  "quantity": 1,
+  "age": [
+   16
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "وليد خالد الضو",
+  "record_number": "96",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "71261915",
+  "quantity": 2,
+  "age": [
+   9,
+   11
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "وليد شمدين السعيد",
+  "record_number": "153",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "71473277",
+  "quantity": 2,
+  "age": [
+   10,
+   12
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "وليد شمدين السعيد",
+  "record_number": "153",
+  "governorate": "بيروت",
+  "district": "بيروت الاولى",
+  "area": "المدور",
+  "phone": "81778046",
+  "quantity": 2,
+  "age": [
+   12,
+   10
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "وليد واكيم",
+  "record_number": "41",
+  "governorate": "بيروت",
+  "district": "الاشرفية",
+  "area": "الاشرفية",
+  "phone": "81237640",
+  "quantity": 2,
+  "age": [
+   12,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "يوسف حنا دعيبس",
+  "record_number": "90",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "03366946",
+  "quantity": 1,
+  "age": [
+   15
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "يوسف طانيوس نمر",
+  "record_number": "232",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70241514",
+  "quantity": 1,
+  "age": [
+   9
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "يوسف عبدالله فارس",
+  "record_number": "279",
+  "governorate": "النبطية",
+  "district": "مرجعيون",
+  "area": "القليعة",
+  "phone": "70077879",
+  "quantity": 1,
+  "age": [
+   12
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "يوسف كرنبي",
+  "record_number": "369",
+  "governorate": "بعلبك الهرمل",
+  "district": "بعلبك",
+  "area": "عرسال",
+  "phone": "70781370",
+  "quantity": 4,
+  "age": [
+   11,
+   10,
+   9,
+   6
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "يوسف مايكل متري",
+  "record_number": "31",
+  "governorate": "النبطية",
+  "district": "حاصبيا",
+  "area": "ابو قمحة",
+  "phone": "03363081",
+  "quantity": 2,
+  "age": [
+   15,
+   12
+  ],
+  "batch": "south_2026",
+  "pre_collected": true
+ },
+ {
+  "name": "يوسف محمد العبادي",
+  "record_number": "283",
+  "governorate": "بيروت",
+  "district": "بيروت الأولى",
+  "area": "المدور",
+  "phone": "81957443",
+  "quantity": 1,
+  "age": [
+   15
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "يوسف مرسلينو ذاده",
+  "record_number": "157",
+  "governorate": "الشمال",
+  "district": "زغرتا",
+  "area": "زغرتا حي السيدة الغربي",
+  "phone": "70578508",
+  "quantity": 2,
+  "age": [
+   4,
+   3
+  ],
+  "batch": "main",
+  "pre_collected": false
+ },
+ {
+  "name": "يونس الحاج",
+  "record_number": "91",
+  "governorate": "جبل لبنان",
+  "district": "الشوف",
+  "area": "اقليم الخروب",
+  "phone": "76374054",
+  "quantity": 2,
+  "age": [
+   12,
+   9
+  ],
+  "batch": "main",
+  "pre_collected": false
+ }
+]
