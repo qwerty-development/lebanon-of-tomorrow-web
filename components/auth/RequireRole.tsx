@@ -33,6 +33,12 @@ export function RequireRole({
 
   const message = fallbackMessage || defaultMessage;
 
+  // Callers pass this inline (allowedRoles={['super_admin']}), so the array is a
+  // new object on every render. Depending on it directly re-ran the whole check
+  // — getSession + getUser + a profiles query — on each parent render. Depend on
+  // the contents instead.
+  const allowedRolesKey = allowedRoles.join(",");
+
   useEffect(() => {
     let isMounted = true;
 
@@ -107,7 +113,8 @@ export function RequireRole({
       isMounted = false;
       subscription.unsubscribe();
     };
-  }, [router, locale, allowedRoles]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router, locale, allowedRolesKey]);
 
   // Show loading state
   if (checking) {

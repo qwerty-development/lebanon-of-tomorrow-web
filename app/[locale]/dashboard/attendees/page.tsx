@@ -106,323 +106,114 @@ async function withRetry<T>(
   throw lastError;
 }
 
-// Helper function to generate ultra-comprehensive search patterns for any input
+// The database raises these in English from triggers and RPCs. Operators are
+// volunteers working in Arabic, so map the ones they can actually hit onto
+// wording that tells them what to do next.
+function friendlyDbError(raw: string, isArabic: boolean): string {
+  const m = (raw || "").toLowerCase();
+
+  if (m.includes("main entrance must be checked"))
+    return isArabic
+      ? "يجب تسجيل المدخل الرئيسي أولاً لهذه العائلة."
+      : "Check this family in at the Main entrance first.";
+
+  if (m.includes("do not have permission"))
+    return isArabic
+      ? "هذه المحطة ليست ضمن صلاحيتك. استخدم محطتك الخاصة."
+      : "This station is not assigned to your account.";
+
+  if (m.includes("quantity cannot exceed"))
+    return isArabic
+      ? "الكمية أكبر من عدد أطفال العائلة المسجّل."
+      : "That is more than the number of children registered for this family.";
+
+  if (m.includes("only super admins can undo"))
+    return isArabic
+      ? "المشرف الأعلى فقط يمكنه التراجع عن التسجيل."
+      : "Only a Super Admin can undo a check-in.";
+
+  if (m.includes("unchecking is not allowed"))
+    return isArabic
+      ? "لا يمكن إلغاء التسجيل. اطلب من المشرف الأعلى."
+      : "Check-ins cannot be undone here. Ask a Super Admin.";
+
+  if (m.includes("already collected in a previous distribution"))
+    return isArabic
+      ? "استلمت هذه العائلة في توزيع سابق. المحطات مقفلة."
+      : "This family already collected in a previous distribution.";
+
+  if (m.includes("quantity must be at least"))
+    return isArabic ? "أدخل كمية 1 أو أكثر." : "Enter a quantity of 1 or more.";
+
+  // Network / offline, which is the likeliest failure on venue wifi.
+  if (m.includes("fetch") || m.includes("network") || m.includes("timeout"))
+    return isArabic
+      ? "تعذّر الاتصال بالخادم. تحقّق من الشبكة وحاول مرة أخرى — لم يُسجَّل شيء."
+      : "Could not reach the server. Check the connection and try again — nothing was saved.";
+
+  return raw;
+}
+
+// Search patterns for one query, evaluated server-side by search_attendees().
+//
+// This used to emit up to 100 patterns per keystroke, which cost 330ms of
+// database time per search (measured) versus 10ms for a plain match. Most of
+// them could no longer match anything: phone numbers are stored digits-only, so
+// every "+961 3 565846" / "00961-..." / parenthesised variant was dead weight.
+//
+// What the stored data actually looks like, and therefore what is worth trying:
+//   phone          digits only (1072 of 1075 rows)
+//   record_number  digits, plus 23 rows using "/" or "\\", Arabic-Indic
+//                  numerals, or free text
+//   name           Arabic text
+const SEPARATORS = ['/', '\\', '-', ' '];
+
+// Backslash is LIKE/ILIKE's escape character, so a lone "\" in a pattern
+// escapes the next character instead of matching a backslash: '%18\19%' looks
+// for "1819" and would never find the record stored as "18\19". Double it.
+function escapeLike(value: string): string {
+  return value.replace(/\\/g, '\\\\');
+}
+
+// Operators read record numbers off printed sheets that sometimes use
+// Arabic-Indic numerals, so "20" should still find "٢٠".
+function toArabicIndic(digits: string): string {
+  return digits.replace(/[0-9]/g, (d) => '٠١٢٣٤٥٦٧٨٩'[Number(d)]);
+}
+
 function generateSlashPatterns(searchTerm: string): string[] {
-  const patterns: string[] = [];
-  
-  // Always add the original search term (case insensitive)
-  patterns.push(`%${searchTerm.toLowerCase()}%`);
-  
-  // Check if search term contains digits
-  const hasDigits = /\d/.test(searchTerm);
-  
-  if (hasDigits) {
-    // Extract all digits from the search term
-    const allDigits = searchTerm.replace(/\D/g, '');
-    
-    if (allDigits.length >= 2) {
-      // 1. BASIC DIGIT PATTERNS
-      patterns.push(`%${allDigits}%`); // Just the digits
-      
-      // 2. LEADING ZEROS VARIATIONS (super broad)
-      for (let leadingZeros = 1; leadingZeros <= 4; leadingZeros++) {
-        const zerosPrefix = '0'.repeat(leadingZeros);
-        patterns.push(`%${zerosPrefix}${allDigits}%`);
-      }
-      
-      // 3. **CRITICAL FIX** - REMOVE LEADING ZEROS FROM SEARCH
-      // If user searches "03463479", also search for "3463479" (without leading zeros)
-      let trimmedDigits = allDigits;
-      while (trimmedDigits.startsWith('0') && trimmedDigits.length > 1) {
-        trimmedDigits = trimmedDigits.substring(1);
-        patterns.push(`%${trimmedDigits}%`);
-        
-        // Also add variations with different separators for the trimmed number
-        if (trimmedDigits.length >= 3) {
-          for (let i = 1; i < trimmedDigits.length; i++) {
-            const before = trimmedDigits.substring(0, i);
-            const after = trimmedDigits.substring(i);
-            patterns.push(`%${before}/${after}%`);
-            patterns.push(`%${before}-${after}%`);
-            patterns.push(`%${before} ${after}%`);
-          }
+  const term = searchTerm.trim();
+  if (!term) return [];
+
+  const patterns: string[] = [`%${escapeLike(term.toLowerCase())}%`];
+  const digits = term.replace(/\D/g, '');
+
+  if (digits.length >= 2) {
+    patterns.push(`%${digits}%`);
+
+    // "03565846" typed against a record stored as "3565846", and the reverse.
+    const trimmed = digits.replace(/^0+/, '');
+    if (trimmed && trimmed !== digits) patterns.push(`%${trimmed}%`);
+    if (!digits.startsWith('0')) patterns.push(`%0${digits}%`);
+
+    patterns.push(`%${toArabicIndic(digits)}%`);
+
+    // Record numbers are short and are the only values that still carry
+    // separators, so only split those. Doing this for an 8-digit phone would
+    // add ~28 patterns that cannot match a digits-only column.
+    if (digits.length <= 6) {
+      for (let i = 1; i < digits.length; i++) {
+        const before = digits.slice(0, i);
+        const after = digits.slice(i);
+        for (const sep of SEPARATORS) {
+          patterns.push(`%${before}${escapeLike(sep)}${after}%`);
         }
       }
-      
-      // 4. PHONE NUMBER PATTERNS - LEBANON SPECIFIC & INTERNATIONAL
-      if (allDigits.length >= 6) {
-        // Lebanese mobile patterns (961, +961, 00961)
-        patterns.push(`%961${allDigits}%`);
-        patterns.push(`%+961${allDigits}%`);
-        patterns.push(`%00961${allDigits}%`);
-        
-        // Also try with trimmed digits
-        if (trimmedDigits !== allDigits && trimmedDigits.length >= 6) {
-          patterns.push(`%961${trimmedDigits}%`);
-          patterns.push(`%+961${trimmedDigits}%`);
-          patterns.push(`%00961${trimmedDigits}%`);
-        }
-        
-        // Common Lebanese mobile prefixes
-        const lebMobilePrefixes = ['03', '70', '71', '76', '78', '79', '81'];
-        lebMobilePrefixes.forEach(prefix => {
-          if (allDigits.startsWith(prefix) || allDigits.includes(prefix)) {
-            patterns.push(`%${prefix}${allDigits.replace(prefix, '')}%`);
-            patterns.push(`%0${prefix}${allDigits.replace(prefix, '')}%`);
-            patterns.push(`%961${prefix}${allDigits.replace(prefix, '')}%`);
-            patterns.push(`%+961${prefix}${allDigits.replace(prefix, '')}%`);
-          }
-          
-          // Try with trimmed digits too
-          if (trimmedDigits !== allDigits && (trimmedDigits.startsWith(prefix) || trimmedDigits.includes(prefix))) {
-            patterns.push(`%${prefix}${trimmedDigits.replace(prefix, '')}%`);
-            patterns.push(`%0${prefix}${trimmedDigits.replace(prefix, '')}%`);
-            patterns.push(`%961${prefix}${trimmedDigits.replace(prefix, '')}%`);
-            patterns.push(`%+961${prefix}${trimmedDigits.replace(prefix, '')}%`);
-          }
-        });
-        
-        // If digits might be part of phone number, try common formats
-        patterns.push(`%+${allDigits}%`);
-        patterns.push(`%00${allDigits}%`);
-        if (trimmedDigits !== allDigits) {
-          patterns.push(`%+${trimmedDigits}%`);
-          patterns.push(`%00${trimmedDigits}%`);
-        }
-      }
-      
-      // 5. ALL POSSIBLE SEPARATOR COMBINATIONS
-      const separators = ['/', '-', ' ', '_', '.', '(', ')', '+'];
-      
-      // Single separator at every possible position - for both original and trimmed
-      [allDigits, trimmedDigits].forEach(digitString => {
-        if (digitString.length >= 2) {
-          for (let i = 1; i < digitString.length; i++) {
-            const before = digitString.substring(0, i);
-            const after = digitString.substring(i);
-            
-            separators.forEach(sep => {
-              patterns.push(`%${before}${sep}${after}%`);
-              
-              // With leading zeros
-              for (let zeros = 1; zeros <= 3; zeros++) {
-                const zeroPrefix = '0'.repeat(zeros);
-                patterns.push(`%${zeroPrefix}${before}${sep}${after}%`);
-                patterns.push(`%${before}${sep}${zeroPrefix}${after}%`);
-              }
-              
-              // Phone number specific formats
-              if (digitString.length >= 6) {
-                patterns.push(`%961${sep}${before}${sep}${after}%`);
-                patterns.push(`%+961${sep}${before}${sep}${after}%`);
-                patterns.push(`%00961${sep}${before}${sep}${after}%`);
-              }
-            });
-          }
-          
-          // **NEW: CRITICAL FIX FOR REVERSE SEPARATOR MATCHING**
-          // When user searches "71182625" but DB has "71/182625" 
-          // We need to create patterns that will match DB values WITH separators
-          // This generates patterns like: %71/182625%, %71-182625%, %71 182625%, etc.
-          
-          // Try all possible separator positions for this digit string
-          for (let sepPos = 1; sepPos < digitString.length; sepPos++) {
-            const beforeSep = digitString.substring(0, sepPos);
-            const afterSep = digitString.substring(sepPos);
-            
-            if (beforeSep.length >= 1 && afterSep.length >= 1) {
-              separators.forEach(sep => {
-                // Basic separator pattern
-                patterns.push(`%${beforeSep}${sep}${afterSep}%`);
-                
-                // With leading zero variations
-                patterns.push(`%0${beforeSep}${sep}${afterSep}%`);
-                patterns.push(`%00${beforeSep}${sep}${afterSep}%`);
-                patterns.push(`%${beforeSep}${sep}0${afterSep}%`);
-                
-                // Phone number variations
-                if (digitString.length >= 6) {
-                  patterns.push(`%+961${beforeSep}${sep}${afterSep}%`);
-                  patterns.push(`%961${beforeSep}${sep}${afterSep}%`);
-                  patterns.push(`%00961${beforeSep}${sep}${afterSep}%`);
-                  patterns.push(`%+961 ${beforeSep}${sep}${afterSep}%`);
-                  patterns.push(`%961 ${beforeSep}${sep}${afterSep}%`);
-                }
-                
-                // Multiple separator combinations
-                if (afterSep.length >= 4) {
-                  // Split the second part further
-                  for (let secondSepPos = 2; secondSepPos < afterSep.length - 1; secondSepPos++) {
-                    const middlePart = afterSep.substring(0, secondSepPos);
-                    const endPart = afterSep.substring(secondSepPos);
-                    
-                    patterns.push(`%${beforeSep}${sep}${middlePart}${sep}${endPart}%`);
-                    patterns.push(`%0${beforeSep}${sep}${middlePart}${sep}${endPart}%`);
-                    patterns.push(`%+961${beforeSep}${sep}${middlePart}${sep}${endPart}%`);
-                  }
-                }
-              });
-            }
-          }
-        }
-      });
-      
-      // 6. MULTIPLE SEPARATORS - Common phone formats
-      [allDigits, trimmedDigits].forEach(digitString => {
-        if (digitString.length >= 6) {
-          const commonPhoneFormats = [
-            // Lebanese formats
-            `%+961 ${digitString.substring(0, 2)} ${digitString.substring(2)}%`,
-            `%+961-${digitString.substring(0, 2)}-${digitString.substring(2)}%`,
-            `%961 ${digitString.substring(0, 2)} ${digitString.substring(2)}%`,
-            `%961-${digitString.substring(0, 2)}-${digitString.substring(2)}%`,
-            `%00961 ${digitString.substring(0, 2)} ${digitString.substring(2)}%`,
-            `%00961-${digitString.substring(0, 2)}-${digitString.substring(2)}%`,
-            
-            // Local formats
-            `%0${digitString.substring(0, 2)} ${digitString.substring(2)}%`,
-            `%0${digitString.substring(0, 2)}-${digitString.substring(2)}%`,
-            `%0${digitString.substring(0, 2)}/${digitString.substring(2)}%`,
-            
-            // International formats
-            `%(+961) ${digitString.substring(0, 2)} ${digitString.substring(2)}%`,
-            `%(961) ${digitString.substring(0, 2)} ${digitString.substring(2)}%`,
-          ];
-          
-          // Add different splitting positions for each format
-          for (let splitPos = 2; splitPos <= Math.min(4, digitString.length - 2); splitPos++) {
-            const part1 = digitString.substring(0, splitPos);
-            const part2 = digitString.substring(splitPos);
-            
-            commonPhoneFormats.push(
-              `%+961 ${part1} ${part2}%`,
-              `%+961-${part1}-${part2}%`,
-              `%961 ${part1} ${part2}%`,
-              `%961-${part1}-${part2}%`,
-              `%0${part1} ${part2}%`,
-              `%0${part1}-${part2}%`,
-              `%0${part1}/${part2}%`,
-              `%(+961) ${part1} ${part2}%`,
-              `%(961) ${part1} ${part2}%`
-            );
-            
-            // Triple split for longer numbers
-            if (part2.length >= 4) {
-              const subPart1 = part2.substring(0, Math.floor(part2.length / 2));
-              const subPart2 = part2.substring(Math.floor(part2.length / 2));
-              
-              commonPhoneFormats.push(
-                `%+961 ${part1} ${subPart1} ${subPart2}%`,
-                `%+961-${part1}-${subPart1}-${subPart2}%`,
-                `%961 ${part1} ${subPart1} ${subPart2}%`,
-                `%961-${part1}-${subPart1}-${subPart2}%`,
-                `%0${part1} ${subPart1} ${subPart2}%`,
-                `%0${part1}-${subPart1}-${subPart2}%`,
-                `%(+961) ${part1} ${subPart1} ${subPart2}%`,
-                `%(961) ${part1} ${subPart1} ${subPart2}%`
-              );
-            }
-          }
-          
-          patterns.push(...commonPhoneFormats);
-        }
-      });
-      
-      // 7. RECORD NUMBER PATTERNS
-      [allDigits, trimmedDigits].forEach(digitString => {
-        if (digitString.length >= 3) {
-          // Common record number formats
-          const recordFormats = [
-            `%${digitString.substring(0, 2)}/${digitString.substring(2)}%`,
-            `%${digitString.substring(0, 3)}/${digitString.substring(3)}%`,
-            `%${digitString.substring(0, 2)}-${digitString.substring(2)}%`,
-            `%${digitString.substring(0, 3)}-${digitString.substring(3)}%`,
-            `%REC${digitString}%`,
-            `%rec${digitString}%`,
-            `%R${digitString}%`,
-            `%r${digitString}%`,
-          ];
-          
-          // With leading zeros
-          recordFormats.forEach(format => {
-            patterns.push(format);
-            for (let zeros = 1; zeros <= 3; zeros++) {
-              const zeroPrefix = '0'.repeat(zeros);
-              patterns.push(format.replace(digitString, `${zeroPrefix}${digitString}`));
-            }
-          });
-        }
-      });
-      
-      // 8. SUBSTRING MATCHING - Find digits as part of longer sequences
-      // This finds the search digits anywhere within larger numbers
-      [allDigits, trimmedDigits].forEach(digitString => {
-        if (digitString.length >= 3) {
-          patterns.push(`%${digitString}%`); // Already added, but ensures it's there
-        }
-      });
-      
-      // 9. REVERSED PATTERNS (sometimes numbers are stored/displayed differently)
-      [allDigits, trimmedDigits].forEach(digitString => {
-        if (digitString.length >= 4) {
-          const reversed = digitString.split('').reverse().join('');
-          patterns.push(`%${reversed}%`);
-          
-          // Reversed with separators
-          for (let i = 1; i < reversed.length; i++) {
-            const before = reversed.substring(0, i);
-            const after = reversed.substring(i);
-            patterns.push(`%${before}/${after}%`);
-            patterns.push(`%${before}-${after}%`);
-            patterns.push(`%${before} ${after}%`);
-          }
-        }
-      });
-      
-      // 10. PARTIAL MATCHING - Super broad
-      [allDigits, trimmedDigits].forEach(digitString => {
-        if (digitString.length >= 4) {
-          // Take different chunks of the digits
-          for (let start = 0; start < digitString.length - 2; start++) {
-            for (let length = 3; length <= digitString.length - start; length++) {
-              const chunk = digitString.substring(start, start + length);
-              if (chunk.length >= 3) {
-                patterns.push(`%${chunk}%`);
-                patterns.push(`%0${chunk}%`);
-                patterns.push(`%00${chunk}%`);
-              }
-            }
-          }
-        }
-      });
     }
   }
-  
-  // 11. NON-NUMERIC PATTERNS (for names, etc.)
-  if (!searchTerm.match(/^\d+$/)) {
-    // Add case variations
-    patterns.push(`%${searchTerm.toUpperCase()}%`);
-    
-    // Add patterns for names with common prefixes/suffixes
-    const namePrefixes = ['mr', 'mrs', 'ms', 'dr', 'prof'];
-    const nameSuffixes = ['jr', 'sr', 'ii', 'iii'];
-    
-    namePrefixes.forEach(prefix => {
-      patterns.push(`%${prefix} ${searchTerm.toLowerCase()}%`);
-      patterns.push(`%${prefix.toUpperCase()} ${searchTerm.toLowerCase()}%`);
-    });
-    
-    nameSuffixes.forEach(suffix => {
-      patterns.push(`%${searchTerm.toLowerCase()} ${suffix}%`);
-      patterns.push(`%${searchTerm.toLowerCase()} ${suffix.toUpperCase()}%`);
-    });
-  }
-  
-  // 12. Remove duplicates and limit to reasonable number
-  const uniquePatterns = [...new Set(patterns)];
-  
-  // Return first 100 most relevant patterns to avoid query complexity
-  return uniquePatterns.slice(0, 100);
+
+  // Still capped, but the cap is now far above what this generates.
+  return [...new Set(patterns)].slice(0, 40);
 }
 
 // Mobile-friendly Quantity Input Modal
@@ -509,14 +300,16 @@ function QuantityModal({
                 inputMode="numeric"
                 pattern="[0-9]*"
                 min="1"
-                max={isSuperAdmin ? "999" : maxValue}
+                // Callers now pass the family's real quantity for every role,
+                // because the database enforces that ceiling for super admins too.
+                max={maxValue}
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 className="w-full px-4 py-3 text-lg text-center border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:border-blue-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors touch-manipulation"
                 placeholder={isArabic ? "أدخل الكمية" : "Enter quantity"}
                 autoFocus
               />
-              {maxValue && !isSuperAdmin && (
+              {maxValue && (
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 text-center">
                   {isArabic ? `الحد الأقصى: ${maxValue}` : `Max: ${maxValue}`}
                 </p>
@@ -719,9 +512,14 @@ export default function AttendeesPage() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-  const [userRole, setUserRole] = useState<UserRole>('admin');
+  // null until the profiles row loads. Previously defaulted to 'admin', which
+  // reaches every station, so each page load briefly rendered every station as
+  // tappable for operators who are restricted to one.
+  const [userRole, setUserRole] = useState<UserRole | null>(null);
   const [loadError, setLoadError] = useState<string>("");
   const [isOnline, setIsOnline] = useState(true);
+  // Bumped to force a refetch of already-loaded rows after a connection gap.
+  const [resyncNonce, setResyncNonce] = useState(0);
 
   // Modal state for mobile-friendly dialogs
   const [quantityModal, setQuantityModal] = useState<{
@@ -823,7 +621,9 @@ export default function AttendeesPage() {
     });
   };
 
-  const showAlertModal = (title: string, message: string): Promise<void> => {
+  // Stable identity: handleMarkField closes over this, and only setAlertModal
+  // (a stable setter) is used inside.
+  const showAlertModal = useCallback((title: string, message: string): Promise<void> => {
     return new Promise((resolve) => {
       const handleClose = () => {
         setAlertModal(prev => ({ ...prev, isOpen: false }));
@@ -837,7 +637,7 @@ export default function AttendeesPage() {
         onClose: handleClose
       });
     });
-  };
+  }, []);
 
   // Translations
   const t = {
@@ -878,14 +678,26 @@ export default function AttendeesPage() {
       : "Collected in the south distribution. Stations are locked.",
   };
 
-  // Network status monitoring
+  // Network status monitoring.
+  //
+  // Realtime does NOT replay events missed while the socket was down, so simply
+  // resubscribing leaves the tablet showing pre-blackout data: a family checked
+  // in at main entrance by someone else still looks unchecked here, and every
+  // other station stays greyed out as "main entrance first". Coming back online
+  // therefore resets to page 1 and refetches rather than just reconnecting.
   useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
+    const handleOnline = () => {
+      setIsOnline(true);
+      setCurrentPage(1);
+      setAttendees([]);
+      setHasMore(true);
+      setResyncNonce(n => n + 1);
+    };
     const handleOffline = () => setIsOnline(false);
-    
+
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
-    
+
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
@@ -1018,7 +830,9 @@ export default function AttendeesPage() {
     return () => {
       abortControllerRef.current?.abort();
     };
-  }, [currentPage, loadAttendees]);
+    // resyncNonce forces this to re-run after a reconnect even when the page
+    // number is unchanged.
+  }, [currentPage, loadAttendees, resyncNonce]);
 
   // Setup real-time subscriptions (optimized)
   useEffect(() => {
@@ -1128,6 +942,17 @@ export default function AttendeesPage() {
 
     setBusy(prev => new Set(prev).add(key));
 
+    // Write the database's answer straight into the row on screen. Realtime is
+    // a second opinion, not the only one: if its event is slow or the socket
+    // dropped, the button used to stay grey after a successful check-in and the
+    // operator would hand the same item out twice.
+    const applyStatus = (checkedAt: string | null, quantity: number) =>
+      setAttendees(prev => prev.map(a =>
+        a.id === attendee.id
+          ? { ...a, fieldStatuses: { ...a.fieldStatuses, [field.id]: { checkedAt, quantity } } }
+          : a
+      ));
+
     try {
       if (isUnchecking) {
         const { error } = await withRetry(async () =>
@@ -1137,6 +962,7 @@ export default function AttendeesPage() {
           })
         );
         if (error) throw error;
+        applyStatus(null, 1);
       } else {
         // Atomic claim: the database decides who wins, not the browser.
         const { data, error } = await withRetry(async () =>
@@ -1149,6 +975,13 @@ export default function AttendeesPage() {
         if (error) throw error;
 
         const res = data as any;
+
+        // Whether we won the claim or lost it, `res` is the authoritative row.
+        // Apply it either way so the button matches the database immediately.
+        if (res) {
+          applyStatus(res.checked_at ?? null, res.quantity ?? 1);
+        }
+
         // claimed === false means someone else got there first. (Unless it was
         // us: a retry after a lost response still reports our own id.)
         if (res && res.claimed === false && res.checked_by !== userId) {
@@ -1157,20 +990,19 @@ export default function AttendeesPage() {
                 hour: "2-digit", minute: "2-digit",
               })
             : "";
-          const who = res.checked_by_email ? ` (${res.checked_by_email})` : "";
-          alert(`${t.alreadyChecked}\n\n${field.name} — ${attendee.name}\n${when}${who}`);
-          // Reflect the winner's state immediately rather than waiting on realtime.
-          setAttendees(prev => prev.map(a =>
-            a.id === attendee.id
-              ? { ...a, fieldStatuses: { ...a.fieldStatuses, [field.id]: {
-                    checkedAt: res.checked_at, quantity: res.quantity ?? 1 } } }
-              : a
-          ));
+          const who = res.checked_by_email ? ` — ${res.checked_by_email}` : "";
+          await showAlertModal(
+            t.alreadyChecked,
+            `${field.name} — ${attendee.name}\n${when}${who}`
+          );
         }
       }
     } catch (error) {
       console.error("Database error:", error);
-      alert(`${t.failed}: ${(error as Error).message}`);
+      await showAlertModal(
+        t.failed,
+        friendlyDbError((error as Error).message, isArabic)
+      );
     } finally {
       setBusy(prev => {
         const next = new Set(prev);
@@ -1178,7 +1010,7 @@ export default function AttendeesPage() {
         return next;
       });
     }
-  }, [t.failed, t.alreadyChecked, userId, isArabic]);
+  }, [t.failed, t.alreadyChecked, userId, isArabic, showAlertModal]);
 
   const mainField = fields.find(f => f.is_main);
 
@@ -1505,7 +1337,7 @@ function AttendeeCard({
   fields: Field[];
   mainField?: Field;
   isSuperAdmin: boolean;
-  userRole: UserRole;
+  userRole: UserRole | null;
   busy: Set<string>;
   onMarkField: (attendee: AttendeeWithStatus, field: Field, quantity?: number) => Promise<void>;
   translations: any;
@@ -1564,10 +1396,20 @@ function AttendeeCard({
             const status = attendee.fieldStatuses[field.id];
             const checked = !!status?.checkedAt;
             const mainChecked = mainField ? !!attendee.fieldStatuses[mainField.id]?.checkedAt : true;
-            const roleRestricted = !canUserModifyField(userRole, field.name, field.is_main);
+            // userRole is null until the profiles lookup returns. Treat unknown
+            // as "no permission yet" so a station operator is not briefly shown
+            // every station as tappable on page load.
+            const roleKnown = userRole !== null;
+            const roleRestricted =
+              roleKnown && !canUserModifyField(userRole, field.name, field.is_main);
             // Already served offline: nobody checks these in, super admin included.
             const locked = attendee.preCollected;
-            const disabled = locked || (!isSuperAdmin && !field.is_main && !mainChecked) || roleRestricted;
+            // The main-entrance gate is enforced by status_enforce_rules() for
+            // EVERY role, super admin included, so the button must not look
+            // tappable to them either. Stations that are already checked stay
+            // enabled so a super admin can still undo them.
+            const gatedByMain = !field.is_main && !mainChecked && !checked;
+            const disabled = locked || !roleKnown || gatedByMain || roleRestricted;
             const key = `${attendee.id}:${field.id}`;
             const fieldQuantity = status?.checkedAt ? (status.quantity || 1) : 0;
             
@@ -1591,19 +1433,25 @@ function AttendeeCard({
                   
                   if (isSuperAdmin) {
                     if (!isUnchecking) {
+                      // The database caps this at the family's own quantity
+                      // (status_enforce_rules: "Quantity cannot exceed attendee
+                      // total quantity"), and that check applies to super admins
+                      // too. Offering 1-999 here produced a guaranteed failed
+                      // write and a raw SQL error popup, so offer the real range.
+                      const maxQty = Math.max(1, attendee.quantity ?? 1);
                       const input = await showQuantityModal(
                         isArabic ? "إدخال الكمية - مدير متفوق" : "Enter Quantity - Super Admin",
-                        `${isArabic ? "أدخل الكمية (المدير المتفوق يمكنه تجاوز الحد الأقصى)" : "Enter quantity (Super Admin can exceed limits)"}\n(1 - 999)`,
-                        "1",
-                        999,
+                        `${t.enterQty} (1 - ${maxQty})`,
+                        String(maxQty),
+                        maxQty,
                         true
                       );
                       if (input == null) return;
                       const parsed = parseInt(input, 10);
-                      if (!Number.isFinite(parsed) || parsed < 1) {
+                      if (!Number.isFinite(parsed) || parsed < 1 || parsed > maxQty) {
                         await showAlertModal(
                           isArabic ? "خطأ" : "Error",
-                          isArabic ? "قيمة غير صالحة" : "Invalid quantity"
+                          `${t.invalidQty} (1 - ${maxQty})`
                         );
                         return;
                       }
@@ -1680,7 +1528,7 @@ function Station({
   locked?: boolean;
   busy?: boolean;
   isSuperAdmin?: boolean;
-  userRole?: UserRole;
+  userRole?: UserRole | null;
   fieldName?: string;
   isMainField?: boolean;
   quantity?: number;
